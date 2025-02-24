@@ -1,6 +1,6 @@
 ---
-title: "Road trip in South Island, NZ (2025-02-15 to 2025-02-20)"
-excerpt: "Beautiful views in South Island of New Zealand.<br/>
+title: "Road trip in South Island, NZ"
+excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 2025-02-20.<br/>
         <img src='/images/nz/1.jpg' width='300px'>
 	<img src='/images/nz/2.jpg' width='300px'>
 	<img src='/images/nz/3.jpg' width='300px'>
