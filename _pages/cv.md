@@ -1,6 +1,6 @@
 ---
 layout: archive
-title: "CV"
+title: "<strong>CV</strong>"
 permalink: /cv/
 author_profile: true
 redirect_from:
@@ -18,11 +18,11 @@ Education
   
 Skills
 ======
-* Database expert
-  * Data normalization
-  * Normal forms
-* Data mining
-  * Log anomaly detection via deep learning
+* Database Expert
+  * Data Normalization
+  * Normal Forms
+* Data Mining
+  * Log Anomaly Detection via Deep Learning
 * Programming 
   * Java
   * Python
