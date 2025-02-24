@@ -1,5 +1,5 @@
 ---
-title: "Composite Object Normal Forms: Parameterizing Boyce-Codd Normal Form by the Number of Minimal Keys"
+title: "Composite Object Normal Forms: Parameterizing Boyce-Codd Normal Form by the Number of Minimal Keys (CCF-A)"
 collection: publications
 category: conferences
 permalink: 
