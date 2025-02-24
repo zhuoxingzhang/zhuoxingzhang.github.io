@@ -1,5 +1,5 @@
 ---
-title: "Discovery of Cross Joins"
+title: "Discovery of Cross Joins (CCF-A)"
 collection: publications
 category: manuscripts
 permalink: 
