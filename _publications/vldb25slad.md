@@ -1,5 +1,5 @@
 ---
-title: "Substructure-aware Log Anomaly Detection"
+title: "Substructure-aware Log Anomaly Detection (CCF-A)"
 collection: publications
 category: conferences
 permalink: 
