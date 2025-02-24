@@ -1,6 +1,6 @@
 ---
 layout: archive
-title: "<h1 style='font-size: 52px; border-bottom: 10px solid #2c3e50; margin-bottom: 2rem;'>CV</h1>"
+title: "<h1 style='font-size: 52px; border-bottom: 1px solid #2c3e50; padding-bottom: 15px; margin-bottom: 3rem;'>CV</h1>"
 permalink: /cv/
 author_profile: true
 redirect_from:
