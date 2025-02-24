@@ -1,5 +1,5 @@
 ---
-title: "Mixed Covers of Keys and Functional Dependencies for Maintaining the Integrity of Data under Updates"
+title: "Mixed Covers of Keys and Functional Dependencies for Maintaining the Integrity of Data under Updates (CCF-A)"
 collection: publications
 category: conferences
 permalink: 
