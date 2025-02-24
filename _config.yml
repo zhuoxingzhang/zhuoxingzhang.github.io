@@ -22,7 +22,7 @@ repository               : "github.com/ZhuoxingZhang"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
+  avatar           : "zhuoxing.png"
   name             : "Zhuoxing Zhang"
   pronouns         : "he/him" # example: "she/her"  
   bio              : "I am currently Ph.D. candidate at the University of Auckland, and work on database research."
