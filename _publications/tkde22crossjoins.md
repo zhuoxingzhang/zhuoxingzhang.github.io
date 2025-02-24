@@ -1,5 +1,5 @@
 ---
-title: "Discovery of cross joins"
+title: "Discovery of Cross Joins"
 collection: publications
 category: manuscripts
 permalink: 
