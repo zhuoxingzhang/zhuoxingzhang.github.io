@@ -6,7 +6,7 @@ permalink:
 excerpt: ''
 date: 2025-02-20
 venue: 'VLDB'
-paperurl: ''
+paperurl: 'https://www.vldb.org/pvldb/vol18/p213-tang.pdf'
 citation: 'Yanni Tang, <strong>Zhuoxing Zhang</strong>, Kaiqi Zhao, Lanting Fang, Zhenhua Li, and Wu Chen. "Substructure-aware log anomaly detection." Proceedings of the VLDB Endowment 18, no. 2 (2024): 213-225.'
 ---
 
