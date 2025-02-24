@@ -11,9 +11,9 @@ redirect_from:
 
 Education
 ======
-* Ph.D, the University of Auckland, 2023 - present
-* M.S., Southwest University, 2016 - 2019
-* B.S., South-Central Minzu University, 2012 - 2016
+* Ph.D in Computer Science, the University of Auckland, 2023 - present
+* M.S. in Software Engineering, Southwest University, 2016 - 2019
+* B.S. in Software Engineering, South-Central Minzu University, 2012 - 2016
 
   
 Skills
@@ -33,19 +33,7 @@ Publications
   <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks reversed %}
-    {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
+   
 Service and leadership
 ======
 * ICDE reviewer
