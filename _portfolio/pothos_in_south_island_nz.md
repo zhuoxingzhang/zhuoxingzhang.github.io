@@ -1,7 +1,6 @@
 ---
 title: "Road trip in South Island, NZ"
 excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 2025-02-20.<br/>
-          <div style='gap: 10px;'>
             <img src='/images/nz/1.jpg' width='300px'>
             <img src='/images/nz/2.jpg' width='300px'>
             <img src='/images/nz/3.jpg' width='300px'>
@@ -16,7 +15,6 @@ excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 20
             <img src='/images/nz/12.jpg' width='300px'>
             <img src='/images/nz/13.jpg' width='300px'>
             <img src='/images/nz/14.jpg' width='300px'>
-            <img src='/images/nz/15.jpg' width='300px'>
-          </div>"
+            <img src='/images/nz/15.jpg' width='300px'>"
 collection: portfolio
 ---
