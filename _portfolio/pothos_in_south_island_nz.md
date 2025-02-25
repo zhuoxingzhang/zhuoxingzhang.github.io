@@ -3,7 +3,7 @@ title: "Road trip in South Island, NZ"
 excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 2025-02-20.<br/>
 <style>
   .gallery {
-    margin: 3px;
+    margin: 3px 1px 3px 3px; /* 调整右边距 */
   }
 </style>
             <img src='/images/nz/1.jpg' width='300px' class='gallery'>
