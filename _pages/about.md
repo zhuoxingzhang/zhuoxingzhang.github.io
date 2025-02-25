@@ -17,4 +17,7 @@ I am a doctoral candidate at the University of Auckland, specializing in relatio
 
 - **Mining FDs/Keys from Data**:  
   Mining some meaningful Functional Dependencies/Keys from data with domain expert knowledge.
+
+- **Detecting Anomalies from System Logs**:  
+  Mining anomalous patterns from system logs to find root causes via deep learning techniques.
   
