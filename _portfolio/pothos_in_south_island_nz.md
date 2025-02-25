@@ -3,12 +3,12 @@ title: "Road trip in South Island, NZ"
 excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 2025-02-20.<br/>
 <style>
   .gallery {
-    margin: 3px;
+    margin: 6px;
   }
 </style>
-            <img src='/images/nz/1.jpg' width='303px' class='gallery'>
-	<img src='/images/nz/2.jpg' width='303px' class='gallery'>
-	<img src='/images/nz/3.jpg' width='303px' class='gallery'>
+            <img src='/images/nz/1.jpg' width='300px' class='gallery'>
+	<img src='/images/nz/2.jpg' width='300px' class='gallery'>
+	<img src='/images/nz/3.jpg' width='300px' class='gallery'>
  	<img src='/images/nz/4.jpg' width='300px' class='gallery'>
 	<img src='/images/nz/5.jpg' width='300px' class='gallery'>
 	<img src='/images/nz/6.jpg' width='300px' class='gallery'>
