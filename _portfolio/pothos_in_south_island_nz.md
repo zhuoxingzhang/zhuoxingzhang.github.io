@@ -6,9 +6,9 @@ excerpt: "Beautiful views in South Island of New Zealand during 2025-02-15 to 20
     margin: 3px;
   }
 </style>
-            <img src='/images/nz/1.jpg' width='310px' class='gallery'>
-	<img src='/images/nz/2.jpg' width='310px' class='gallery'>
-	<img src='/images/nz/3.jpg' width='310px' class='gallery'>
+            <img src='/images/nz/1.jpg' width='303px' class='gallery'>
+	<img src='/images/nz/2.jpg' width='303px' class='gallery'>
+	<img src='/images/nz/3.jpg' width='303px' class='gallery'>
  	<img src='/images/nz/4.jpg' width='300px' class='gallery'>
 	<img src='/images/nz/5.jpg' width='300px' class='gallery'>
 	<img src='/images/nz/6.jpg' width='300px' class='gallery'>
