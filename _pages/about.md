@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 ## 🔍 Research Focus
-I am a doctoral candidate at the University of Auckland, specializing in relational database theory with a focus on data normalization techniques and anomaly detection from system logs. My work mainly consists of the following areas:
+I am currently pursuing a Ph.D. in Computer Science at the University of Auckland (2023–present). Previously, I completed an M.S. in Software Engineering at Southwest University (2016–2019) and a B.S. in Software Engineering at South-Central Minzu University (2012–2016). My current research specialises in relational database theory with a focus on data normalization techniques and anomaly detection from system logs. Specifically, my work mainly consists of the following areas:
 
 - **Schema Design Optimization**:  
   Developing novel normalization algorithms to minimize data redundancy and improve update efficiency while preserving functional dependencies.
