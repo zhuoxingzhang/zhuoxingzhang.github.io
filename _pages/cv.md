@@ -28,14 +28,13 @@ redirect_from:
 * Data Mining
   * Log Anomaly Detection via Deep Learning
 * Programming 
-  * Java
-  * Python
-  * Pytorch
+  * Java/Java Springboot
+  * Python/Pytorch
 
 ## Publications
   <ul>{% for post in site.publications reversed %}
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
    
-## Service and leadership
+## Service
 * ICDE reviewer
