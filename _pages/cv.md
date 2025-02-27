@@ -16,9 +16,9 @@ redirect_from:
   }
 </style>
 ## Education
-* Ph.D in Computer Science, the University of Auckland, 2023 - present
-* M.S. in Software Engineering, Southwest University, 2016 - 2019
-* B.S. in Software Engineering, South-Central Minzu University, 2012 - 2016
+* PhD in Computer Science, the University of Auckland, 2023 - present
+* MSc in Software Engineering, Southwest University, 2016 - 2019
+* BSc in Software Engineering, South-Central Minzu University, 2012 - 2016
 
   
 ## Skills
