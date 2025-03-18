@@ -6,7 +6,7 @@ permalink:
 excerpt: ''
 date: 2025-02-26
 venue: 'VLDBJ'
-paperurl: ''
+paperurl: 'https://link.springer.com/article/10.1007/s00778-025-00910-2'
 citation: '<strong>Zhuoxing Zhang</strong>, and Sebastian Link. "Mixed Covers: Optimizing Updates and Queries Using Minimal Keys and Functional Dependencies." The VLDB Journal, accepted to appear.'
 ---
 
