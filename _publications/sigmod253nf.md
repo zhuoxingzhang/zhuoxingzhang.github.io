@@ -4,7 +4,7 @@ collection: publications
 category: conferences
 permalink: 
 excerpt: ''
-date: 2025-05-30
+date: 2025-06-18
 venue: 'SIGMOD'
 paperurl: ''
 citation: '<strong>Zhuoxing Zhang</strong>, and Sebastian Link. "Synthesizing Third Normal Form Schemata that Minimize Integrity Maintenance and Update Overheads: Parameterizing 3NF by the Numbers of Minimal Keys and Functional Dependencies." Proceedings of the ACM on Management of Data 3, no. 3 (2025): 1-25.'
