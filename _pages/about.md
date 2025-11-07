@@ -36,7 +36,7 @@ h1, h2, h3 {
 ul.custom-list {
   list-style: none;
   padding-left: 1.5em;  /* 控制整体左缩进 */
-  margin: 0.5em 0 0.8em 0;
+  margin: 0em 0 0.8em 0;
 }
 
 ul.custom-list li {
