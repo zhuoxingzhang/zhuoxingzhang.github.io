@@ -22,8 +22,8 @@ p.justify {
   line-height: 1.8;
   font-size: 16px;
   color: #3a3a3a;
-  margin-bottom: 0.5em;
-  margin-top: 3em;
+  margin-bottom: 0em;
+  margin-top: 6em;
 }
 
 /* 🧷 标题样式 */
