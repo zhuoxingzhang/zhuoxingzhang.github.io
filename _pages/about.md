@@ -62,10 +62,10 @@ h1 {
   color: #004aad;
   font-size: 24px;
   font-weight: 600;
-  margin-top: 0.5em;
-  margin-bottom: 2em;
+  margin-top: 0em;
+  margin-bottom: 1em;
   border-bottom: 2px solid #004aad33;
-  padding-bottom: 0.2em;
+  padding-bottom: 0.4em;
 }
 
 /* 🧾 段落样式 */
@@ -133,7 +133,7 @@ ul.pub-list li::before {
 /* 🔹 蓝色标题和venue */
 .pub-title {
   /* color: #004aad; */
-  color: #333;
+  /* color: #333; */
   font-weight: 600;
 }
 .venue {
