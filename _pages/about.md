@@ -7,7 +7,7 @@ redirect_from:
 ---
 
 <!-- 🧠 Short Bio -->
-<h1>Short Bio</h1>
+<h1 id="short-bio">Short Bio</h1>
 <p class="justify">
 &emsp;&emsp;I am currently pursuing a PhD in Computer Science at the University of Auckland since 2023. Previously, I was a visiting student at Southwest University during 2019 - 2022. Prior to that, I completed an MSc in Software Engineering at Southwest University in 2019 and a BSc in Software Engineering at South-Central Minzu University in 2016. My current research specialises in relational database theory with a focus on data normalization techniques and anomaly detection from system logs.<br> 
 &emsp;&emsp;Specifically, my work mainly consists of the following areas:
@@ -24,7 +24,7 @@ redirect_from:
 ---
 
 <!-- 🧾 Selected Publications -->
-<h1>Selected Publications</h1>
+<h1 id="publications">Selected Publications</h1>
 <div class="wordwrap">You can also find all my papers on my <a href="https://dblp.org/pid/223/8303.html" target="_blank">DBLP</a> profile.</div>
 
 <!-- 📚 Publications 列表 -->
@@ -153,5 +153,9 @@ a:hover {
 /* 🚫 隐藏 Home 默认标题 */
 .page__title {
   display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 </style>
