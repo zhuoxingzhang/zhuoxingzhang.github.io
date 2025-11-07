@@ -35,23 +35,19 @@ author_profile: true
 {% endif %}
 
 <style>
-/* 🟦 标题颜色统一蓝色 */
-.publications-page h1,
-.publications-page h2,
-.publications-page h3,
-.publications-page .page__title {
+/* 🧷 页面标题 */
+h1, h2, h3 {
   color: #004aad;
   font-weight: 600;
-  margin-bottom: 0.5em;
 }
 
-/* 📏 正文文字统一大小和行高（和 Short Bio 一致） */
-.publications-page, 
-.publications-page p, 
-.publications-page li, 
-.publications-page ul, 
-.publications-page ol, 
-.publications-page div {
+.page__title {
+  color: #004aad;
+  font-weight: 600;
+}
+
+/* 📝 正文文字统一大小和行高，和 Short Bio 一致 */
+.wordwrap, .archive-single .post-content, .archive-single li {
   font-size: 16px;
   line-height: 1.8;
   color: #3a3a3a;
