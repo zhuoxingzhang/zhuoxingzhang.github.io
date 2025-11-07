@@ -34,7 +34,7 @@ h1, h2, h3 {
 /* 🔹 自定义列表 */
 ul.custom-list {
   list-style: none;
-  padding-left: 2em;  /* 控制整体左缩进 */
+  padding-left: 1em;  /* 控制整体左缩进 */
   margin: 0.5em 0 0.8em 0;
 }
 
@@ -42,7 +42,7 @@ ul.custom-list li {
   position: relative;
   text-align: justify;
   text-justify: inter-word;
-  margin-bottom: 0.6em;
+  margin-bottom: 0.2em;
   font-size: 16px;
   color: #333;
 }
@@ -51,7 +51,7 @@ ul.custom-list li {
 ul.custom-list li::before {
   content: "→ ";
   position: absolute;
-  left: -1.2em;
+  left: -1.5em;
   color: #004aad;     /* 蓝色符号 */
   font-weight: bold;
 }
