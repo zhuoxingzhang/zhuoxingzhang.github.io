@@ -43,7 +43,7 @@ author_profile: true
   {% endfor %}
 
   <li>
-    <strong class="pub-title">{{ pub.title }}</strong>, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
+    {{ pub.title }}, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
   </li>
 {% endfor %}
 </ul>
@@ -130,12 +130,6 @@ ul.pub-list li::before {
   font-weight: bold;
 }
 
-/* 🔹 蓝色标题和venue */
-.pub-title {
-  /* color: #004aad; */
-  /* color: #333; */
-  /* font-weight: 600; */
-}
 .venue {
   color: #004aad;
   font-style: italic;
