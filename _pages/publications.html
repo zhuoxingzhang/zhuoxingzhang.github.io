@@ -35,20 +35,68 @@ author_profile: true
 {% endif %}
 
 <style>
-  /* 🧷 标题样式 */
+/* =======================
+   🟦 页面标题和分类标题
+   ======================= */
 h1, h2, h3 {
-  color: #004aad;  /* 蓝色标题 */
+  color: #004aad;   /* 蓝色 */
   font-weight: 600;
+  margin-bottom: 0.5em;
 }
-  
+
 .page__title {
-  color: #004aad;   /* 蓝色主标题 */
+  color: #004aad;
   font-weight: 600;
+  margin-bottom: 1em; /* 与正文保持距离 */
 }
-.wordwrap, .archive-single .post-content, .archive-single li {
+
+/* =======================
+   📝 正文文字统一
+   ======================= */
+.publications-page, 
+.publications-page * {
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  color: #3a3a3a !important;
+}
+
+/* =======================
+   🔹 自定义列表样式
+   ======================= */
+ul.custom-list, 
+.archive-single ul, 
+.archive-single ol {
+  list-style: none;
+  padding-left: 1.5em;
+  margin: 0.5em 0 0.8em 0;
+}
+
+ul.custom-list li, 
+.archive-single li {
+  position: relative;
+  text-align: justify;
+  text-justify: inter-word;
+  margin-bottom: 0.3em;
   font-size: 16px;
-  line-height: 1.8;
   color: #3a3a3a;
+}
+
+/* 自定义符号 */
+ul.custom-list li::before, 
+.archive-single li::before {
+  content: "➤ ";
+  position: absolute;
+  left: -1.5em;
+  color: #004aad;
+  font-weight: bold;
+}
+
+/* 斜体文章或项目名样式 */
+ul.custom-list i, 
+.archive-single li i {
+  font-style: italic;
+  color: #004aad;
+  font-weight: 500;
 }
 </style>
 
