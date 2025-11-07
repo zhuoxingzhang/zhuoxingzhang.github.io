@@ -43,7 +43,7 @@ author_profile: true
   {% endfor %}
 
   <li>
-    {{ pub.title }}, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
+    <i>{{ pub.title }}</i>, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
   </li>
 {% endfor %}
 </ul>
