@@ -110,6 +110,12 @@ ul.custom-list i {
   font-weight: 500;
 }
 
+/* 🔹 论文标题样式（与 venue 一样蓝色） */
+.pub-title {
+  color: #004aad;
+  font-weight: 500;
+}
+
 /* 🔗 链接样式 */
 a {
   color: #004aad;
