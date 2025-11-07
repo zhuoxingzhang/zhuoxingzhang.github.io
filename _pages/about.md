@@ -29,9 +29,23 @@ redirect_from:
 
 <ul class="custom-list">
 {% for pub in site.data.pubs %}
+  {% assign authors = pub.authors | split: ',' %}
+  {% assign formatted_authors = "" %}
+
+  {% for a in authors %}
+    {% assign author = a | strip %}
+    {% if author == "Zhuoxing Zhang" %}
+      {% assign formatted_authors = formatted_authors | append: "<strong>Zhuoxing Zhang</strong>" %}
+    {% else %}
+      {% assign formatted_authors = formatted_authors | append: author %}
+    {% endif %}
+    {% unless forloop.last %}
+      {% assign formatted_authors = formatted_authors | append: ", " %}
+    {% endunless %}
+  {% endfor %}
+
   <li>
-    <strong>{{ pub.title }}</strong>, {{ pub.authors }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
-    {% if pub.role %} (<strong>{{ pub.role }}</strong>){% endif %}
+    <strong>{{ pub.title }}</strong>, {{ formatted_authors | strip_newlines }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
   </li>
 {% endfor %}
 </ul>
