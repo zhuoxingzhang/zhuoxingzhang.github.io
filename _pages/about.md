@@ -7,6 +7,20 @@ redirect_from:
   - /about.html
 ---
 
+<p class="justify">
+&emsp;&emsp;Selected Publications:
+</p>
+
+<ul class="custom-list">
+{% for pub in site.data.publications %}
+  <li>
+    <strong>{{ pub.title }}</strong>, {{ pub.authors }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
+    {% if pub.role %} (<strong>{{ pub.role }}</strong>){% endif %}
+  </li>
+{% endfor %}
+</ul>
+
+
 <style>
 /* 🎨 整体风格 */
 body, p, li {
