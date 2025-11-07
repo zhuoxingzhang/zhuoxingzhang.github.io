@@ -7,20 +7,6 @@ redirect_from:
   - /about.html
 ---
 
-<p class="justify">
-&emsp;&emsp;Selected Publications:
-</p>
-
-<ul class="custom-list">
-{% for pub in site.data.pubs %}
-  <li>
-    <strong>{{ pub.title }}</strong>, {{ pub.authors }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
-    {% if pub.role %} (<strong>{{ pub.role }}</strong>){% endif %}
-  </li>
-{% endfor %}
-</ul>
-
-
 <style>
 /* 🎨 整体风格 */
 body, p, li {
@@ -89,4 +75,17 @@ ul.custom-list i {
   <li><i>Update Cost Reduction</i>: Quantifying the trade-offs between normalization levels and update overheads in database systems.</li>
   <li><i>Mining FDs/Keys from Data</i>: Mining meaningful Functional Dependencies/Keys from data with domain expert knowledge.</li>
   <li><i>Detecting Anomalies from System Logs</i>: Mining anomalous patterns from system logs to find root causes via deep learning techniques.</li>
+</ul>
+
+<p class="justify">
+&emsp;&emsp;Selected Publications:
+</p>
+
+<ul class="custom-list">
+{% for pub in site.data.pubs %}
+  <li>
+    <strong>{{ pub.title }}</strong>, {{ pub.authors }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
+    {% if pub.role %} (<strong>{{ pub.role }}</strong>){% endif %}
+  </li>
+{% endfor %}
 </ul>
