@@ -1,9 +1,6 @@
 ---
 permalink: /
 author_profile: true
-redirect_from:
-  
-  - /about.html
 ---
 
 <!-- 🧠 Short Bio -->
@@ -66,7 +63,7 @@ h1 {
   font-size: 24px;
   font-weight: 600;
   margin-top: 0.5em;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
   border-bottom: 2px solid #004aad33;
   padding-bottom: 0.2em;
 }
@@ -99,12 +96,14 @@ ul.bio-list li::before {
   content: "• ";
   position: absolute;
   left: -1.5em;
-  color: #007acc;  /* 稍浅蓝色 */
+  /* color: #007acc;  /* 稍浅蓝色 */ */
+  color: #333;
   font-weight: bold;
 }
 ul.bio-list i {
   font-style: italic;
-  color: #004aad;
+  /* color: #004aad; */
+  color: #333;
   font-weight: 600;
 }
 
@@ -118,7 +117,7 @@ ul.pub-list li {
   position: relative;
   text-align: justify;
   text-justify: inter-word;
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
   font-size: 16px;
   color: #333;
 }
@@ -126,13 +125,15 @@ ul.pub-list li::before {
   content: "- ";
   position: absolute;
   left: -1.5em;
-  color: #004aad;
+  /* color: #004aad; */
+  color: #333;
   font-weight: bold;
 }
 
 /* 🔹 蓝色标题和venue */
 .pub-title {
-  color: #004aad;
+  /* color: #004aad; */
+  color: #333;
   font-weight: 600;
 }
 .venue {
