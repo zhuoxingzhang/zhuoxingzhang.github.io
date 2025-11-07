@@ -65,8 +65,8 @@ h1 {
   color: #004aad;
   font-size: 24px;
   font-weight: 600;
-  margin-top: 1em;
-  margin-bottom: 0.6em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
   border-bottom: 2px solid #004aad33;
   padding-bottom: 0.2em;
 }
@@ -118,7 +118,7 @@ ul.pub-list li {
   position: relative;
   text-align: justify;
   text-justify: inter-word;
-  margin-bottom: 0.4em;
+  margin-bottom: 1em;
   font-size: 16px;
   color: #333;
 }
