@@ -34,7 +34,10 @@ redirect_from:
   {% for a in authors %}
     {% assign author = a | strip %}
     {% if author == "Zhuoxing Zhang" %}
-      {% assign formatted_authors = formatted_authors | append: "<strong class="pub-title">Zhuoxing Zhang</strong>" %}
+      {%- comment -%}
+        用 append 分段拼接，避免引号嵌套问题
+      {%- endcomment -%}
+      {% assign formatted_authors = formatted_authors | append: "<strong>" | append: author | append: "</strong>" %}
     {% else %}
       {% assign formatted_authors = formatted_authors | append: author %}
     {% endif %}
@@ -44,10 +47,12 @@ redirect_from:
   {% endfor %}
 
   <li>
-    <strong>{{ pub.title }}</strong>, {{ formatted_authors | strip_newlines }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
+    <!-- 论文名加类以应用蓝色样式 -->
+    <strong class="pub-title">{{ pub.title }}</strong>, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
   </li>
 {% endfor %}
 </ul>
+
 
 <style>
 /* 🎨 全局风格 */
@@ -113,8 +118,15 @@ ul.custom-list i {
 /* 🔹 论文标题样式（与 venue 一样蓝色） */
 .pub-title {
   color: #004aad;
+  font-weight: 600;
+}
+
+.venue {
+  color: #004aad;
+  font-style: italic;
   font-weight: 500;
 }
+
 
 /* 🔗 链接样式 */
 a {
