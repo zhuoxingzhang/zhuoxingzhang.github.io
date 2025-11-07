@@ -1,12 +1,11 @@
 ---
 permalink: /
-title: "About Me"
+title: "Short Bio"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
-## 🔍 Research Focus
 I am currently pursuing a PhD in Computer Science at the University of Auckland since 2023. Previously, I was a visiting student at Southwest University during 2019 - 2022. Prior to that, I completed an MSc in Software Engineering at Southwest University in 2019 and a BSc in Software Engineering at South-Central Minzu University in 2016. My current research specialises in relational database theory with a focus on data normalization techniques and anomaly detection from system logs. Specifically, my work mainly consists of the following areas:
 
 - **Schema Design Optimization**:  
