@@ -75,14 +75,14 @@ p.justify {
   line-height: 1.8;
   font-size: 16px;
   color: #3a3a3a;
-  margin-bottom: 1em;
+  margin-bottom: 0.2em;
 }
 
 /* 🌱 Short Bio 列表样式 */
 ul.bio-list {
   list-style: none;
   padding-left: 1.5em;
-  margin: 0 0 2em 0;
+  margin: -0.2em 0 2em 0;
 }
 ul.bio-list li {
   position: relative;
