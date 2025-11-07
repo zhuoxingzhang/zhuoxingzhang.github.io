@@ -22,7 +22,8 @@ p.justify {
   line-height: 1.8;
   font-size: 16px;
   color: #3a3a3a;
-  margin-bottom: 0.8em;
+  margin-bottom: 0.5em;
+  margin-top: 3em;
 }
 
 /* 🧷 标题样式 */
@@ -49,7 +50,7 @@ ul.custom-list li {
 
 /* 💠 自定义符号（可改为 "★"、"◆"、"✔"、"➤" 等） */
 ul.custom-list li::before {
-  content: "➤ ";
+  content: "- ";
   position: absolute;
   left: -1.5em;
   color: #004aad;     /* 蓝色符号 */
