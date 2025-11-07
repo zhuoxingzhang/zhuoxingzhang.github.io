@@ -42,14 +42,14 @@ ul.custom-list li {
   position: relative;
   text-align: justify;
   text-justify: inter-word;
-  margin-bottom: 0.2em;
+  margin-bottom: 0.01em;
   font-size: 16px;
   color: #333;
 }
 
 /* 💠 自定义符号（可改为 "★"、"◆"、"✔"、"➤" 等） */
 ul.custom-list li::before {
-  content: "→ ";
+  content: "➤ ";
   position: absolute;
   left: -1.5em;
   color: #004aad;     /* 蓝色符号 */
