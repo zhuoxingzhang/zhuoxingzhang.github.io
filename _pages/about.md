@@ -112,7 +112,7 @@ ul.custom-list li::before {
 ul.custom-list i {
   font-style: italic;
   color: #004aad;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* 🔹 论文标题样式（与 venue 一样蓝色） */
