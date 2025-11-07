@@ -62,7 +62,7 @@ h2 {
   color: #004aad;
   font-size: 24px;
   font-weight: 600;
-  margin-top: 2.5em;
+  margin-top: 1em;
   margin-bottom: 0.6em;
   border-bottom: 2px solid #004aad33; /* 淡蓝下划线 */
   padding-bottom: 0.2em;
