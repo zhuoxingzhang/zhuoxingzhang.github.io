@@ -124,7 +124,7 @@ ul.custom-list i {
 .venue {
   color: #004aad;
   font-style: italic;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 
