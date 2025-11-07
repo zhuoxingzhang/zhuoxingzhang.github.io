@@ -134,7 +134,7 @@ ul.pub-list li::before {
 .pub-title {
   /* color: #004aad; */
   /* color: #333; */
-  font-weight: 600;
+  /* font-weight: 600; */
 }
 .venue {
   color: #004aad;
