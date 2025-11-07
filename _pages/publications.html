@@ -3,7 +3,6 @@ layout: archive
 title: "Publications"
 permalink: /publications/
 author_profile: true
-body_class: publications-page
 ---
 
 <!-- {% if site.author.googlescholar %}
@@ -37,24 +36,23 @@ body_class: publications-page
 
 <style>
 /* 🔹 标题统一蓝色 */
-.publications-page h1,
-.publications-page h2,
-.publications-page h3,
-.publications-page .page__title {
+h1, h2, h3, .page__title {
   color: #004aad;
   font-weight: 600;
   margin-bottom: 0.5em;
 }
 
 /* 📏 正文字体和 Short Bio 一致 */
-.publications-page .archive-single, 
-.publications-page .archive-single p, 
-.publications-page .archive-single li, 
-.publications-page .archive-single ul, 
-.publications-page .archive-single ol, 
-.publications-page .archive-single div {
+.archive-single,
+.archive-single p,
+.archive-single li,
+.archive-single ul,
+.archive-single ol,
+.archive-single .post-content {
   font-size: 16px;
   line-height: 1.8;
   color: #3a3a3a;
+  text-align: justify;
+  text-justify: inter-word;
 }
 </style>
