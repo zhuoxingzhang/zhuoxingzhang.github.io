@@ -13,7 +13,8 @@ redirect_from:
 &emsp;&emsp;Specifically, my work mainly consists of the following areas:
 </p>
 
-<ul class="custom-list">
+<!-- 🌱 Short Bio 列表 -->
+<ul class="bio-list">
   <li><i>Schema Design Optimization</i>: Developing novel normalization algorithms to minimize data redundancy and improve update efficiency while preserving functional dependencies.</li>
   <li><i>Update Cost Reduction</i>: Quantifying the trade-offs between normalization levels and update overheads in database systems.</li>
   <li><i>Mining FDs/Keys from Data</i>: Mining meaningful Functional Dependencies/Keys from data with domain expert knowledge.</li>
@@ -26,7 +27,8 @@ redirect_from:
 <h1>Selected Publications</h1>
 <div class="wordwrap">You can also find all my papers on my <a href="https://dblp.org/pid/223/8303.html" target="_blank">DBLP</a> profile.</div>
 
-<ul class="custom-list">
+<!-- 📚 Publications 列表 -->
+<ul class="pub-list">
 {% for pub in site.data.pubs %}
   {% assign authors = pub.authors | split: ',' %}
   {% assign formatted_authors = "" %}
@@ -34,9 +36,6 @@ redirect_from:
   {% for a in authors %}
     {% assign author = a | strip %}
     {% if author == "Zhuoxing Zhang" %}
-      {%- comment -%}
-        用 append 分段拼接，避免引号嵌套问题
-      {%- endcomment -%}
       {% assign formatted_authors = formatted_authors | append: "<strong>" | append: author | append: "</strong>" %}
     {% else %}
       {% assign formatted_authors = formatted_authors | append: author %}
@@ -47,7 +46,6 @@ redirect_from:
   {% endfor %}
 
   <li>
-    <!-- 论文名加类以应用蓝色样式 -->
     <strong class="pub-title">{{ pub.title }}</strong>, {{ formatted_authors }}, <i class="venue">{{ pub.venue }}</i>, {{ pub.year }}
   </li>
 {% endfor %}
@@ -55,25 +53,25 @@ redirect_from:
 
 
 <style>
-/* 🎨 全局风格 */
+/* 🎨 全局字体样式 */
 body, p, li {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #333;
   line-height: 1.7;
 }
 
-/* 🔹 一级标题（Short Bio, Selected Publications） */
+/* 🔹 一级标题样式 */
 h1 {
   color: #004aad;
   font-size: 24px;
   font-weight: 600;
   margin-top: 1em;
   margin-bottom: 0.6em;
-  border-bottom: 2px solid #004aad33; /* 淡蓝下划线 */
+  border-bottom: 2px solid #004aad33;
   padding-bottom: 0.2em;
 }
 
-/* 🧾 段落样式：首行缩进 + 两端对齐 */
+/* 🧾 段落样式 */
 p.justify {
   text-align: justify;
   text-justify: inter-word;
@@ -83,24 +81,48 @@ p.justify {
   margin-bottom: 1em;
 }
 
-/* 🔹 自定义列表 */
-ul.custom-list {
+/* 🌱 Short Bio 列表样式 */
+ul.bio-list {
   list-style: none;
   padding-left: 1.5em;
-  margin: 0.5em 0 1em 0;
+  margin: 0 0 2em 0;
 }
-
-ul.custom-list li {
+ul.bio-list li {
   position: relative;
   text-align: justify;
   text-justify: inter-word;
-  margin-bottom: 0.3em;
+  margin-bottom: 0.5em;
   font-size: 16px;
   color: #333;
 }
+ul.bio-list li::before {
+  content: "• ";
+  position: absolute;
+  left: -1.5em;
+  color: #007acc;  /* 稍浅蓝色 */
+  font-weight: bold;
+}
+ul.bio-list i {
+  font-style: italic;
+  color: #004aad;
+  font-weight: 600;
+}
 
-/* 💠 蓝色符号 */
-ul.custom-list li::before {
+/* 📚 Publications 列表样式 */
+ul.pub-list {
+  list-style: none;
+  padding-left: 1.5em;
+  margin: 0.5em 0 2em 0;
+}
+ul.pub-list li {
+  position: relative;
+  text-align: justify;
+  text-justify: inter-word;
+  margin-bottom: 0.4em;
+  font-size: 16px;
+  color: #333;
+}
+ul.pub-list li::before {
   content: "- ";
   position: absolute;
   left: -1.5em;
@@ -108,25 +130,16 @@ ul.custom-list li::before {
   font-weight: bold;
 }
 
-/* 🪶 斜体项目名 */
-ul.custom-list i {
-  font-style: italic;
-  color: #004aad;
-  font-weight: 600;
-}
-
-/* 🔹 论文标题样式（与 venue 一样蓝色） */
+/* 🔹 蓝色标题和venue */
 .pub-title {
   color: #004aad;
   font-weight: 600;
 }
-
 .venue {
   color: #004aad;
   font-style: italic;
   font-weight: 600;
 }
-
 
 /* 🔗 链接样式 */
 a {
@@ -137,6 +150,7 @@ a:hover {
   text-decoration: underline;
 }
 
+/* 🚫 隐藏 Home 默认标题 */
 .page__title {
   display: none !important;
 }
