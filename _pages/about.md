@@ -1,6 +1,5 @@
 ---
 permalink: /
-title: "Home"
 author_profile: true
 redirect_from:
   - /about/
@@ -118,5 +117,9 @@ a {
 }
 a:hover {
   text-decoration: underline;
+}
+
+.page__title {
+  display: none !important;
 }
 </style>
