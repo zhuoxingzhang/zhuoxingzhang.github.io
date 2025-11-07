@@ -37,22 +37,19 @@ author_profile: true
 <style>
 /* 🔹 标题统一蓝色 */
 h1, h2, h3, .page__title {
-  color: #004aad;
-  font-weight: 600;
-  margin-bottom: 0.5em;
+  color: #004aad !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5em !important;
 }
 
-/* 📏 正文字体和 Short Bio 一致 */
-.archive-single,
-.archive-single p,
-.archive-single li,
-.archive-single ul,
-.archive-single ol,
-.archive-single .post-content {
-  font-size: 16px;
-  line-height: 1.8;
-  color: #3a3a3a;
-  text-align: justify;
-  text-justify: inter-word;
+/* 📏 正文字体和 Short Bio 一致，覆盖所有嵌套内容 */
+.archive-single, 
+.archive-single * {
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  color: #3a3a3a !important;
+  text-align: justify !important;
+  text-justify: inter-word !important;
 }
 </style>
+
