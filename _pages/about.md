@@ -12,7 +12,7 @@ redirect_from:
 </p>
 
 <ul class="custom-list">
-{% for pub in site.data.publications %}
+{% for pub in site.data.pubs %}
   <li>
     <strong>{{ pub.title }}</strong>, {{ pub.authors }}, <i>{{ pub.venue }}</i>, {{ pub.year }}
     {% if pub.role %} (<strong>{{ pub.role }}</strong>){% endif %}
