@@ -34,7 +34,7 @@ redirect_from:
   {% for a in authors %}
     {% assign author = a | strip %}
     {% if author == "Zhuoxing Zhang" %}
-      {% assign formatted_authors = formatted_authors | append: "<strong>Zhuoxing Zhang</strong>" %}
+      {% assign formatted_authors = formatted_authors | append: "<strong class="pub-title">Zhuoxing Zhang</strong>" %}
     {% else %}
       {% assign formatted_authors = formatted_authors | append: author %}
     {% endif %}
