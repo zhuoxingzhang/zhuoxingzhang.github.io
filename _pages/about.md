@@ -21,7 +21,7 @@ author_profile: true
 ---
 
 <!-- 🧾 Selected Publications -->
-<h1 id="publications">Selected Publications</h1>
+<h1 id="publications">Publications</h1>
 <div class="wordwrap">You can also find all my papers on my <a href="https://dblp.org/pid/223/8303.html" target="_blank">DBLP</a> profile.</div>
 
 <!-- 📚 Publications 列表 -->
