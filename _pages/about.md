@@ -17,7 +17,7 @@ author_profile: true
   <li><i>Mining FDs/Keys from Data</i>: Mining meaningful Functional Dependencies/Keys from data with domain expert knowledge.</li>
   <li><i>Detecting Anomalies from System Logs</i>: Mining anomalous patterns from system logs to find root causes via deep learning techniques.</li>
 </ul>
-
+&emsp;&emsp;If you are interested in exploring possible collaborations, please don’t hesitate to reach out.
 ---
 
 <!-- 🧾 Selected Publications -->
