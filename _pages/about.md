@@ -18,7 +18,7 @@ author_profile: true
   <li><i>Detecting Anomalies from System Logs</i>: Mining anomalous patterns from system logs to find root causes via deep learning techniques.</li>
 </ul>
 <p class="justify">
-&emsp;&emsp;If you are interested in exploring possible collaborations, please don’t hesitate to reach out.
+If you are interested in exploring possible collaborations, please don’t hesitate to reach out.
 </p>
 
 ---
