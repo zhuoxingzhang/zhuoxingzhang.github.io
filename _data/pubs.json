@@ -1,4 +1,10 @@
-[
+[	
+	{
+        "title": "Unseen Anomaly Detection from System Logs",
+        "authors": "Yanni Tang, Zhuoxing Zhang, Lanting Fang, Sebastian Link, Wu Chen, Kaiqi Zhao",
+        "venue": "SIGMOD",
+        "year": "2026"
+    },
     {
         "title": "Synthesizing Third Normal Form Schemata that Minimize Integrity Maintenance and Update Overheads: Parameterizing 3NF by the Numbers of Minimal Keys and Functional Dependencies",
         "authors": "Zhuoxing Zhang, Sebastian Link",
@@ -48,3 +54,4 @@
         "year": "2018"
     }
 ]
+
