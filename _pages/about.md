@@ -3,14 +3,14 @@ permalink: /
 author_profile: true
 ---
 
-<!-- 🧠 Short Bio -->
+<!-- Short Bio -->
 <h1 id="short-bio">Short Bio</h1>
 <p class="justify">
 &emsp;&emsp;I am currently pursuing a PhD in Computer Science at the University of Auckland since 2023. Previously, I was a visiting student at Southwest University during 2019 - 2022. Prior to that, I completed an MSc in Software Engineering at Southwest University in 2019 and a BSc in Software Engineering at South-Central Minzu University in 2016. My current research focuses on relational databases and anomaly detection from system logs.<br> 
 &emsp;&emsp;Specifically, my work mainly consists of the following areas:
 </p>
 
-<!-- 🌱 Short Bio 列表 -->
+<!-- Short Bio -->
 <ul class="bio-list">
   <li><i>Schema Design Optimization</i>: Developing novel normalization algorithms to minimize data redundancy and improve update efficiency while preserving functional dependencies.</li>
   <li><i>Update Cost Reduction</i>: Quantifying the trade-offs between normalization levels and update overheads in database systems.</li>
@@ -23,11 +23,11 @@ If you are interested in exploring possible collaborations, please don’t hesit
 
 ---
 
-<!-- 🧾 Selected Publications -->
+<!-- Selected Publications -->
 <h1 id="publications">Publications</h1>
 <div class="wordwrap">You can also find all my papers on my <a href="https://dblp.org/pid/223/8303.html" target="_blank">DBLP</a> profile.</div>
 
-<!-- 📚 Publications 列表 -->
+<!-- Publications -->
 <ul class="pub-list">
 {% for pub in site.data.pubs %}
   {% assign authors = pub.authors | split: ',' %}
@@ -53,14 +53,12 @@ If you are interested in exploring possible collaborations, please don’t hesit
 
 
 <style>
-/* 🎨 全局字体样式 */
 body, p, li {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #333;
   line-height: 1.7;
 }
 
-/* 🔹 一级标题样式 */
 h1 {
   color: #004aad;
   font-size: 24px;
@@ -71,7 +69,6 @@ h1 {
   padding-bottom: 0.4em;
 }
 
-/* 🧾 段落样式 */
 p.justify {
   text-align: justify;
   text-justify: inter-word;
@@ -81,7 +78,7 @@ p.justify {
   margin-bottom: 0.2em;
 }
 
-/* 🌱 Short Bio 列表样式 */
+/* Short Bio */
 ul.bio-list {
   list-style: none;
   padding-left: 1.5em;
@@ -99,7 +96,7 @@ ul.bio-list li::before {
   content: "• ";
   position: absolute;
   left: -1.5em;
-  /* color: #007acc;  /* 稍浅蓝色 */ */
+  /* color: #007acc; */
   color: #333;
   font-weight: bold;
 }
@@ -110,7 +107,7 @@ ul.bio-list i {
   font-weight: 600;
 }
 
-/* 📚 Publications 列表样式 */
+/* Publications */
 ul.pub-list {
   list-style: none;
   padding-left: 1.5em;
@@ -139,7 +136,7 @@ ul.pub-list li::before {
   font-weight: 600;
 }
 
-/* 🔗 链接样式 */
+/* hyperlink */
 a {
   color: #004aad;
   text-decoration: none;
@@ -148,7 +145,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* 🚫 隐藏 Home 默认标题 */
 .page__title {
   display: none !important;
 }
