@@ -1,5 +1,11 @@
 [	
 	{
+        "title": "A Graph-based File-level Anomaly Detection Framework for System Logs",
+        "authors": "Yanni Tang, Wenjing Xiong, Zhuoxing Zhang, Kaiqi Zhao, Jiamou Liu, Kui Liu, Wu Chen",
+        "venue": "EAAI",
+        "year": "2026"
+    },
+	{
         "title": "Unseen Anomaly Detection from System Logs",
         "authors": "Yanni Tang, Zhuoxing Zhang, Lanting Fang, Sebastian Link, Wu Chen, Kaiqi Zhao",
         "venue": "SIGMOD",
