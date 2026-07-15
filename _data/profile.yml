@@ -14,7 +14,7 @@ email: zhuoxing.zhang@auckland.ac.nz
 photo: "/images/zhuoxing.jpg"
 
 # Short line under the name in the sidebar.
-tagline: Relational databases · Schema design · Log anomaly detection
+tagline: Schema design · Integrity maintenance · Log anomaly detection
 
 # Each paragraph is a separate list item.
 about:
@@ -23,33 +23,51 @@ about:
     current research focuses on relational databases and anomaly detection from
     system logs.
   - >-
-    A well-designed schema is what makes data cheap to keep correct. Much of my
-    work asks how far that principle can be pushed: I parameterize classical
-    normal forms such as Boyce-Codd and Third Normal Form by the number of
-    minimal keys and functional dependencies, and synthesize schemata that
-    minimize integrity maintenance and update overheads without giving up query
-    performance. Alongside this, I work on discovering the dependencies
-    themselves from data, and on detecting anomalies in large-scale system logs.
-    My work has appeared at SIGMOD and VLDB, and in TKDE and the VLDB Journal.
+    Schema design decides what it costs to keep data correct, and classical
+    normalization leaves that cost largely unquantified: it tells you to reach
+    Third Normal Form, or Boyce-Codd where you can, but not how to choose among
+    the many schemata that qualify. My work makes the choice measurable. I
+    parameterize normal forms by the numbers of minimal keys and functional
+    dependencies they exhibit, which exposes a concrete trade-off between how
+    many ways an entity can be addressed and how much work each update costs,
+    and I build covers that push as much of a constraint set as possible onto
+    the keys that database systems already enforce natively.
+  - >-
+    Alongside this I work on discovering constraints from data — settling the
+    complexity of cross join discovery and giving the first algorithms for it —
+    and on graph-based models for detecting anomalies in system logs. My work
+    has appeared at SIGMOD and VLDB, and in TKDE and the VLDB Journal.
 
 # Each entry may be a bare string, or have a `name` and a `detail`.
 interests:
-  - name: Schema Design Optimization
+  - name: Parameterized Normal Forms
     detail: >-
-      Developing novel normalization algorithms to minimize data redundancy and
-      improve update efficiency while preserving functional dependencies.
-  - name: Update Cost Reduction
+      Textbook design stops at "3NF, and BCNF where possible", which admits many
+      schemata and offers no principled way to choose among them. I parameterize
+      BCNF by its number of minimal keys — a count that turns out to trade
+      access variety against update complexity — and 3NF by its numbers of
+      minimal keys and functional dependencies, so the effort of maintaining
+      integrity becomes something you can measure and optimize at design time.
+  - name: Mixed Covers of Keys and Dependencies
     detail: >-
-      Quantifying the trade-offs between normalization levels and update
-      overheads in database systems.
-  - name: Mining FDs/Keys from Data
+      Database systems enforce keys natively but leave functional dependencies
+      to triggers or application code. A mixed cover pairs the minimal keys with
+      a cover of the remaining non-key FDs, putting as much of a constraint set
+      as possible on native support: orders of magnitude less integrity
+      maintenance overhead, and faster queries, refreshes and inserts on TPC-H.
+  - name: Discovering Constraints in Data
     detail: >-
-      Mining meaningful functional dependencies and keys from data with domain
-      expert knowledge.
-  - name: Detecting Anomalies from System Logs
+      Which dependencies does a dataset actually satisfy? For cross joins I
+      settled the complexity — NP-complete, and W[3]-complete in the arity —
+      and gave the first algorithms that discover them, including approximate
+      variants that trade discovery time against a target ratio.
+  - name: Anomaly Detection in System Logs
     detail: >-
-      Mining anomalous patterns from system logs to find root causes via deep
-      learning techniques.
+      Graph models capture how log events depend on one another but overlook the
+      substructures that betray a fault. My recent work searches for
+      representative substructures and distills them for fast inference, and
+      extends detection to the file level and to anomalies never seen in
+      training.
 
 # Shown as pills in the sidebar. Delete or add entries as needed.
 links:
