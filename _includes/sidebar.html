@@ -1,25 +1,47 @@
-{% include base_path %}
+{%- assign p = site.data.profile -%}
+<aside class="side">
+  <div class="side-inner">
 
-{% if page.author_profile or layout.author_profile or page.sidebar %}
-  <div class="sidebar sticky">
-  {% if page.author_profile or layout.author_profile %}{% include author-profile.html %}{% endif %}
-  {% if page.sidebar %}
-    {% for s in page.sidebar %}
-      {% if s.image %}
-        <img src=
-        {% if s.image contains "://" %}
-          "{{ s.image }}"
-        {% else %}
-          "{{ s.image | prepend: "/images/" | prepend: base_path }}"
-        {% endif %}
-        alt="{% if s.image_alt %}{{ s.image_alt }}{% endif %}">
-      {% endif %}
-      {% if s.title %}<h3>{{ s.title }}</h3>{% endif %}
-      {% if s.text %}{{ s.text | markdownify }}{% endif %}
-    {% endfor %}
-    {% if page.sidebar.nav %}
-      {% include nav_list nav=page.sidebar.nav %}
+    {% if p.photo and p.photo != "" %}
+      <img class="avatar" src="{{ p.photo | relative_url }}" alt="{{ p.name }}">
+    {% else %}
+      {%- assign parts = p.name | split: " " -%}
+      <div class="avatar avatar-mono" aria-hidden="true">
+        {%- for part in parts -%}{{ part | slice: 0 }}{%- endfor -%}
+      </div>
     {% endif %}
-  {% endif %}
+
+    <h1 class="side-name">{{ p.name }}</h1>
+    {% if p.pronouns %}<p class="side-pronouns">{{ p.pronouns }}</p>{% endif %}
+
+    <p class="side-role">
+      {{ p.title }}<br>
+      {% if p.department %}{{ p.department }}<br>{% endif %}
+      {{ p.affiliation }}
+    </p>
+
+    {% if p.tagline %}<p class="side-tagline">{{ p.tagline }}</p>{% endif %}
+
+    <nav class="side-nav" aria-label="Sections">
+      <a href="#about">About</a>
+      {% if site.data.news and site.data.news.size > 0 %}<a href="#news">News</a>{% endif %}
+      <a href="#publications">Publications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <ul class="side-links">
+      {% for l in p.links %}
+        <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
+      {% endfor %}
+      {% if p.cv and p.cv != "" %}
+        <li><a class="is-cv" href="{{ p.cv | relative_url }}">CV</a></li>
+      {% endif %}
+    </ul>
+
+    <p class="side-contact">
+      <a href="mailto:{{ p.email }}">{{ p.email }}</a>
+      {% if p.location %}<span class="side-loc">{{ p.location }}</span>{% endif %}
+    </p>
+
   </div>
-{% endif %}
+</aside>

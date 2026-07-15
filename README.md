@@ -1,89 +1,97 @@
-# Academic Pages
-**Academic Pages is a GitHub Pages template for personal and professional portfolio-oriented websites.**
+# zhuoxingzhang.github.io
 
-![Academic Pages template example](images/homepage.png "Academic Pages template example")
+Personal academic site. Plain Jekyll — GitHub Pages builds it on every push, so
+there is nothing to install and nothing to run.
 
-# Getting Started
+## How to update
 
-1. Register a GitHub account if you don't have one and confirm your e-mail (required!)
-1. Click the "Use this template" button in the top right.
-1. On the "New repository" page, enter your repository name as "[your GitHub username].github.io", which will also be your website's URL.
-1. Set site-wide configuration and add your content.
-1. Upload any files (like PDFs, .zip files, etc.) to the `files/` directory. They will appear at https://[your GitHub username].github.io/files/example.pdf.
-1. Check status by going to the repository settings, in the "GitHub pages" section
-1. (Optional) Use the Jupyter notebooks or python scripts in the `markdown_generator` folder to generate markdown files for publications and talks from a TSV file.
+All content lives in `_data/`. You never need to touch HTML or CSS.
 
-See more info at https://academicpages.github.io/
+| I want to…                          | Edit                    |
+| ----------------------------------- | ----------------------- |
+| Add a paper                         | `_data/publications.yml` |
+| Post a news item                    | `_data/news.yml`         |
+| Change bio, interests, links, email | `_data/profile.yml`      |
+| Change the site title / SEO blurb   | `_config.yml`            |
 
-## Running locally
+Edit the file, commit, push. The site rebuilds in about a minute.
 
-When you are initially working your website, it is very useful to be able to preview the changes locally before pushing them to GitHub. To work locally you will need to:
+You can do this entirely in the browser: open the file on GitHub, click the
+pencil icon, edit, and hit *Commit changes*.
 
-1. Clone the repository and made updates as detailed above.
-1. Make sure you have ruby-dev, bundler, and nodejs installed
-    
-    On most Linux distribution and [Windows Subsystem Linux](https://learn.microsoft.com/en-us/windows/wsl/about) the command is:
-    ```bash
-    sudo apt install ruby-dev ruby-bundler nodejs
-    ```
-    If you see error `Unable to locate package ruby-bundler`, `Unable to locate package nodejs `, run the following:
-    ```bash
-    sudo apt update && sudo apt upgrade -y
-    ```
-    then try run `sudo apt install ruby-dev ruby-bundler nodejs` again.
+### Adding a paper
 
-    On MacOS the commands are:
-    ```bash
-    brew install ruby
-    brew install node
-    gem install bundler
-    ```
-1. Run `bundle install` to install ruby dependencies. If you get errors, delete Gemfile.lock and try again.
+Copy an existing block in `_data/publications.yml` and change the fields. Only
+`title`, `authors`, `venue`, `year`, and `type` are required.
 
-    If you see file permission error like `Fetching bundler-2.6.3.gem ERROR:  While executing gem (Gem::FilePermissionError) You don't have write permissions for the /var/lib/gems/3.2.0 directory.` or `Bundler::PermissionError: There was an error while trying to write to /usr/local/bin.`
-    Install Gems Locally (Recommended):
-    ```bash
-    bundle config set --local path 'vendor/bundle'
-    ```
-    then try run `bundle install` again. If succeeded, you should see a folder called `vendor` and open `.gitignore` then add `vendor` inside it.
-
-1. Run `jekyll serve -l -H localhost` to generate the HTML and serve it from `localhost:4000` the local server will automatically rebuild and refresh the pages on change.
-    You may also try `bundle exec jekyll serve -l -H localhost` to ensure jekyll to use specific dependencies on your own local machine.
-
-If you are running on Linux it may be necessary to install some additional dependencies prior to being able to run locally: `sudo apt install build-essential gcc make`
-
-## Using Docker
-
-Working from a different OS, or just want to avoid installing dependencies? You can use the provided `Dockerfile` to build a container that will run the site for you if you have [Docker](https://www.docker.com/) installed.
-
-You can build and execute the container by running the following command in the repository:
-
-```bash
-docker compose up
+```yaml
+- title: The title of the paper
+  authors: Yanni Tang, Zhuoxing Zhang, Sebastian Link
+  venue: SIGMOD
+  venue_full: Proceedings of the ACM on Management of Data   # tooltip on the venue tag
+  year: 2027
+  type: conference        # journal | conference
+  award: Best Paper       # optional
+  links:                  # optional
+    - {name: DOI, url: "https://doi.org/10.1145/xxxxxxx"}
+    - {name: PDF, url: "/assets/papers/my-paper.pdf"}
+    - {name: Code, url: "https://github.com/zhuoxingzhang/..."}
 ```
 
-You should now be able to access the website from `localhost:4000`.
+Order in the file does not matter — the page groups by `year` and sorts newest
+first. Your name is bolded automatically (it matches `author_name` in
+`_config.yml`).
 
-# Maintenance
+### Changing the photo
 
-Bug reports and feature requests to the template should be [submitted via GitHub](https://github.com/academicpages/academicpages.github.io/issues/new/choose). For questions concerning how to style the template, please feel free to start a [new discussion on GitHub](https://github.com/academicpages/academicpages.github.io/discussions).
+The current photo is `images/zhuoxing.jpg`. To swap it, drop a new square image
+in `images/` and point `_data/profile.yml` at it:
 
-This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see LICENSE.md). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
+```yaml
+photo: "/images/my-new-photo.jpg"
+```
 
-## Bugfixes and enhancements
+Leave `photo: ""` and you get a typeset monogram instead.
 
-If you have bugfixes and enhancements that you would like to submit as a pull request, you will need to [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repository as opposed to using it as a template. This will also allow you to [synchronize your copy](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) of template to your fork as well.
+### Adding a CV
 
-Unfortunately, one logistical issue with a template theme like Academic Pages that makes it a little tricky to get bug fixes and updates to the core theme. If you use this template and customize it, you will probably get merge conflicts if you attempt to synchronize. If you want to save your various .yml configuration files and markdown files, you can delete the repository and fork it again. Or you can manually patch.
+Save it as `assets/cv.pdf`, then in `_data/profile.yml` set `cv: "/assets/cv.pdf"`.
+A CV pill appears in the sidebar. Leave it empty to hide it.
 
----
-<div align="center">
-    
-![pages-build-deployment](https://github.com/academicpages/academicpages.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/academicpages/academicpages.github.io.svg)](https://github.com/academicpages/academicpages.github.io/graphs/contributors)
-[![GitHub release](https://img.shields.io/github/v/release/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/releases/latest)
-[![GitHub license](https://img.shields.io/github/license/academicpages/academicpages.github.io?color=blue)](https://github.com/academicpages/academicpages.github.io/blob/master/LICENSE)
+## Deploying
 
-[![GitHub stars](https://img.shields.io/github/stars/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io)
-[![GitHub forks](https://img.shields.io/github/forks/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/fork)
-</div>
+Push to the `master` branch of `zhuoxingzhang/zhuoxingzhang.github.io`. In the
+repo's *Settings → Pages*, source is **Deploy from a branch**, branch `master`,
+folder `/ (root)`.
+
+## Optional: previewing locally
+
+Not required, but if you want to see changes before pushing and have Ruby
+installed:
+
+```bash
+bundle install
+bundle exec jekyll serve
+```
+
+Then open <http://localhost:4000>. Changes to `_data/` reload automatically;
+changes to `_config.yml` need a restart.
+
+## Structure
+
+```
+_config.yml            site settings, SEO
+_data/profile.yml      name, bio, interests, links
+_data/news.yml         news items (empty -> the News section hides itself)
+_data/publications.yml papers
+_layouts/default.html  page shell
+_includes/sidebar.html sidebar
+index.html             the page itself
+assets/css/style.css   all styling (design tokens at the top)
+images/                photos, incl. the profile picture
+_portfolio/            dormant: 2025 South Island road-trip gallery, not linked
+                       from the current site (see images/nz/)
+```
+
+Colours, fonts, and spacing are CSS variables in the `:root` block at the top of
+`assets/css/style.css`. Dark mode follows the reader's system setting.

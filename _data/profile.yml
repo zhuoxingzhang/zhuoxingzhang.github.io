@@ -1,0 +1,70 @@
+# ---------------------------------------------------------------
+# Who you are. Edit freely — the page re-renders from these values.
+# ---------------------------------------------------------------
+
+name: Zhuoxing Zhang
+pronouns: he/him
+title: PhD Candidate in Computer Science
+affiliation: University of Auckland
+department: School of Computer Science
+location: Auckland, New Zealand
+email: zzha969@aucklanduni.ac.nz
+
+# A square image works best. Leave empty to fall back to a typeset monogram.
+photo: "/images/zhuoxing.jpg"
+
+# Short line under the name in the sidebar.
+tagline: Relational databases · Schema design · Log anomaly detection
+
+# Each paragraph is a separate list item.
+about:
+  - >-
+    I am a PhD candidate in Computer Science at the University of Auckland. My
+    current research focuses on relational databases and anomaly detection from
+    system logs.
+  - >-
+    A well-designed schema is what makes data cheap to keep correct. Much of my
+    work asks how far that principle can be pushed: I parameterize classical
+    normal forms such as Boyce-Codd and Third Normal Form by the number of
+    minimal keys and functional dependencies, and synthesize schemata that
+    minimize integrity maintenance and update overheads without giving up query
+    performance. Alongside this, I work on discovering the dependencies
+    themselves from data, and on detecting anomalies in large-scale system logs.
+    My work has appeared at SIGMOD and VLDB, and in TKDE and the VLDB Journal.
+
+# Each entry may be a bare string, or have a `name` and a `detail`.
+interests:
+  - name: Schema Design Optimization
+    detail: >-
+      Developing novel normalization algorithms to minimize data redundancy and
+      improve update efficiency while preserving functional dependencies.
+  - name: Update Cost Reduction
+    detail: >-
+      Quantifying the trade-offs between normalization levels and update
+      overheads in database systems.
+  - name: Mining FDs/Keys from Data
+    detail: >-
+      Mining meaningful functional dependencies and keys from data with domain
+      expert knowledge.
+  - name: Detecting Anomalies from System Logs
+    detail: >-
+      Mining anomalous patterns from system logs to find root causes via deep
+      learning techniques.
+
+# Shown as pills in the sidebar. Delete or add entries as needed.
+links:
+  - name: Google Scholar
+    url: https://scholar.google.com/citations?user=Cdo6VqoAAAAJ&hl=en&oi=ao
+  - name: DBLP
+    url: https://dblp.org/pid/223/8303.html
+  - name: ORCID
+    url: https://orcid.org/0000-0001-6736-4501
+  - name: GitHub
+    url: https://github.com/zhuoxingzhang
+  - name: LinkedIn
+    url: https://www.linkedin.com/in/zhuoxing-zhang-405220326
+  - name: X
+    url: https://twitter.com/ZhuoxingZhang
+
+# Optional. Put your CV at assets/cv.pdf and set this to /assets/cv.pdf
+cv: ""

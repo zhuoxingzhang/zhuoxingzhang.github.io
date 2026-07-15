@@ -1,0 +1,17 @@
+# ---------------------------------------------------------------
+# News. Newest first — rendered in the order written.
+# The News section is hidden entirely while this list is empty, and
+# reappears as soon as you add an entry. The page shows the first 5;
+# anything beyond that folds into an "Earlier news" toggle.
+#
+# Uncomment and edit to start:
+#
+# - date: 2026-05
+#   text: >-
+#     <em>A Graph-based File-level Anomaly Detection Framework for System
+#     Logs</em> has been accepted to <strong>EAAI</strong>.
+#
+# - date: 2026-02
+#   text: >-
+#     Free HTML is allowed here, e.g. <a href="https://example.com">a link</a>.
+# ---------------------------------------------------------------

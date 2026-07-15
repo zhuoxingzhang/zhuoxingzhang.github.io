@@ -1,0 +1,99 @@
+---
+layout: default
+---
+{%- assign p = site.data.profile -%}
+
+<section id="about" class="sec">
+  <h2 class="sec-h">About</h2>
+  <div class="prose">
+    {% for para in p.about %}<p>{{ para }}</p>{% endfor %}
+  </div>
+
+  {% if p.interests and p.interests.size > 0 %}
+  <h3 class="sub-h">Research interests</h3>
+  <dl class="interests">
+    {% for i in p.interests %}
+      {% if i.name %}
+        <dt>{{ i.name }}</dt>
+        <dd>{{ i.detail }}</dd>
+      {% else %}
+        <dt>{{ i }}</dt>
+      {% endif %}
+    {% endfor %}
+  </dl>
+  {% endif %}
+</section>
+
+{% if site.data.news and site.data.news.size > 0 %}
+<section id="news" class="sec">
+  <h2 class="sec-h">News</h2>
+  <ol class="news">
+    {% for n in site.data.news limit: 5 %}
+      <li>
+        <time class="news-date">{{ n.date }}</time>
+        <span class="news-text">{{ n.text }}</span>
+      </li>
+    {% endfor %}
+  </ol>
+  {% if site.data.news.size > 5 %}
+  <details class="more">
+    <summary>Earlier news</summary>
+    <ol class="news">
+      {% for n in site.data.news offset: 5 %}
+        <li>
+          <time class="news-date">{{ n.date }}</time>
+          <span class="news-text">{{ n.text }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  </details>
+  {% endif %}
+</section>
+{% endif %}
+
+<section id="publications" class="sec">
+  <h2 class="sec-h">Publications</h2>
+  <p class="sec-note">
+    Authors are listed in publication order. A complete list is also on
+    <a href="{{ p.links | where: 'name', 'DBLP' | map: 'url' | first }}">DBLP</a> and
+    <a href="{{ p.links | where: 'name', 'Google Scholar' | map: 'url' | first }}">Google&nbsp;Scholar</a>.
+  </p>
+
+  {%- capture self_bold %}<b>{{ site.author_name }}</b>{% endcapture -%}
+  {%- assign groups = site.data.publications | group_by: "year" | sort: "name" | reverse -%}
+  {% for g in groups %}
+    <div class="year-group">
+      <h3 class="year">{{ g.name }}</h3>
+      <ol class="pubs">
+        {% for pub in g.items %}
+          <li class="pub">
+            <p class="pub-title">{{ pub.title }}</p>
+            <p class="pub-authors">
+              {{ pub.authors | replace: site.author_name, self_bold }}
+            </p>
+            <p class="pub-meta">
+              <span class="venue" {% if pub.venue_full %}title="{{ pub.venue_full }}"{% endif %}>{{ pub.venue }}</span>
+              <span class="pub-year">{{ pub.year }}</span>
+              {% if pub.award %}<span class="award">{{ pub.award }}</span>{% endif %}
+              {% for l in pub.links %}
+                <a class="pub-link" href="{{ l.url }}">{{ l.name }}</a>
+              {% endfor %}
+            </p>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endfor %}
+</section>
+
+<section id="contact" class="sec">
+  <h2 class="sec-h">Contact</h2>
+  <div class="prose">
+    <p>
+      If you are interested in exploring possible collaborations, please don't
+      hesitate to reach out — the fastest way to reach me is email:
+      <a href="mailto:{{ p.email }}">{{ p.email }}</a>.
+    </p>
+    <p class="addr">{{ p.department }}, {{ p.affiliation }}<br>{{ p.location }}</p>
+  </div>
+</section>
