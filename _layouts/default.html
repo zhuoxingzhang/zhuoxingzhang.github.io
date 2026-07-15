@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#131417" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">
   {% seo %}
   {%- comment -%}
     Not style.css: GitHub Pages applies jekyll-theme-primer when _config.yml
@@ -12,18 +12,48 @@
     same path and wins, silently replacing this file.
   {%- endcomment -%}
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='25' x='4' font-size='26' font-family='Georgia,serif'>Z</text></svg>">
+  <link rel="icon" href="{{ '/images/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="alternate icon" href="{{ '/images/favicon.ico' | relative_url }}">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <div class="shell">
-    {% include sidebar.html %}
-    <main id="main" class="main">
-      {{ content }}
-      <footer class="foot">
-        <p>&copy; {{ 'now' | date: "%Y" }} {{ site.data.profile.name }}. Built with Jekyll, hosted on GitHub Pages.</p>
-      </footer>
-    </main>
-  </div>
+
+  {% include hero.html %}
+
+  <main id="main" class="main">
+    {{ content }}
+  </main>
+
+  <footer class="foot">
+    <div class="foot-inner">
+      <p>&copy; {{ 'now' | date: "%Y" }} {{ site.data.profile.name }}</p>
+      <p>Built with Jekyll, hosted on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script>
+    // Light up the nav link whose section is currently in view.
+    (function () {
+      var links = [].slice.call(document.querySelectorAll('.nav a[href^="#"]'));
+      if (!links.length || !('IntersectionObserver' in window)) return;
+
+      var byId = {};
+      var targets = links.map(function (a) {
+        var el = document.getElementById(a.getAttribute('href').slice(1));
+        if (el) byId[el.id] = a;
+        return el;
+      }).filter(Boolean);
+
+      var seen = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting; });
+        var current = targets.filter(function (t) { return seen[t.id]; })[0];
+        links.forEach(function (a) { a.classList.remove('is-active'); });
+        if (current) byId[current.id].classList.add('is-active');
+      }, { rootMargin: '-45% 0px -50% 0px' });
+
+      targets.forEach(function (t) { io.observe(t); });
+    })();
+  </script>
 </body>
 </html>

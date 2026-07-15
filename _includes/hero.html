@@ -1,0 +1,55 @@
+{%- assign p = site.data.profile -%}
+<header class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+
+    <div class="hero-portrait">
+      {% if p.photo and p.photo != "" %}
+        <img src="{{ p.photo | relative_url }}" alt="{{ p.name }}">
+      {% else %}
+        {%- assign parts = p.name | split: " " -%}
+        <span class="mono" aria-hidden="true">
+          {%- for part in parts -%}{{ part | slice: 0 }}{%- endfor -%}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="hero-text">
+      <h1 class="hero-name">
+        {{ p.name }}
+        {% if p.pronouns %}<span class="hero-pronouns">{{ p.pronouns }}</span>{% endif %}
+      </h1>
+
+      <p class="hero-role">{{ p.title }}</p>
+      <p class="hero-affil">
+        {% if p.department %}{{ p.department }} &middot; {% endif %}{{ p.affiliation }}
+        {% if p.location %}<span class="hero-loc">{{ p.location }}</span>{% endif %}
+      </p>
+
+      {% if p.tagline %}<p class="hero-tagline">{{ p.tagline }}</p>{% endif %}
+
+      <ul class="hero-links">
+        <li><a class="is-mail" href="mailto:{{ p.email }}">{{ p.email }}</a></li>
+        {% for l in p.links %}
+          <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
+        {% endfor %}
+        {% if p.cv and p.cv != "" %}
+          <li><a class="is-cv" href="{{ p.cv | relative_url }}">CV</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+  </div>
+</header>
+
+<nav class="nav" aria-label="Sections">
+  <div class="nav-inner">
+    <span class="nav-brand">{{ p.name }}</span>
+    <ul>
+      <li><a href="#about">About</a></li>
+      {% if site.data.news and site.data.news.size > 0 %}<li><a href="#news">News</a></li>{% endif %}
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
