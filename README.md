@@ -87,11 +87,17 @@ _data/publications.yml papers
 _layouts/default.html  page shell
 _includes/sidebar.html sidebar
 index.html             the page itself
-assets/css/style.css   all styling (design tokens at the top)
+assets/css/site.css    all styling (design tokens at the top)
 images/                photos, incl. the profile picture
 _portfolio/            dormant: 2025 South Island road-trip gallery, not linked
                        from the current site (see images/nz/)
 ```
 
 Colours, fonts, and spacing are CSS variables in the `:root` block at the top of
-`assets/css/style.css`. Dark mode follows the reader's system setting.
+`assets/css/site.css`. Dark mode follows the reader's system setting.
+
+One gotcha worth knowing: because `_config.yml` names no theme, GitHub Pages
+applies `jekyll-theme-primer` by default. That theme ships its own
+`assets/css/style.scss`, which builds to `/assets/css/style.css` and would
+silently override a file of ours at that path — which is why the stylesheet is
+called `site.css`. Don't rename it back.
