@@ -1,0 +1,17 @@
+---
+# Why this file exists
+# --------------------
+# GitHub Pages applies jekyll-theme-primer whenever _config.yml names no theme,
+# and that theme ships its own assets/css/style.scss. Without this file, the
+# theme's version builds to /assets/css/style.css and 76KB of primer CSS gets
+# served from our domain.
+#
+# That path is also what earlier versions of this site linked to, so any browser
+# still holding cached HTML would load primer's CSS and render the page
+# unstyled. Sharing the path shadows the theme's file and points the stale URL
+# at the real stylesheet, so those visitors recover on their own.
+#
+# The live stylesheet is site.css. Edit that, not this.
+---
+
+@import url("/assets/css/site.css");
