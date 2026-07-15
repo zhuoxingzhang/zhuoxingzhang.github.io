@@ -6,7 +6,12 @@
   <meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#131417" media="(prefers-color-scheme: dark)">
   {% seo %}
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  {%- comment -%}
+    Not style.css: GitHub Pages applies jekyll-theme-primer when _config.yml
+    names no theme, and the theme's own assets/css/style.scss compiles to that
+    same path and wins, silently replacing this file.
+  {%- endcomment -%}
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='25' x='4' font-size='26' font-family='Georgia,serif'>Z</text></svg>">
 </head>
 <body>
