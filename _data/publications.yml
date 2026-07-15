@@ -1,0 +1,110 @@
+# ---------------------------------------------------------------
+# Publications. Newest first is not required — the page groups and
+# sorts by `year` automatically.
+#
+# To add a paper, copy this block to the top and fill it in:
+#
+#   - title: Paper title in sentence case
+#     authors: First Author, Zhuoxing Zhang, Last Author   # your name is bolded automatically
+#     venue: SIGMOD                                        # short name, shown as a tag
+#     venue_full: Proceedings of the ACM on Management of Data
+#     year: 2026
+#     type: journal            # journal | conference  (only used for the filter tabs)
+#     award: Best Paper        # optional, omit if none
+#     links:                   # optional, omit if none
+#       - {name: DOI, url: "https://doi.org/..."}
+#       - {name: PDF, url: "/assets/papers/....pdf"}
+#       - {name: Code, url: "https://github.com/..."}
+# ---------------------------------------------------------------
+
+- title: A Graph-based File-level Anomaly Detection Framework for System Logs
+  authors: Yanni Tang, Wenjing Xiong, Zhuoxing Zhang, Kaiqi Zhao, Jiamou Liu, Kui Liu, Wu Chen
+  venue: EAAI
+  venue_full: Engineering Applications of Artificial Intelligence
+  year: 2026
+  type: journal
+  links:
+    - {name: DOI, url: "https://doi.org/10.1016/j.engappai.2026.115345"}
+
+- title: Unseen Anomaly Detection from System Logs
+  authors: Yanni Tang, Zhuoxing Zhang, Lanting Fang, Sebastian Link, Wu Chen, Kaiqi Zhao
+  venue: SIGMOD
+  venue_full: Proceedings of the ACM on Management of Data
+  year: 2026
+  type: conference
+
+- title: >-
+    Synthesizing Third Normal Form Schemata that Minimize Integrity Maintenance
+    and Update Overheads: Parameterizing 3NF by the Numbers of Minimal Keys and
+    Functional Dependencies
+  authors: Zhuoxing Zhang, Sebastian Link
+  venue: SIGMOD
+  venue_full: Proceedings of the ACM on Management of Data
+  year: 2025
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.1145/3725362"}
+
+- title: "Mixed Covers: Optimizing Updates and Queries Using Minimal Keys and Functional Dependencies"
+  authors: Zhuoxing Zhang, Sebastian Link
+  venue: VLDBJ
+  venue_full: The VLDB Journal
+  year: 2025
+  type: journal
+  links:
+    - {name: DOI, url: "https://doi.org/10.1007/s00778-025-00910-2"}
+
+- title: Substructure-aware Log Anomaly Detection
+  authors: Yanni Tang, Zhuoxing Zhang, Kaiqi Zhao, Lanting Fang, Zhenhua Li, Wu Chen
+  venue: VLDB
+  venue_full: Proceedings of the VLDB Endowment
+  year: 2025
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.14778/3705829.3705840"}
+
+- title: Mixed Covers of Keys and Functional Dependencies for Maintaining the Integrity of Data under Updates
+  authors: Zhuoxing Zhang, Sebastian Link
+  venue: VLDB
+  venue_full: Proceedings of the VLDB Endowment
+  year: 2024
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.14778/3654621.3654626"}
+
+- title: "Composite Object Normal Forms: Parameterizing Boyce-Codd Normal Form by the Number of Minimal Keys"
+  authors: Zhuoxing Zhang, Wu Chen, Sebastian Link
+  venue: SIGMOD
+  venue_full: Proceedings of the ACM on Management of Data
+  year: 2023
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.1145/3588693"}
+
+- title: Discovery of Cross Joins
+  authors: Miika Hannula, Zhuoxing Zhang, Bor-Kuan Song, Sebastian Link
+  venue: TKDE
+  venue_full: IEEE Transactions on Knowledge and Data Engineering
+  year: 2022
+  type: journal
+  links:
+    - {name: DOI, url: "https://doi.org/10.1109/TKDE.2022.3192842"}
+    - {name: "Extended abstract (ICDE'23)", url: "https://doi.org/10.1109/ICDE55515.2023.00353"}
+
+- title: Simple SQL Validation of Generalized Entity Integrity
+  authors: Zhuoxing Zhang, Hong Zhang, Sebastian Link
+  venue: ADC
+  venue_full: Australasian Database Conference
+  year: 2019
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.1007/978-3-030-12079-5_3"}
+
+- title: Establishing Connections in a Social Network — Radial Versus Medial Centrality Indices
+  authors: Yanni Tang, Jiamou Liu, Wu Chen, Zhuoxing Zhang
+  venue: PRICAI
+  venue_full: Pacific Rim International Conference on Artificial Intelligence
+  year: 2018
+  type: conference
+  links:
+    - {name: DOI, url: "https://doi.org/10.1007/978-3-319-97304-3_80"}
