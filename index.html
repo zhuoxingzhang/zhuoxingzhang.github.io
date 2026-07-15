@@ -4,34 +4,35 @@ layout: default
 {%- assign p = site.data.profile -%}
 
 <section id="about" class="sec">
-  <h2 class="sec-h">About</h2>
+  <h2 class="sec-h"><span>About</span></h2>
   <div class="prose">
     {% for para in p.about %}<p>{{ para }}</p>{% endfor %}
   </div>
 
   {% if p.interests and p.interests.size > 0 %}
-  <h3 class="sub-h">Research interests</h3>
-  <dl class="interests">
+  <ul class="interests">
     {% for i in p.interests %}
-      {% if i.name %}
-        <dt>{{ i.name }}</dt>
-        <dd>{{ i.detail }}</dd>
-      {% else %}
-        <dt>{{ i }}</dt>
-      {% endif %}
+      <li class="interest">
+        {% if i.name %}
+          <h3>{{ i.name }}</h3>
+          <p>{{ i.detail }}</p>
+        {% else %}
+          <h3>{{ i }}</h3>
+        {% endif %}
+      </li>
     {% endfor %}
-  </dl>
+  </ul>
   {% endif %}
 </section>
 
 {% if site.data.news and site.data.news.size > 0 %}
 <section id="news" class="sec">
-  <h2 class="sec-h">News</h2>
+  <h2 class="sec-h"><span>News</span></h2>
   <ol class="news">
     {% for n in site.data.news limit: 5 %}
       <li>
-        <time class="news-date">{{ n.date }}</time>
-        <span class="news-text">{{ n.text }}</span>
+        <time>{{ n.date }}</time>
+        <span>{{ n.text }}</span>
       </li>
     {% endfor %}
   </ol>
@@ -41,8 +42,8 @@ layout: default
     <ol class="news">
       {% for n in site.data.news offset: 5 %}
         <li>
-          <time class="news-date">{{ n.date }}</time>
-          <span class="news-text">{{ n.text }}</span>
+          <time>{{ n.date }}</time>
+          <span>{{ n.text }}</span>
         </li>
       {% endfor %}
     </ol>
@@ -52,9 +53,12 @@ layout: default
 {% endif %}
 
 <section id="publications" class="sec">
-  <h2 class="sec-h">Publications</h2>
+  <h2 class="sec-h">
+    <span>Publications</span>
+    <em class="sec-count">{{ site.data.publications.size }}</em>
+  </h2>
   <p class="sec-note">
-    Authors are listed in publication order. A complete list is also on
+    Authors in publication order. Also on
     <a href="{{ p.links | where: 'name', 'DBLP' | map: 'url' | first }}">DBLP</a> and
     <a href="{{ p.links | where: 'name', 'Google Scholar' | map: 'url' | first }}">Google&nbsp;Scholar</a>.
   </p>
@@ -63,17 +67,15 @@ layout: default
   {%- assign groups = site.data.publications | group_by: "year" | sort: "name" | reverse -%}
   {% for g in groups %}
     <div class="year-group">
-      <h3 class="year">{{ g.name }}</h3>
+      <h3 class="year"><span>{{ g.name }}</span></h3>
       <ol class="pubs">
         {% for pub in g.items %}
           <li class="pub">
             <p class="pub-title">{{ pub.title }}</p>
-            <p class="pub-authors">
-              {{ pub.authors | replace: site.author_name, self_bold }}
-            </p>
+            <p class="pub-authors">{{ pub.authors | replace: site.author_name, self_bold }}</p>
             <p class="pub-meta">
-              <span class="venue" {% if pub.venue_full %}title="{{ pub.venue_full }}"{% endif %}>{{ pub.venue }}</span>
-              <span class="pub-year">{{ pub.year }}</span>
+              <span class="venue venue--{{ pub.venue | downcase }}"
+                    {% if pub.venue_full %}title="{{ pub.venue_full }}"{% endif %}>{{ pub.venue }}</span>
               {% if pub.award %}<span class="award">{{ pub.award }}</span>{% endif %}
               {% for l in pub.links %}
                 <a class="pub-link" href="{{ l.url }}">{{ l.name }}</a>
@@ -87,13 +89,13 @@ layout: default
 </section>
 
 <section id="contact" class="sec">
-  <h2 class="sec-h">Contact</h2>
-  <div class="prose">
+  <h2 class="sec-h"><span>Contact</span></h2>
+  <div class="contact">
     <p>
       If you are interested in exploring possible collaborations, please don't
-      hesitate to reach out — the fastest way to reach me is email:
-      <a href="mailto:{{ p.email }}">{{ p.email }}</a>.
+      hesitate to reach out.
     </p>
-    <p class="addr">{{ p.department }}, {{ p.affiliation }}<br>{{ p.location }}</p>
+    <a class="contact-mail" href="mailto:{{ p.email }}">{{ p.email }}</a>
+    <p class="contact-addr">{{ p.department }}, {{ p.affiliation }} &middot; {{ p.location }}</p>
   </div>
 </section>
