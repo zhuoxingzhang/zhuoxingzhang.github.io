@@ -565,6 +565,11 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   border-bottom: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
 }
 .contact-mail:hover { text-decoration: none; border-bottom-color: var(--accent); }
+
+/* Until the script attaches the mailto, .mail is an <a> with no href: style it
+   as the plain text it currently is rather than as a dead link. */
+.mail:not([href]) { cursor: text; }
+.mail[href] { cursor: pointer; }
 .contact-addr {
   margin: 0;
   font-size: .82rem;

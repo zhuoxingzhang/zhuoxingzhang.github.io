@@ -32,6 +32,19 @@
   </footer>
 
   <script>
+    // Restore the contact address. It ships reversed (see _includes/email.html)
+    // so that the markup a harvester downloads holds no usable address; the
+    // " [at] " fallback in the markup is what shows if this never runs.
+    (function () {
+      var els = document.querySelectorAll('a[data-mail]');
+      for (var i = 0; i < els.length; i++) {
+        var addr = els[i].getAttribute('data-mail').split('').reverse().join('');
+        els[i].href = 'mailto:' + addr;
+        els[i].textContent = addr;
+        els[i].removeAttribute('data-mail');
+      }
+    })();
+
     // Light up the nav link whose section is currently in view.
     (function () {
       var links = [].slice.call(document.querySelectorAll('.nav a[href^="#"]'));

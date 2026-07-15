@@ -95,7 +95,7 @@ layout: default
       If you are interested in exploring possible collaborations, please don't
       hesitate to reach out.
     </p>
-    <a class="contact-mail" href="mailto:{{ p.email }}">{{ p.email }}</a>
+    {% include email.html class="contact-mail" %}
     <p class="contact-addr">{{ p.department }}, {{ p.affiliation }} &middot; {{ p.location }}</p>
   </div>
 </section>

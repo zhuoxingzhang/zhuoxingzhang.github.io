@@ -29,7 +29,7 @@
       {% if p.tagline %}<p class="hero-tagline">{{ p.tagline }}</p>{% endif %}
 
       <ul class="hero-links">
-        <li><a class="is-mail" href="mailto:{{ p.email }}">{{ p.email }}</a></li>
+        <li>{% include email.html class="is-mail" %}</li>
         {% for l in p.links %}
           <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
         {% endfor %}

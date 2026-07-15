@@ -1,0 +1,19 @@
+{%- comment -%}
+  Renders the contact address without leaving a harvestable one in the markup.
+
+  What ships in the HTML is the address reversed, in a data attribute; the
+  script in _layouts/default.html reverses it back and attaches the mailto on
+  load. The visible fallback uses the " [at] " form, so with JS off the address
+  is still readable and copyable, just not clickable.
+
+  This defeats the regex-scraping harvesters that account for most address
+  collection. It does not defeat a scraper that runs a real browser — nothing
+  rendered on a page can. Keep writing the plain address in _data/profile.yml;
+  the obfuscation happens here.
+
+  Usage:  {% include email.html class="is-mail" %}
+{%- endcomment -%}
+{%- assign addr = site.data.profile.email -%}
+{%- assign rev = addr | split: '' | reverse | join: '' -%}
+{%- assign shown = addr | replace: '@', ' [at] ' -%}
+<a class="mail {{ include.class }}" data-mail="{{ rev }}">{{ shown }}</a>
