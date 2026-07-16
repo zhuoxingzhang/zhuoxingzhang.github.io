@@ -153,6 +153,12 @@ body { margin: 0; }
     hyphenate-limit-chars: 5 2 2;
   }
   .pub-authors { text-align: left; }
+
+  /* So is the bookplate: its padding leaves the narrowest measure on the page
+     even after the trim in the layout collapse below, and hyphenation alone
+     could not close the gaps justification opened on lines that short. Ragged
+     right; the hyphens stay to keep the rag tight. */
+  .contact > p { text-align: left; }
 }
 
 /* --------------------------------------------------------------------------
@@ -306,7 +312,9 @@ body { margin: 0; }
 
   /* This panel's padding made its text the narrowest column on the page — 269px
      against 327px for the prose — so its justified lines held the fewest words
-     and opened the widest gaps. Trimmed, it sets like everything else. */
+     and opened the widest gaps. Trimmed it is still the narrowest, which is
+     why the justification block above also gives up on it and sets these
+     paragraphs ragged right. */
   .contact { padding: 1.15rem; }
 }
 
