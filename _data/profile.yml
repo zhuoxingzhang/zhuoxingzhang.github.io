@@ -13,6 +13,11 @@ email: zhuoxing.zhang@auckland.ac.nz
 # A square image works best. Leave empty to fall back to a typeset monogram.
 photo: "/images/zhuoxing.jpg"
 
+# Which visual style a first-time visitor sees: archival-warm | liquid-glass.
+# Anyone can switch with the button in the nav, and their choice sticks in their
+# own browser — this only sets the opening impression.
+style: archival-warm
+
 # Short line under the name in the sidebar.
 tagline: Schema design · Integrity maintenance · Log anomaly detection
 

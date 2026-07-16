@@ -3,352 +3,96 @@
 ---
 
 /* ==========================================================================
-   Design tokens — change colours, fonts and rhythm here.
+
+   site.css
+
+   Not style.css: GitHub Pages applies jekyll-theme-primer when _config.yml
+   names no theme, and that theme's own assets/css/style.scss compiles to that
+   path and would win. assets/css/style.scss shadows it and points here.
+
+   THREE LAYERS, IN THIS ORDER:
+
+     1. BASE           what must hold whichever style is showing — the column
+                       geometry, justification, print, accessibility floors.
+     2. STYLE: archival-warm      scoped to html[data-style="archival-warm"]
+     3. STYLE: liquid-glass       scoped to html[data-style="liquid-glass"]
+
+   The two style layers are complete and independent: each owns colour, type,
+   surfaces and decoration for the whole page, and assumes nothing from the
+   other. Every selector in them starts with html[data-style="<key>"]. That is
+   not a convention — it is the thing that keeps them from corrupting each
+   other. A single unscoped selector leaks.
+
+   WHICH STYLE SHOWS: _data/profile.yml sets the default (`style:`); the button
+   in the nav lets a reader switch, and their choice is remembered in their own
+   browser. Both styles must work in light AND dark — those are separate axes.
+
+   TO EDIT COLOUR OR TYPE: find the layer for the style you mean and change its
+   tokens at the top. Do not add rules to BASE unless they must apply to both.
+
    ========================================================================== */
-:root {
-  --bg:         #fbfaf8;
-  --surface:    #ffffff;
-  --surface-2:  #f4f2ee;
-  --text:       #16191c;
-  --muted:      #5c6169;
-  --faint:      #878d96;
-  --rule:       #e5e1da;
-  --rule-soft:  #efece6;
 
-  --accent:      #0f4c5c;
-  --accent-tint: #e8f1f3;
-  --accent-ink:  #0d4150;
-
-  --hero-from: #eef4f5;
-  --hero-to:   #fbfaf8;
-  --glow:      rgba(15, 76, 92, .13);
-
-  --shadow-sm: 0 1px 2px rgba(20, 30, 35, .05);
-  --shadow-md: 0 4px 16px -4px rgba(20, 30, 35, .10), 0 1px 3px rgba(20, 30, 35, .05);
-  --shadow-lg: 0 14px 40px -12px rgba(20, 30, 35, .22);
-
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-  --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue", Arial,
-           "PingFang SC", "Microsoft YaHei", sans-serif;
-
-  /* --wrap sizes the hero, nav, content and footer alike. 46rem left desktop
-     looking cramped, 60rem overshot; this sits between them. Keep it above
-     ~47rem or the interest cards drop from two columns to one. */
-  --wrap: 55rem;
-  --pad:  1.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:         #101216;
-    --surface:    #171a1f;
-    --surface-2:  #1c2026;
-    --text:       #e9e7e3;
-    --muted:      #a2a7b0;
-    --faint:      #767c86;
-    --rule:       #282c34;
-    --rule-soft:  #1f232a;
-
-    --accent:      #79c3d8;
-    --accent-tint: #16292f;
-    --accent-ink:  #a5d8e7;
-
-    --hero-from: #162126;
-    --hero-to:   #101216;
-    --glow:      rgba(121, 195, 216, .14);
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
-    --shadow-md: 0 4px 16px -4px rgba(0, 0, 0, .45), 0 1px 3px rgba(0, 0, 0, .3);
-    --shadow-lg: 0 14px 40px -12px rgba(0, 0, 0, .6);
-  }
-}
 
 /* ==========================================================================
-   Base
+   LAYER 1 — BASE
+   Applies to every style. If it is a look, it does not belong here.
    ========================================================================== */
+
+/* ==========================================================================
+   BASE — everything that must hold no matter which style is showing.
+
+   The site ships two complete style layers (see the end of site.css), each
+   scoped to html[data-style="..."]. They own colour, type, surfaces and
+   decoration. This layer owns only what must not vary between them:
+
+     - the column geometry every block's edges align to
+     - justification and hyphenation, which the owner asked to keep
+     - the switch control's behaviour (not its look)
+     - print and accessibility floors
+
+   Anything added here applies to BOTH styles. If it is a look, it does not
+   belong here.
+   ========================================================================== */
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  * { transition: none !important; animation: none !important; }
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 2px; }
-
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
-
-.skip { position: absolute; left: -9999px; background: var(--surface); padding: .6rem 1rem; z-index: 20; }
-.skip:focus { left: 1rem; top: 1rem; }
-
-/* ==========================================================================
-   Hero
-   ========================================================================== */
-.hero {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(170deg, var(--hero-from) 0%, var(--hero-to) 78%);
-  border-bottom: 1px solid var(--rule-soft);
-}
-
-.hero-glow {
-  position: absolute;
-  top: -34%; right: -8%;
-  width: 42rem; height: 42rem;
-  background: radial-gradient(circle, var(--glow) 0%, transparent 68%);
-  pointer-events: none;
-}
-
-.hero-inner {
-  position: relative;
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 4.5rem var(--pad) 3.25rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 2.25rem;
-  row-gap: 1.6rem;
-  align-items: center;
-}
-
-.hero-portrait {
-  width: 8.5rem; height: 8.5rem;
-  border-radius: 50%;
-  padding: 5px;
-  background: var(--bg);
-  box-shadow: var(--shadow-lg), 0 0 0 1px var(--rule);
-}
-.hero-portrait img {
-  width: 100%; height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-}
-.hero-portrait .mono {
-  width: 100%; height: 100%;
-  border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--accent-tint);
-  color: var(--accent);
-  font-family: var(--serif);
-  font-size: 2.6rem;
-}
-
-.hero-name {
-  font-family: var(--serif);
-  font-size: clamp(2.1rem, 5.5vw, 3rem);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -.02em;
-  margin: 0;
-}
-.hero-pronouns {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: .6rem;
-  padding: .2rem .5rem;
-  border-radius: 999px;
-  background: var(--accent-tint);
-  color: var(--accent-ink);
-  font-family: var(--sans);
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .04em;
-}
-
-.hero-role {
-  margin: .7rem 0 0;
-  font-size: 1.02rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-.hero-affil {
-  margin: .2rem 0 0;
-  font-size: .9rem;
-  color: var(--muted);
-}
-.hero-loc::before { content: " · "; }
-.hero-loc { color: var(--faint); }
-
-.hero-tagline {
-  margin: 1rem 0 0;
-  font-size: .86rem;
-  color: var(--muted);
-}
-
-.hero-links {
-  /* Spans the portrait column too, so the row starts on the same left edge as
-     the sections below rather than behind the portrait. Row spacing comes from
-     the grid's row-gap. */
-  grid-column: 1 / -1;
-  list-style: none;
-  display: flex; flex-wrap: wrap; gap: .45rem;
-  margin: 0; padding: 0;
-}
-.hero-links a {
-  display: inline-block;
-  font-size: .78rem;
-  line-height: 1;
-  padding: .5rem .75rem;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--surface);
-  color: var(--muted);
-  box-shadow: var(--shadow-sm);
-  transition: transform .15s, border-color .15s, color .15s, box-shadow .15s;
-}
-.hero-links a:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
-}
-/* The address sits in the same row as Scholar/DBLP/… and reads as one of them,
-   so it carries no fill. Only the CV, an actual call to action, is filled. */
-.hero-links .is-cv {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 500;
-}
-.hero-links .is-cv:hover { color: #fff; opacity: .9; }
-
-@media (prefers-color-scheme: dark) {
-  .hero-links .is-cv,
-  .hero-links .is-cv:hover { color: #0d1417; }
-}
-
-/* ==========================================================================
-   Sticky nav
-   ========================================================================== */
-.nav {
-  position: sticky; top: 0; z-index: 10;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: saturate(1.6) blur(10px);
-  -webkit-backdrop-filter: saturate(1.6) blur(10px);
-  border-bottom: 1px solid var(--rule-soft);
-}
-.nav-inner {
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 0 var(--pad);
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem;
-}
-.nav-brand {
-  font-family: var(--serif);
-  font-size: .95rem;
-  color: var(--text);
-  white-space: nowrap;
-}
-.nav ul {
-  list-style: none;
-  /* Spacing comes from the gap, not from padding on the links. Padding would
-     inset the last item's text from the column edge, leaving "Contact" short of
-     the right edge that every block below lines up on. */
-  display: flex; gap: 1.4rem;
-  margin: 0; padding: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.nav ul::-webkit-scrollbar { display: none; }
-.nav a {
-  display: block;
-  padding: .95rem 0;
-  font-size: .84rem;
-  color: var(--muted);
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: color .15s, border-color .15s;
-}
-.nav a:hover { color: var(--text); text-decoration: none; }
-.nav a.is-active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
-
-/* Where scroll-driven animations exist, hold the name back until the hero has
-   scrolled away — the hero already shows it, much larger. Browsers without the
-   feature simply show it the whole time, which is a fine fallback. Don't move
-   the opacity:0 out of this block: on its own it would hide the name forever. */
-@supports (animation-timeline: scroll()) {
-  .nav-brand {
-    opacity: 0;
-    animation: fade-brand linear both;
-    animation-timeline: scroll();
-    animation-range: 220px 300px;
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
   }
-  @keyframes fade-brand { to { opacity: 1; } }
 }
 
-/* ==========================================================================
-   Sections
-   ========================================================================== */
-.main {
+body { margin: 0; }
+
+/* --------------------------------------------------------------------------
+   Column geometry. The hero, nav, content and footer share one box; their
+   contents share another. Every block lines up on those two edges — the
+   styles are forbidden from touching this.
+   -------------------------------------------------------------------------- */
+:root {
+  --wrap: 55rem;
+  --pad:  1.5rem;
+}
+
+.hero-inner,
+.nav-inner,
+.main,
+.foot-inner {
   max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 3.5rem var(--pad) 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
 }
 
-.sec { margin-bottom: 4rem; scroll-margin-top: 4.5rem; }
-
-.sec-h {
-  display: flex; align-items: center; gap: .75rem;
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 500;
-  letter-spacing: -.01em;
-  margin: 0 0 1.5rem;
-}
-.sec-h span { position: relative; }
-.sec-h span::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: -.35rem;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--accent);
-  opacity: .85;
-}
-.sec-count {
-  font-family: var(--sans);
-  font-size: .7rem;
-  font-style: normal;
-  font-weight: 600;
-  padding: .2rem .5rem;
-  border-radius: 999px;
-  background: var(--accent-tint);
-  color: var(--accent-ink);
-}
-
-.sec-note {
-  margin: -.5rem 0 1.75rem;
-  font-size: .84rem;
-  color: var(--faint);
-}
-
-/* Prose runs the full column, same as every other block. That makes for a long
-   line, so it gets a larger size and looser leading to stay readable. */
-.prose { font-size: 1.03rem; line-height: 1.75; }
-.prose p { margin: 0 0 1.15rem; }
-.prose p:last-child { margin-bottom: 0; }
-
-/* ==========================================================================
-   Justified body text
-   Running text is justified, as on the previous version of this site.
-   Headings and titles are deliberately left out: justifying a heading that
-   wraps stretches its first line across the column and reads as a mistake.
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   Justification. Running text only — never headings: a heading that wraps
+   would have its first line stretched across the column, which reads as a
+   mistake rather than as typesetting.
+   -------------------------------------------------------------------------- */
 .prose p,
 .interest p,
 .news li span,
@@ -358,13 +102,12 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   text-justify: inter-word;
 }
 
-/* Narrow screens keep the justification, but a 35–44 character line cannot
-   absorb the slack between words on its own — that is what opens rivers.
-   Hyphenation gives the slack somewhere to go, which is how narrow justified
-   columns have always been set. Needs the lang attribute on <html>.
+/* A narrow line holds too few words to absorb the slack between them — that is
+   what opens rivers. Hyphenation gives the slack somewhere to go, which is how
+   narrow justified columns have always been set. Needs lang on <html>.
 
    Author lists are the exception: they are people's names, and breaking one
-   across a line ("Zhuox-ing") is worse than an uneven right edge. */
+   across a line ("Zhuox-ing") reads worse than an uneven edge. */
 @media (max-width: 40rem) {
   .prose p,
   .interest p,
@@ -372,321 +115,2179 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   .contact > p {
     -webkit-hyphens: auto;
     hyphens: auto;
-    /* Default hyphenation is conservative — it leaves short words whole, and
-       short words are most of a 35-character line. Letting it break from five
-       characters gives justification more places to take up the slack. */
     -webkit-hyphenate-limit-chars: 5 2 2;
     hyphenate-limit-chars: 5 2 2;
   }
   .pub-authors { text-align: left; }
 }
 
-/* ==========================================================================
-   Research interests
-   ========================================================================== */
-.interests {
+/* --------------------------------------------------------------------------
+   Lists. Every list here is a layout device — a row of links, a grid of cards,
+   a stack of entries — not prose enumeration. Left alone, the UA gives them
+   markers and a 40px indent, which shows bullets beside the cards and pushes
+   entries off the column every other block lines up on.
+
+   This is structure, so it lives here rather than in a style: both styles built
+   on the assumption it was already done.
+   -------------------------------------------------------------------------- */
+.hero-links,
+.nav ul,
+.interests,
+.news,
+.pubs {
   list-style: none;
-  display: grid;
-  /* 22rem lands on two columns at full width, so an even number of interests
-     forms a block rather than leaving one stranded on its own row. */
-  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-  gap: .9rem;
-  margin: 0; padding: 0;
-  counter-reset: interest;
-}
-.interest {
-  position: relative;
-  padding: 1.4rem 1.4rem 1.4rem 3.4rem;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--rule));
-  background: linear-gradient(160deg, var(--accent-tint) 0%, var(--surface) 70%);
-  box-shadow: var(--shadow-sm);
-  transition: transform .18s, box-shadow .18s, border-color .18s;
-}
-/* A counter reads as structure where a left rule read as decoration. */
-.interest::before {
-  counter-increment: interest;
-  content: counter(interest, decimal-leading-zero);
-  position: absolute;
-  left: 1.4rem; top: 1.35rem;
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  line-height: 1;
-  color: var(--accent);
-  opacity: .5;
-}
-.interest:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-}
-.interest h3 {
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 500;
-  line-height: 1.3;
-  margin: 0 0 .4rem;
-  color: var(--accent-ink);
-}
-.interest p {
   margin: 0;
-  font-size: .855rem;
-  line-height: 1.6;
-  color: var(--muted);
+  padding: 0;
 }
 
-/* ==========================================================================
-   News
-   ========================================================================== */
-.news { list-style: none; margin: 0; padding: 0; }
+/* --------------------------------------------------------------------------
+   Layout. Where things sit, not what they look like — both styles arrange the
+   page the same way and differ in how they paint it.
+
+   Everything here is single-class on purpose: a style's html[data-style="…"]
+   selector outranks it, so a style that wants a different gap or a bigger
+   portrait just says so and wins.
+   -------------------------------------------------------------------------- */
+.hero { position: relative; overflow: hidden; }
+.hero-glow { position: absolute; top: -34%; right: -8%; pointer-events: none; }
+
+.hero-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 2.25rem;
+  row-gap: 1.6rem;
+  align-items: center;
+}
+.hero-portrait img { display: block; }
+.hero-portrait .mono { display: grid; place-items: center; }
+.hero-pronouns { display: inline-block; }
+
+/* Spans the portrait column too, so the row starts on the same left edge as
+   the sections below rather than behind the portrait. */
+.hero-links {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+.hero-links a { display: inline-block; }
+
+.nav { position: sticky; top: 0; z-index: 10; }
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+/* Spacing from the gap, never padding on the links: padding would inset the
+   last item's text from the column edge, leaving "Contact" short of the edge
+   every block below lines up on. */
+.nav ul {
+  display: flex;
+  gap: 1.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav ul::-webkit-scrollbar { display: none; }
+.nav a { display: block; }
+
+.sec { scroll-margin-top: 4.5rem; }
+.sec-h { display: flex; align-items: center; gap: .75rem; }
+
+/* min(22rem, 100%) rather than a bare 22rem: at full width 22rem still lands
+   on two columns, so an even number of interests forms a block instead of
+   stranding one — but a bare 22rem is 352px, and at 375px the content box is
+   only 327px, so the track overflowed and the page scrolled sideways by a
+   pixel. min() lets the track collapse when there isn't room for it. */
+.interests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+  gap: .9rem;
+  counter-reset: interest;
+}
+.interest { position: relative; }
+.interest::before { counter-increment: interest; }
+
 .news li {
   position: relative;
   display: grid;
   grid-template-columns: 3.25rem minmax(0, 1fr);
   gap: 1.1rem;
-  padding: .6rem 0 .6rem 1.1rem;
-  font-size: .9rem;
-  border-left: 2px solid var(--rule);
-}
-.news li::before {
-  content: "";
-  position: absolute;
-  left: -5px; top: 1.15rem;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--bg);
-}
-.news li:first-child { padding-top: .2rem; }
-.news li:first-child::before { top: .75rem; }
-.news li:last-child { border-left-color: transparent; }
-.news time {
-  color: var(--accent);
-  font-weight: 600;
-  font-size: .8rem;
-  font-variant-numeric: tabular-nums;
-  padding-top: .1rem;
-}
-
-.more { margin-top: .75rem; }
-.more summary {
-  cursor: pointer;
-  font-size: .82rem;
-  color: var(--muted);
-  list-style: none;
-  padding-left: 1.1rem;
 }
 .more summary::-webkit-details-marker { display: none; }
-.more summary::before { content: "+ "; color: var(--faint); }
-.more[open] summary::before { content: "− "; }
-.more summary:hover { color: var(--accent); }
+
+.year { display: flex; align-items: center; gap: .75rem; }
+.pubs { display: grid; gap: .6rem; }
+.pub { position: relative; }
+.pub-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+
+.contact-mail { display: inline-block; }
+
+.foot-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+/* Layout collapse. Look is the styles' business; where things go is this
+   layer's, at every width. */
+@media (max-width: 40rem) {
+  .hero-inner { grid-template-columns: 1fr; row-gap: 1.35rem; }
+  .nav-brand { display: none; }
+  .nav-inner { justify-content: flex-start; }
+  .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility floors. A style may restyle these; it may not remove them.
+   -------------------------------------------------------------------------- */
+.skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 20;
+  padding: .6rem 1rem;
+}
+.skip:focus { left: 1rem; top: 1rem; }
+
+:focus-visible { outline-offset: 3px; }
+
+/* The switch is a real button; keep it from inheriting UA chrome regardless of
+   which style is painting it. */
+.style-toggle {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Print. Neither style's decoration survives paper, and neither should try.
+   -------------------------------------------------------------------------- */
+@media print {
+  .nav, .skip, .foot, .hero-glow, .style-toggle { display: none !important; }
+  .hero-inner, .main { max-width: none; padding: 0; }
+  body { font-size: 11pt; }
+  .pub, .interest, .contact {
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin-bottom: .6rem;
+  }
+  .pub-link::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+}
+
+
+/* ==========================================================================
+   LAYER 2 — STYLE: archival-warm
+   html[data-style="archival-warm"] — scholarly print: laid ground, oxblood rules.
+   ========================================================================== */
+
+/* ==========================================================================
+   ARCHIVAL WARM — style layer, scoped to html[data-style="archival-warm"]
+
+   The idea in one line: a scholarly offprint. Laid-paper ground, oxblood
+   rules, the book face for anything you read and a small sans for the
+   apparatus around it.
+
+   What this layer deliberately does NOT do: old-style figures, sepia-toned
+   portraits, small caps on everything with a pulse. The earlier draft wore
+   those and read as costume rather than as a CV. Small caps now appear in
+   exactly one place — section headings — and the numerals are lining and
+   tabular everywhere, because years and counts get scanned, not savoured.
+
+   Two style layers share one stylesheet, so EVERY selector below is scoped.
+   The shared base owns --wrap/--pad, the column geometry of .hero-inner /
+   .nav-inner / .main / .foot-inner, and the justification + hyphenation of
+   running text. None of that is touched here.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tokens.
+
+   The base's own token names are re-pointed at this palette on purpose: any
+   base rule this layer does not restate still lands in warm paper rather than
+   in the other style's colours. The layer restates essentially everything
+   anyway, but the belt matters as much as the braces when two themes share a
+   file. --wrap and --pad are conspicuously absent: they are the base's.
+
+   Ratios (measured, WCAG 2.1): the weakest pairing anywhere in this layer is
+   4.75:1 (dark --faint on --tint). Body ink runs 13–16:1. See the header
+   comment on each colour for where it is spent.
+   -------------------------------------------------------------------------- */
+html[data-style="archival-warm"] {
+  --paper:      #f3eee3;  /* page ground */
+  --paper-deep: #eae3d4;  /* furniture: hero band, nav band, footer */
+  --panel:      #fbf9f4;  /* cards: interests, publications, bookplate */
+  --tint:       #f0e9db;  /* stamp grounds and hover fills */
+
+  --ink:        #221c17;  /* 14.6:1 on paper, 16.0:1 on panel */
+  --muted:      #5a4d45;  /* 7.0:1 on paper, 6.4:1 on paper-deep */
+  --faint:      #6b5d51;  /* 5.5:1 on paper, 5.0:1 on paper-deep (footer) */
+  --accent:     #7b2d26;  /* oxblood — 8.1:1 on paper */
+  --accent-ink: #6b2620;  /* oxblood for text under ~0.9rem — 9.4:1 on paper */
+
+  --rule:       #cfc3ad;
+  --rule-soft:  #e2d9c7;
+  --emboss:     rgba(255, 255, 255, .8);
+  --wash:       rgba(123, 45, 38, .055);
+
+  /* Laid paper: wire lines every 4px, chain lines every 26px. Kept at ~3%
+     alpha — at anything stronger it stops being paper and starts being a
+     texture effect. Static background, so it costs nothing on scroll. */
+  --grain-a:    rgba(96, 66, 34, .028);
+  --grain-b:    rgba(96, 66, 34, .020);
+  --laid:
+    repeating-linear-gradient(0deg,  var(--grain-a) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, var(--grain-b) 0 1px, transparent 1px 26px);
+
+  /* Letterpress: a white edge along the top of a panel and a short, warm
+     shadow beneath it. Warm-tinted, because a neutral grey shadow on oatmeal
+     reads as dirt. */
+  --press:
+    inset 0 1px 0 var(--emboss),
+    0 1px 2px rgba(60, 40, 20, .07),
+    0 6px 16px -12px rgba(60, 40, 20, .3);
+  --press-hi:
+    inset 0 1px 0 var(--emboss),
+    0 1px 2px rgba(60, 40, 20, .09),
+    0 10px 22px -14px rgba(60, 40, 20, .4);
+
+  /* Venue inks. One card stock, many stamp inks — colour still codes the
+     venue, but every tag sits on the same known ground, so the contrast is
+     provable rather than hopeful. All 6.6–9.0:1 on --tint. */
+  --v-sigmod: #0d4756;
+  --v-vldb:   #2c3a72;
+  --v-vldbj:  #4f2f66;
+  --v-tkde:   #7a2246;
+  --v-eaai:   #275030;
+  --v-pricai: #6f3e10;
+  --v-adc:    #3f464d;
+  --v-award:  #6b4a12;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+           Georgia, "Times New Roman", serif;
+  --sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+           "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  /* Base token names, re-pointed. */
+  --bg:          var(--paper);
+  --surface:     var(--panel);
+  --surface-2:   var(--paper-deep);
+  --text:        var(--ink);
+  --accent-tint: var(--tint);
+  --hero-from:   var(--paper-deep);
+  --hero-to:     var(--paper);
+  --glow:        var(--wash);
+  --shadow-sm:   0 1px 2px rgba(60, 40, 20, .07);
+  --shadow-md:   var(--press-hi);
+  --shadow-lg:   var(--press);
+
+  color-scheme: light dark;
+}
+
+/* Dark. Note the specificity trap this avoids: html[data-style=…] outranks the
+   base's :root, and a media query adds no specificity — so without this block
+   the base's own dark tokens would lose to the light values above and the page
+   would come up cream at 2am. The palette is the same ledger seen by lamplight:
+   the oxblood has to climb to a warm terracotta to stay legible on near-black. */
+@media (prefers-color-scheme: dark) {
+  html[data-style="archival-warm"] {
+    --paper:      #16120f;
+    --paper-deep: #0f0c0a;
+    --panel:      #201b16;
+    --tint:       #2b2520;
+
+    --ink:        #ece3d5;  /* 14.7:1 on paper, 13.4:1 on panel */
+    --muted:      #ab9d8e;  /* 7.1:1 on paper, 5.7:1 on tint */
+    --faint:      #9c8e7f;  /* 5.8:1 on paper, 4.8:1 on tint */
+    --accent:     #e59a83;  /* 8.2:1 on paper */
+    --accent-ink: #eeae99;  /* 9.9:1 on paper */
+
+    --rule:       #453a31;
+    --rule-soft:  #322a23;
+    --emboss:     rgba(255, 240, 220, .05);
+    --wash:       rgba(229, 154, 131, .07);
+
+    --grain-a:    rgba(255, 232, 200, .020);
+    --grain-b:    rgba(255, 232, 200, .014);
+
+    --press:
+      inset 0 1px 0 var(--emboss),
+      0 1px 2px rgba(0, 0, 0, .4),
+      0 8px 20px -12px rgba(0, 0, 0, .8);
+    --press-hi:
+      inset 0 1px 0 var(--emboss),
+      0 1px 2px rgba(0, 0, 0, .5),
+      0 12px 26px -14px rgba(0, 0, 0, .9);
+
+    --v-sigmod: #7cc6d7;
+    --v-vldb:   #a2aeee;
+    --v-vldbj:  #caa4df;
+    --v-tkde:   #f095b1;
+    --v-eaai:   #8fcb9e;
+    --v-pricai: #e3ac78;
+    --v-adc:    #b3aca2;
+    --v-award:  #dcb974;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+  }
+}
+
+/* ==========================================================================
+   Ground
+   ========================================================================== */
+html[data-style="archival-warm"] body {
+  background-color: var(--paper);
+  background-image: var(--laid);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+html[data-style="archival-warm"] a { color: var(--accent); }
+
+/* Restated rather than inherited: the base's focus ring resolves --accent from
+   :root, and this layer's --accent lives on a more specific selector. Restating
+   it keeps the ring oxblood even if the base's ring rule ever changes. */
+html[data-style="archival-warm"] :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+html[data-style="archival-warm"] .skip {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: .85rem;
+  box-shadow: var(--press);
+}
+
+/* ==========================================================================
+   Hero — the title page
+   ========================================================================== */
+html[data-style="archival-warm"] .hero {
+  background-color: var(--paper-deep);
+  background-image: var(--laid);
+  /* The thick half of a title-page double rule; the thin half is ::after. */
+  border-bottom: 2px solid var(--accent);
+}
+html[data-style="archival-warm"] .hero::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 4px;
+  height: 1px;
+  background: var(--rule);
+  pointer-events: none;
+}
+
+html[data-style="archival-warm"] .hero-glow {
+  top: auto; right: auto;
+  inset: -40% -10% auto -10%;
+  width: auto; height: 130%;
+  background: radial-gradient(58% 68% at 24% 32%, var(--wash), transparent 70%);
+}
+
+/* Portrait as a mounted plate: square corners, a paper mat, a hairline.
+   No sepia — toning a photograph to match the furniture is the exact move
+   that made the first draft read as fancy dress. */
+html[data-style="archival-warm"] .hero-portrait {
+  border-radius: 2px;
+  padding: 5px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  box-shadow: var(--press);
+}
+html[data-style="archival-warm"] .hero-portrait img {
+  border-radius: 1px;
+  box-shadow: inset 0 0 0 1px rgba(34, 28, 23, .16);
+}
+/* Fallback when no photo is set. */
+html[data-style="archival-warm"] .hero-portrait .mono {
+  border-radius: 1px;
+  background: var(--tint);
+  border: 1px solid var(--rule-soft);
+  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  letter-spacing: .04em;
+}
+
+html[data-style="archival-warm"] .hero-name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2.05rem, 1.4rem + 2.3vw, 2.95rem);
+  line-height: 1.08;
+  letter-spacing: -.012em;
+  color: var(--ink);
+}
+
+/* Brackets around supplied information — a cataloguing convention that happens
+   to be the quietest way to set a gloss apart from the name it follows. */
+html[data-style="archival-warm"] .hero-pronouns {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  vertical-align: .3em;
+  margin-left: .55em;
+  font-family: var(--sans);
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+html[data-style="archival-warm"] .hero-pronouns::before { content: "["; opacity: .55; margin-right: .15em; }
+html[data-style="archival-warm"] .hero-pronouns::after  { content: "]"; opacity: .55; margin-left: .12em; }
+
+/* The single most scannable fact on the page, so it gets the book face at
+   full ink rather than a coloured subtitle. */
+html[data-style="archival-warm"] .hero-role {
+  margin: .65rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+html[data-style="archival-warm"] .hero-affil {
+  margin: .2rem 0 0;
+  font-family: var(--sans);
+  font-size: .875rem;
+  color: var(--muted);
+}
+html[data-style="archival-warm"] .hero-loc { color: var(--faint); }
+html[data-style="archival-warm"] .hero-loc::before {
+  content: "";
+  display: inline-block;
+  width: 1.3em; height: 1px;
+  vertical-align: .3em;
+  margin: 0 .5em;
+  background: var(--rule);
+}
+
+html[data-style="archival-warm"] .hero-tagline {
+  margin: 1.05rem 0 0;
+  padding-top: .8rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: .82rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: var(--accent-ink);
+}
+
+/* Index tabs. Square corners and a hairline; the pill shape belongs to the
+   other style. .hero-links spans both grid columns in the base — untouched. */
+html[data-style="archival-warm"] .hero-links {
+  margin-top: .4rem;
+  gap: .45rem;
+}
+html[data-style="archival-warm"] .hero-links a {
+  padding: .42rem .7rem;
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: .88rem;
+  line-height: 1.2;
+  letter-spacing: .01em;
+  box-shadow: inset 0 1px 0 var(--emboss), 0 1px 1px rgba(60, 40, 20, .05);
+  transition: color .15s, border-color .15s, background .15s;
+}
+html[data-style="archival-warm"] .hero-links a:hover,
+html[data-style="archival-warm"] .hero-links a:focus-visible {
+  transform: none;              /* the base lifts these; this layer does not */
+  border-color: var(--accent);
+  background: var(--tint);
+  color: var(--accent-ink);
+  box-shadow: inset 0 1px 0 var(--emboss), 0 1px 1px rgba(60, 40, 20, .05);
+  text-decoration: none;
+}
+/* No CV link in the markup today, but the base styles .is-cv, so this layer
+   owns it too rather than letting a filled teal pill appear if one is added. */
+html[data-style="archival-warm"] .hero-links .is-cv,
+html[data-style="archival-warm"] .hero-links .is-cv:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--panel);          /* 9.4:1 light, 8.2:1 dark */
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Nav — a running head, and it is sticky
+   ========================================================================== */
+/* Sticky over a textured ground is the one place this style cannot be coy: the
+   band has to be genuinely opaque or the wire lines of the page below crawl
+   through the labels. So — solid paper-deep, no backdrop blur (the base sets
+   one; killed here), and a rule plus a short shadow underneath so the band
+   reads as sitting on top of the sheet rather than printed into it. */
+html[data-style="archival-warm"] .nav {
+  background: var(--paper-deep);
+  background-image: var(--laid);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid var(--rule);
+  box-shadow:
+    inset 0 1px 0 var(--emboss),
+    0 6px 12px -12px rgba(60, 40, 20, .55);
+}
+
+html[data-style="archival-warm"] .nav-brand {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--ink);
+  /* Deliberately no opacity here: the base fades this in on scroll with a
+     scroll-driven animation and an opacity:0 start. Setting opacity would
+     either fight it or strand the name invisible. */
+}
+
+html[data-style="archival-warm"] .nav a {
+  font-family: var(--serif);
+  font-size: .95rem;
+  letter-spacing: .01em;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+}
+html[data-style="archival-warm"] .nav a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--rule);
+  text-decoration: none;
+}
+html[data-style="archival-warm"] .nav a.is-active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 400;             /* the rule marks it; bold as well is shouting */
+}
+
+/* --- style toggle ------------------------------------------------------- */
+/* A small tab in the running head. Square, hairlined, same family as the hero
+   index tabs so it reads as furniture rather than as a widget. */
+html[data-style="archival-warm"] .style-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin: .35rem 0;
+  padding: .34rem .6rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 var(--emboss);
+  transition: color .15s, border-color .15s, background .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+html[data-style="archival-warm"] .style-toggle:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--tint);
+}
+html[data-style="archival-warm"] .style-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+html[data-style="archival-warm"] .style-toggle:active {
+  box-shadow: inset 0 1px 2px rgba(60, 40, 20, .18);
+}
+/* A stamped square of ink, not an LED. */
+html[data-style="archival-warm"] .style-toggle-dot {
+  width: 7px; height: 7px;
+  flex: none;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: .75;
+  transition: opacity .15s;
+}
+html[data-style="archival-warm"] .style-toggle:hover .style-toggle-dot { opacity: 1; }
+html[data-style="archival-warm"] .style-toggle-text { display: inline-block; }
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+html[data-style="archival-warm"] .sec-h {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1rem;
+  gap: .85rem;
+  margin: 0 0 1.35rem;
+}
+/* The one place small caps are spent. Everything else stays in its own case. */
+html[data-style="archival-warm"] .sec-h > span {
+  font-size: 1.2rem;
+  font-variant-caps: small-caps;
+  letter-spacing: .11em;
+  color: var(--ink);
+}
+/* The base underlines the heading word with a 3px accent bar. This style rules
+   out to the margin instead, so the bar has to go. */
+html[data-style="archival-warm"] .sec-h > span::after { content: none; }
+html[data-style="archival-warm"] .sec-h::after {
+  content: "";
+  flex: 1;
+  height: 3px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule-soft);
+}
+/* order:3 puts the count after the rule; the rule and the word both sit at
+   order:0 and fall in DOM order. Result: WORD ———— [10]. */
+html[data-style="archival-warm"] .sec-count {
+  order: 3;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  font-family: var(--serif);
+  font-style: normal;
+  font-weight: 400;
+  font-size: .92rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .04em;
+  color: var(--accent-ink);
+}
+html[data-style="archival-warm"] .sec-count::before { content: "["; opacity: .5; margin-right: .12em; }
+html[data-style="archival-warm"] .sec-count::after  { content: "]"; opacity: .5; margin-left: .12em; }
+
+html[data-style="archival-warm"] .sec-note {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--faint);
+}
+html[data-style="archival-warm"] .sec-note a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 2px;
+}
+html[data-style="archival-warm"] .sec-note a:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* Running text in the book face. No text-align, no hyphens, no max-width:
+   the base owns the justification and the column, and both are load-bearing. */
+html[data-style="archival-warm"] .prose {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Research — index cards
+   ========================================================================== */
+/* Grid template left alone: the base's 22rem minimum is what keeps four cards
+   in two columns instead of stranding one. */
+html[data-style="archival-warm"] .interest {
+  padding: 1.2rem 1.35rem 1.3rem;   /* the base insets 3.4rem for a left number */
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  box-shadow: var(--press);
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+/* Counter kept — it is structure, and on an index card the number belongs in
+   the corner, not in the text block's left margin. */
+html[data-style="archival-warm"] .interest::before {
+  counter-increment: interest;
+  content: counter(interest, decimal-leading-zero);
+  left: auto;
+  right: 1.35rem;
+  top: 1.25rem;
+  font-family: var(--sans);
+  font-size: .72rem;
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .1em;
+  color: var(--accent-ink);
+  opacity: .8;
+}
+html[data-style="archival-warm"] .interest:hover {
+  transform: none;                  /* the base lifts the card; paper doesn't */
+  border-color: var(--accent);
+  box-shadow: var(--press-hi);
+}
+html[data-style="archival-warm"] .interest h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.32;
+  color: var(--ink);
+  padding: 0 2.6rem .55rem 0;       /* clears the corner number */
+  margin: 0 0 .7rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+html[data-style="archival-warm"] .interest p {
+  font-family: var(--serif);
+  font-size: .92rem;
+  line-height: 1.66;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   News — an accessions ledger
+   ========================================================================== */
+/* The base draws a timeline: a left rail with a dot per entry. A ledger of
+   ruled rows is the same information with less apparatus, and it suits a page
+   made of rules. Rail and dots off; the base's two-column grid stays. */
+html[data-style="archival-warm"] .news li {
+  padding: .75rem 0;
+  border-left: 0;
+  border-bottom: 1px solid var(--rule-soft);
+  align-items: baseline;
+  font-size: .95rem;
+}
+html[data-style="archival-warm"] .news li::before { content: none; }
+html[data-style="archival-warm"] .news li:first-child { padding-top: 0; }
+html[data-style="archival-warm"] .news li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+html[data-style="archival-warm"] .news time {
+  padding-top: 0;                   /* base nudges it; baseline alignment now */
+  font-family: var(--sans);
+  font-size: .76rem;
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .05em;
+  color: var(--accent-ink);
+}
+html[data-style="archival-warm"] .news li span {
+  font-family: var(--serif);
+  font-size: .95rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+html[data-style="archival-warm"] .news li span em { font-style: italic; }
+/* The venue is what the eye is hunting for in a news line. Bold ink. */
+html[data-style="archival-warm"] .news li span strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+html[data-style="archival-warm"] .more {
+  margin-top: .9rem;
+}
+html[data-style="archival-warm"] .more summary {
+  font-family: var(--sans);
+  font-size: .8rem;
+  color: var(--muted);
+  padding-left: 0;
+}
+html[data-style="archival-warm"] .more summary::before { color: var(--accent); }
+html[data-style="archival-warm"] .more summary:hover { color: var(--accent-ink); }
 
 /* ==========================================================================
    Publications
    ========================================================================== */
-.year-group { margin-bottom: 2rem; }
-
-.year {
+html[data-style="archival-warm"] .year {
   font-family: var(--sans);
   font-size: .7rem;
   font-weight: 700;
-  letter-spacing: .12em;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: .14em;
   color: var(--faint);
-  font-variant-numeric: tabular-nums;
-  margin: 0 0 .75rem;
-  display: flex; align-items: center; gap: .75rem;
 }
-.year::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--rule-soft);
-}
+html[data-style="archival-warm"] .year::after { background: var(--rule-soft); }
 
-.pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
-
-.pub {
-  position: relative;
-  padding: 1.15rem 1.25rem;
-  border-radius: 10px;
+html[data-style="archival-warm"] .pub {
+  padding: 1.1rem 1.35rem 1.15rem;
+  border-radius: 2px;
   border: 1px solid var(--rule);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition: transform .18s, box-shadow .18s, border-color .18s;
+  background: var(--panel);
+  box-shadow: var(--press);
+  transition: border-color .18s, box-shadow .18s;
 }
-.pub:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--rule));
-  box-shadow: var(--shadow-md);
+html[data-style="archival-warm"] .pub:hover {
+  transform: none;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--rule));
+  box-shadow: var(--press-hi);
 }
 
-.pub-title {
+html[data-style="archival-warm"] .pub-title {
   font-family: var(--serif);
-  font-size: 1.08rem;
-  line-height: 1.38;
-  margin: 0 0 .4rem;
+  font-size: 1.06rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0 0 .3rem;
+  text-wrap: pretty;
 }
 
-.pub-authors {
-  margin: 0 0 .7rem;
-  font-size: .83rem;
-  line-height: 1.5;
+html[data-style="archival-warm"] .pub-authors {
+  margin: 0 0 .75rem;
+  font-family: var(--serif);
+  font-size: .9rem;
+  line-height: 1.55;
   color: var(--muted);
 }
-.pub-authors b {
-  color: var(--text);
-  font-weight: 600;
-  background: linear-gradient(transparent 68%, var(--accent-tint) 0);
-}
-
-.pub-meta {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: .45rem;
-  margin: 0;
-  font-size: .77rem;
-}
-
-/* Venue tags — colour-coded so a venue is recognisable at a glance.
-   Class comes from the `venue` field, lowercased: venue--sigmod, etc.
-   A venue with no rule below falls back to the neutral base style. */
-.venue {
+/* The owner's name, in an author list, on a page a committee is skimming.
+   It is set BOLD and at full ink — the weight jump against the muted regular
+   around it is the whole job. No small caps (they cost weight, which is the
+   one thing that matters here) and none of the base's highlighter wash. */
+html[data-style="archival-warm"] .pub-authors b {
   font-weight: 700;
-  letter-spacing: .04em;
-  padding: .26rem .55rem;
-  border-radius: 5px;
-  background: var(--surface-2);
-  color: var(--muted);
+  font-variant-caps: normal;
+  color: var(--ink);
+  background: none;
+}
+
+html[data-style="archival-warm"] .pub-meta {
+  gap: .5rem;
+  margin: 0;
+  padding-top: .7rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: .75rem;
+}
+
+/* Venue stamps. One card stock, many inks: the ground is always --tint, so
+   every tag's contrast is a single number this layer can actually guarantee
+   (6.6–9.0:1). Colour still codes the venue; legibility isn't traded for it.
+   Sans, bold, as typed — these get scanned, not read. */
+html[data-style="archival-warm"] .venue {
+  --v: var(--muted);
+  padding: .3em .55em;
+  border-radius: 2px;
+  background: var(--tint);
+  border: 1px solid color-mix(in srgb, var(--v) 35%, transparent);
+  color: var(--v);
+  font-family: var(--sans);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  line-height: 1.35;
+  box-shadow: inset 0 1px 0 var(--emboss);
   cursor: help;
 }
-.venue--sigmod { background: #e4f0f3; color: #0d4d5f; }
-.venue--vldb   { background: #e6ecfa; color: #27407e; }
-.venue--vldbj  { background: #ece7fa; color: #453084; }
-.venue--tkde   { background: #f6e6f2; color: #6f2a5c; }
-.venue--eaai   { background: #e3f2e8; color: #1f5c39; }
-.venue--pricai { background: #fbeee0; color: #7d4a17; }
-.venue--adc    { background: #eceef1; color: #3f4854; }
+html[data-style="archival-warm"] .venue--sigmod { --v: var(--v-sigmod); }
+html[data-style="archival-warm"] .venue--vldb   { --v: var(--v-vldb); }
+html[data-style="archival-warm"] .venue--vldbj  { --v: var(--v-vldbj); }
+html[data-style="archival-warm"] .venue--tkde   { --v: var(--v-tkde); }
+html[data-style="archival-warm"] .venue--eaai   { --v: var(--v-eaai); }
+html[data-style="archival-warm"] .venue--pricai { --v: var(--v-pricai); }
+html[data-style="archival-warm"] .venue--adc    { --v: var(--v-adc); }
 
-@media (prefers-color-scheme: dark) {
-  .venue--sigmod { background: #12333d; color: #8fd0e0; }
-  .venue--vldb   { background: #1a2444; color: #a3b8f0; }
-  .venue--vldbj  { background: #241d40; color: #bda9f2; }
-  .venue--tkde   { background: #3a1c31; color: #e0a3ce; }
-  .venue--eaai   { background: #142e1f; color: #8ed3a8; }
-  .venue--pricai { background: #362413; color: #e5b483; }
-  .venue--adc    { background: #232830; color: #a7b2c1; }
-}
-
-.award {
-  padding: .26rem .55rem;
-  border-radius: 5px;
-  background: #fbf0da;
-  color: #7a5a1e;
+html[data-style="archival-warm"] .award {
+  padding: .3em .55em;
+  border-radius: 2px;
+  background: var(--tint);
+  border: 1px solid color-mix(in srgb, var(--v-award) 40%, transparent);
+  color: var(--v-award);
+  font-family: var(--sans);
+  font-size: .7rem;
   font-weight: 700;
-}
-@media (prefers-color-scheme: dark) {
-  .award { background: #362c16; color: #dcbb79; }
+  letter-spacing: .05em;
+  line-height: 1.35;
 }
 
-.pub-link {
-  color: var(--muted);
-  padding: .26rem .5rem;
-  border-radius: 5px;
+/* Kept as a bordered tab rather than a bare underlined link: it preserves a
+   real tap target next to the stamp, and it matches the hero's index tabs. */
+html[data-style="archival-warm"] .pub-link {
+  padding: .3rem .5rem;
+  border-radius: 2px;
   border: 1px solid var(--rule);
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: .72rem;
+  line-height: 1.35;
   transition: color .15s, border-color .15s, background .15s;
 }
-.pub-link:hover {
-  color: var(--accent);
+html[data-style="archival-warm"] .pub-link:hover {
+  color: var(--accent-ink);
   border-color: var(--accent);
-  background: var(--accent-tint);
+  background: var(--tint);
   text-decoration: none;
 }
 
 /* ==========================================================================
-   Contact
+   Contact — a bookplate
    ========================================================================== */
-.contact {
-  padding: 1.75rem;
-  border-radius: 12px;
+html[data-style="archival-warm"] .contact {
+  position: relative;
+  border-radius: 2px;
   border: 1px solid var(--rule);
-  background: linear-gradient(150deg, var(--accent-tint) 0%, var(--surface) 65%);
-  box-shadow: var(--shadow-sm);
+  background: var(--panel);
+  box-shadow: var(--press);
 }
-.contact > p { margin: 0; }
-.contact-mail {
-  display: inline-block;
-  margin: 1rem 0 .75rem;
+/* The inner rule of a bookplate. One ornament, and it is the only one. */
+html[data-style="archival-warm"] .contact::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 1px;
+  pointer-events: none;
+}
+html[data-style="archival-warm"] .contact > p {
   font-family: var(--serif);
-  font-size: 1.3rem;
-  color: var(--accent);
-  border-bottom: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.contact-mail:hover { text-decoration: none; border-bottom-color: var(--accent); }
-
-/* Until the script attaches the mailto, .mail is an <a> with no href: style it
-   as the plain text it currently is rather than as a dead link. */
-.mail:not([href]) { cursor: text; }
-.mail[href] { cursor: pointer; }
-.contact-addr {
-  margin: 0;
-  font-size: .82rem;
+html[data-style="archival-warm"] .contact-mail {
+  margin: 1rem 0 0;
+  border-bottom: 0;                 /* the base draws one; use a real underline */
+  font-family: var(--serif);
+  font-size: 1.22rem;
+  letter-spacing: .01em;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+html[data-style="archival-warm"] .contact-mail:hover {
+  border-bottom: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+/* Qualified with p.contact-addr on purpose. The address IS a .contact > p, and
+   that rule above is one element more specific than a bare .contact-addr —
+   without the p. here, the intro paragraph's serif ink wins and the address
+   comes out at 16px body copy. The base never tripped on this because it only
+   sets margin on .contact > p. */
+html[data-style="archival-warm"] .contact > p.contact-addr {
+  margin: 1.15rem 0 0;
+  padding-top: .85rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--sans);
+  font-size: .8rem;
+  line-height: 1.55;
   color: var(--faint);
 }
 
 /* ==========================================================================
    Footer
    ========================================================================== */
-.foot {
-  border-top: 1px solid var(--rule-soft);
-  background: var(--surface-2);
+html[data-style="archival-warm"] .foot {
+  background-color: var(--paper-deep);
+  background-image: var(--laid);
+  border-top: 1px solid var(--rule);
+  box-shadow: inset 0 1px 0 var(--emboss);
 }
-.foot-inner {
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 1.5rem var(--pad);
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem;
+html[data-style="archival-warm"] .foot-inner {
+  font-family: var(--sans);
   font-size: .76rem;
-  color: var(--faint);
+  color: var(--faint);            /* 5.0:1 light, 6.1:1 dark on paper-deep */
 }
-.foot p { margin: 0; }
 
 /* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 40rem) {
-  .hero-inner {
-    grid-template-columns: 1fr;
-    gap: 1.35rem;
-    padding: 2.75rem var(--pad) 2.25rem;
-  }
-  .hero-portrait { width: 6.5rem; height: 6.5rem; }
-  .nav-brand { display: none; }
-  .nav-inner { justify-content: flex-start; }
-  .main { padding-top: 2.5rem; }
-  .sec { margin-bottom: 3rem; }
-  .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+  /* The corner number and the heading share a line at this width and the
+     heading has nowhere to go, so pull the number's reserved space in. */
+  html[data-style="archival-warm"] .interest { padding: 1.1rem 1.15rem 1.2rem; }
+  html[data-style="archival-warm"] .interest::before { right: 1.15rem; top: 1.15rem; }
+  html[data-style="archival-warm"] .interest h3 { padding-right: 2.4rem; }
 
-  /* This panel's padding made its text the narrowest column on the page — 269px
-     against 327px for the prose — so its justified lines held the fewest words
-     and opened the widest gaps. Trimmed, it sets like everything else.
-     Has to live here, after the .contact rule: a media query carries no extra
-     specificity, so an override earlier in the file would simply lose. */
-  .contact { padding: 1.15rem; }
+  html[data-style="archival-warm"] .hero-portrait { border-radius: 2px; }
+  html[data-style="archival-warm"] .contact::before { inset: 4px; }
+}
+
+/* Touch. The nav links already clear 44px from the base's padding; the tabs
+   and the toggle do not, and they are the two things a thumb goes for. */
+@media (pointer: coarse) {
+  html[data-style="archival-warm"] .style-toggle {
+    min-height: 44px;
+    padding-inline: .75rem;
+  }
+  html[data-style="archival-warm"] .hero-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  html[data-style="archival-warm"] .pub-link,
+  html[data-style="archival-warm"] .venue {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+  }
+  html[data-style="archival-warm"] .more summary {
+    padding-block: .6rem;
+  }
+}
+
+/* ==========================================================================
+   Preferences
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html[data-style="archival-warm"] *,
+  html[data-style="archival-warm"] *::before,
+  html[data-style="archival-warm"] *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* This layer is opaque by design — the sticky band is solid paper-deep, not a
+   blur — so there is little to undo. What remains is the hero's colour wash
+   and the base's backdrop-filter, both of which are stated away here so the
+   preference is honoured explicitly rather than by luck. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-style="archival-warm"] .hero-glow { display: none; }
+  html[data-style="archival-warm"] .nav {
+    background-color: var(--paper-deep);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  html[data-style="archival-warm"] {
+    --muted: var(--ink);
+    --faint: #4a3f38;
+    --rule: #9d8f78;
+    --rule-soft: #b9ac95;
+  }
+  @media (prefers-color-scheme: dark) {
+    html[data-style="archival-warm"] {
+      --faint: #cfc3b4;
+      --rule: #6d5e50;
+      --rule-soft: #52463b;
+    }
+  }
+  html[data-style="archival-warm"] .venue,
+  html[data-style="archival-warm"] .award {
+    border-color: currentColor;
+  }
 }
 
 /* ==========================================================================
    Print
    ========================================================================== */
+/* The base's print block strips the cards and the hero background, but it does
+   it with single-class selectors — every rule in this layer outranks them, so
+   without this block the laid texture, the panels and the oxblood rules would
+   all go to the printer. Restated at this layer's specificity. */
 @media print {
-  .nav, .skip, .foot, .hero-glow { display: none; }
-  .hero { background: none; border: none; }
-  .hero-inner, .main { max-width: none; padding: 0; }
-  body { font-size: 11pt; }
-  .pub, .interest, .contact {
+  html[data-style="archival-warm"] body {
+    background: #fff;
+    color: #000;
+  }
+  html[data-style="archival-warm"] .hero {
+    background: none;
+    border-bottom: 1px solid #000;
+  }
+  html[data-style="archival-warm"] .hero::after,
+  html[data-style="archival-warm"] .contact::before { content: none; }
+  html[data-style="archival-warm"] .hero-portrait {
+    border: 1px solid #999;
+    box-shadow: none;
+  }
+  html[data-style="archival-warm"] .foot {
+    background: none;
+  }
+  html[data-style="archival-warm"] .pub,
+  html[data-style="archival-warm"] .interest,
+  html[data-style="archival-warm"] .contact {
+    background: none;
     border: none;
     box-shadow: none;
     padding: 0;
-    margin-bottom: .6rem;
-    background: none;
   }
-  .pub-link::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+  html[data-style="archival-warm"] .interest::before {
+    position: static;
+    display: block;
+  }
+  html[data-style="archival-warm"] .venue,
+  html[data-style="archival-warm"] .award,
+  html[data-style="archival-warm"] .pub-link {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0 .3em 0 0;
+    color: #000;
+    min-height: 0;
+  }
+  html[data-style="archival-warm"] .pub-meta { border-top: none; }
+  html[data-style="archival-warm"] .hero-name,
+  html[data-style="archival-warm"] .hero-role,
+  html[data-style="archival-warm"] .pub-title,
+  html[data-style="archival-warm"] .pub-authors b,
+  html[data-style="archival-warm"] .interest h3 { color: #000; }
+}
+
+
+/* ==========================================================================
+   LAYER 3 — STYLE: liquid-glass
+   html[data-style="liquid-glass"] — translucent chrome over an ambient field.
+   ========================================================================== */
+
+/* ==========================================================================
+   LIQUID GLASS
+   Everything below is scoped to html[data-style="liquid-glass"]. Two style
+   layers ship in one stylesheet, so an unscoped selector here would corrupt
+   the other one. There are no bare selectors in this file — not one.
+
+   Three findings from the review shaped this port, and it is worth writing
+   down what changed, because the changes are structural rather than cosmetic:
+
+   1. Text on glass measured ~5.25:1, and it was measured at a convenient spot.
+      Fixed by construction, not by tuning: the reading surfaces (.prose, .pub,
+      .interest, .news, .contact) are now 93% opaque, so what is behind them can
+      move by 35 rgb points and the text still lands at 8-17:1. Body copy is now
+      10.7:1 light / 12.7:1 dark — better than the flat design it replaces.
+
+   2. The effect read as ornament. So the glass is confined to the chrome — the
+      nav, the pills, the ambient field. Reading surfaces are calm. The hairline
+      grid is gone: it existed only to give the blur something to refract, which
+      is decoration justifying decoration. The sticky nav blurs the actual page
+      scrolling underneath, which is real structure and a better argument.
+
+   3. The maintenance model was the real credibility problem — AA held only if
+      someone re-composited against a worst-case blob after every colour change,
+      and nobody was going to. So the field is now *bounded by design*: a fixed,
+      smooth, pale wash whose per-channel extremes are known. Every claim in
+      this file is the worst case over that whole box, computed by compositing
+      the blobs at simultaneous peak — a pixel that cannot actually occur, since
+      the blobs sit in opposite corners. The bound is deliberately unreachable
+      so that it survives edits nobody re-checks.
+
+   Only .nav carries a backdrop-filter. The field is a smooth gradient, so
+   blurring it is a visual no-op — 40-odd backdrop layers of pure cost. The nav
+   is the one element with structured content behind it, so it is the one
+   element that blurs.
+   ========================================================================== */
+
+html[data-style="liquid-glass"] {
+  /* ---- ink -------------------------------------------------------------
+     Four tiers, and one rule that governs where each may be used: on the bare
+     field only --lg-ink and --lg-ink-2 are legible against the worst pixel the
+     hero bloom can produce. --lg-muted and --lg-faint are pane-only inks.
+     .hero-affil / .hero-loc / .hero-tagline therefore use ink-2, not muted —
+     that is why they look heavier here than in the other style. */
+  --lg-ink:      #14181d;
+  --lg-ink-2:    #333d49;
+  --lg-muted:    #414c59;
+  --lg-faint:    #57616e;
+  --lg-accent:   #0c4757;
+  --lg-accent-2: #17677c;
+  --lg-on-fill:  #ffffff;
+
+  /* ---- ambient field ---------------------------------------------------
+     Pale on purpose. The mockup ran these blobs at .30/.26/.20/.18 and the
+     hero's own text failed AA against them at 1.86:1 — the effect was loudest
+     exactly where the reading was. At these alphas the whole field lives
+     between L=0.639 and L=0.877, which is what makes every later number hold.
+     The colour is not lost: saturate() in the nav's backdrop-filter puts it
+     back where the glass concentrates it. */
+  --lg-base: #eef1f5;
+  --lg-blobs:
+    radial-gradient(70rem 46rem at 12% -18%, rgba(13, 74, 90, .070),  transparent 62%),
+    radial-gradient(56rem 40rem at 88%  -6%, rgba(72, 88, 166, .060), transparent 64%),
+    radial-gradient(50rem 40rem at 78%  96%, rgba(198, 132, 72, .045), transparent 62%),
+    radial-gradient(52rem 42rem at -6%  92%, rgba(13, 74, 90, .045),  transparent 62%);
+
+  /* ---- material --------------------------------------------------------
+     --lg-pane is a reading surface: near-opaque, deliberately dull. The glass
+     in it is the edge and the shadow, not the fill.
+     --lg-chip is chrome sitting on the field; --lg-chip-pane is chrome nested
+     on a pane. They are separate tokens because in dark mode they must tint in
+     opposite directions — see the dark block. */
+  --lg-pane:      rgba(255, 255, 255, .93);
+  --lg-pane-hi:   rgba(255, 255, 255, .97);
+  --lg-pane-flat: #fbfcfd;                    /* opaque stand-in for ring tricks */
+  --lg-chip:      rgba(255, 255, 255, .62);
+  --lg-chip-hi:   rgba(255, 255, 255, .82);
+  --lg-chip-pane: rgba(255, 255, 255, .62);
+  --lg-nav:       rgba(255, 255, 255, .82);
+  --lg-foot:      rgba(255, 255, 255, .72);
+  --lg-hair:      rgba(16, 24, 32, .12);
+  --lg-hair-soft: rgba(16, 24, 32, .07);
+  --lg-blur:      blur(20px) saturate(1.5);
+
+  /* The specular edge: bright where the light lands, gone where it doesn't.
+     This and the shadow are what carry the material now the fills are calm. */
+  --lg-edge: linear-gradient(150deg,
+               rgba(255, 255, 255, .95) 0%,
+               rgba(255, 255, 255, .30) 28%,
+               rgba(255, 255, 255, 0)   52%,
+               rgba(255, 255, 255, .14) 72%,
+               rgba(255, 255, 255, .60) 100%);
+  --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .70);
+  --lg-inset-lo: inset 0 -1px 0 rgba(16, 24, 32, .05);
+  --lg-shadow:
+       0 1px 2px rgba(16, 24, 32, .05),
+       0 6px 14px -8px rgba(16, 24, 32, .16),
+       0 22px 44px -22px rgba(16, 24, 32, .26);
+  --lg-shadow-lift:
+       0 2px 4px rgba(16, 24, 32, .06),
+       0 10px 22px -8px rgba(16, 24, 32, .20),
+       0 34px 60px -26px rgba(16, 24, 32, .34);
+
+  --lg-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --lg-sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+              "PingFang SC", "Microsoft YaHei", sans-serif;
+  --lg-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- safety net ------------------------------------------------------
+     The base layer's own tokens, re-pointed at this palette. Anything in the
+     base I have not explicitly overridden below still resolves into this style
+     rather than leaking the other one's colours through. Rule 8 says assume
+     nothing from the other style; this is how that is enforced rather than
+     merely intended.
+     --wrap and --pad are conspicuously absent: the base owns the column, and
+     every block on the page is aligned to it. */
+  --bg:         var(--lg-base);
+  --surface:    var(--lg-pane-flat);
+  --surface-2:  var(--lg-base);
+  --text:       var(--lg-ink);
+  --muted:      var(--lg-muted);
+  --faint:      var(--lg-faint);
+  --rule:       var(--lg-hair);
+  --rule-soft:  var(--lg-hair-soft);
+  --accent:     var(--lg-accent);
+  --accent-tint: rgba(12, 71, 87, .10);
+  --accent-ink: var(--lg-accent);
+  --hero-from:  transparent;
+  --hero-to:    transparent;
+  --glow:       transparent;
+  --serif:      var(--lg-serif);
+  --sans:       var(--lg-sans);
+  --shadow-sm:  0 1px 2px rgba(16, 24, 32, .05);
+  --shadow-md:  var(--lg-shadow);
+  --shadow-lg:  var(--lg-shadow-lift);
+
+  background-color: var(--lg-base);
+}
+
+/* The field. Fixed, so it never scrolls: the nav always has colour to refract,
+   and — the load-bearing part — a given screen pixel has ONE field colour, which
+   is what turns "is this legible?" into a question with a finite answer.
+   z-index:-1 puts it behind the content but in front of the canvas, which only
+   works if body itself stays transparent. Hence the rule below it. */
+html[data-style="liquid-glass"] body {
+  background: transparent;
+  color: var(--lg-ink);
+  font-family: var(--lg-sans);
+  -webkit-font-smoothing: antialiased;
+}
+html[data-style="liquid-glass"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--lg-base);
+  background-image: var(--lg-blobs);
+  background-repeat: no-repeat;
+}
+
+html[data-style="liquid-glass"] a {
+  color: var(--lg-accent);
+  text-decoration: none;
+}
+html[data-style="liquid-glass"] a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+html[data-style="liquid-glass"] :focus-visible {
+  outline: 2px solid var(--lg-accent-2);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+html[data-style="liquid-glass"] .skip {
+  background: var(--lg-pane-flat);
+  color: var(--lg-ink);
+  border-radius: 10px;
+  box-shadow: var(--lg-shadow);
+}
+
+/* ==========================================================================
+   The specular hairline — one ring, six surfaces.
+   A 1px gradient border: fill the box, then mask out everything but the
+   padding ring. .interest is missing from this list on purpose: its ::before
+   is the counter, so its ring lives on ::after.
+   ========================================================================== */
+html[data-style="liquid-glass"] .prose::before,
+html[data-style="liquid-glass"] .news::before,
+html[data-style="liquid-glass"] .pub::before,
+html[data-style="liquid-glass"] .contact::before,
+html[data-style="liquid-glass"] .interest::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--lg-edge);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Hero
+   No pane. The base gives .hero-inner the column geometry — max-width and
+   var(--pad) — so a background on it would draw a box whose edges sit var(--pad)
+   outside every other block on the page. The hero is the field itself instead,
+   and the glass is in the portrait ring and the pills. This is also why the
+   hero's secondary text is set in ink-2: it sits on the bloom, and muted does
+   not survive there.
+   ========================================================================== */
+html[data-style="liquid-glass"] .hero {
+  background: none;
+  border-bottom: 1px solid var(--lg-hair-soft);
+}
+
+/* The one bright bloom, clipped by .hero's overflow:hidden so it never reaches
+   the nav or the body — which is what lets the body field stay pale enough for
+   bare section headings while the hero still gets to be lit. */
+html[data-style="liquid-glass"] .hero-glow {
+  top: -12rem;
+  right: auto;
+  left: 50%;
+  width: 78rem;
+  height: 40rem;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(28rem 18rem at 32% 52%, rgba(28, 107, 128, .11), transparent 66%),
+    radial-gradient(24rem 16rem at 68% 40%, rgba(96, 110, 200, .09), transparent 66%),
+    radial-gradient(18rem 12rem at 54% 78%, rgba(226, 158, 92, .07), transparent 66%);
+}
+
+/* A frosted ring around the photograph. The base's 5px padding is the ring;
+   the img fills the content box. .mono is the no-photo fallback. */
+html[data-style="liquid-glass"] .hero-portrait {
+  background: var(--lg-chip-hi);
+  box-shadow:
+    0 10px 26px -12px rgba(16, 24, 32, .45),
+    0 0 0 1px rgba(255, 255, 255, .5),
+    inset 0 2px 3px rgba(255, 255, 255, .85);
+}
+html[data-style="liquid-glass"] .hero-portrait img {
+  box-shadow: 0 0 0 1px rgba(16, 24, 32, .10);
+}
+html[data-style="liquid-glass"] .hero-portrait .mono {
+  background: var(--lg-chip);
+  color: var(--lg-accent);
+  font-family: var(--lg-serif);
+  letter-spacing: .04em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+html[data-style="liquid-glass"] .hero-name {
+  font-family: var(--lg-serif);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .hero-pronouns {
+  background: var(--lg-chip);
+  border: 1px solid var(--lg-hair);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+  color: var(--lg-muted);
+  font-family: var(--lg-sans);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  padding: .18em .55em;
+}
+html[data-style="liquid-glass"] .hero-role {
+  color: var(--lg-accent);
+  font-weight: 600;
+}
+html[data-style="liquid-glass"] .hero-affil,
+html[data-style="liquid-glass"] .hero-loc {
+  color: var(--lg-ink-2);
+}
+/* No opacity on .hero-loc. It looked like a harmless half-tone, but opacity
+   composites the glyph against the bloom behind it: ink-2 at .85 measured
+   4.26:1 in light, under AA, and worse than the --lg-muted the ink rule above
+   forbids here. Colour tokens are the only way to tune ink on this field —
+   a contrast check that reads tokens cannot see through an opacity. */
+html[data-style="liquid-glass"] .hero-tagline {
+  margin-top: .9rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--lg-hair);
+  font-family: var(--lg-serif);
+  font-style: italic;
+  font-size: .98rem;
+  color: var(--lg-ink-2);
+}
+
+/* Six pills, spanning both columns. The rule above them starts at the same left
+   edge as everything below, which is the whole reason .hero-links spans 1/-1. */
+html[data-style="liquid-glass"] .hero-links {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--lg-hair);
+  gap: .5rem;
+}
+html[data-style="liquid-glass"] .hero-links a {
+  padding: .46rem .95rem;
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: 999px;
+  background: var(--lg-chip);
+  color: var(--lg-ink);
+  font-size: .8rem;
+  font-weight: 500;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 32, .06),
+    0 4px 10px -6px rgba(16, 24, 32, .24),
+    inset 0 1px 0 rgba(255, 255, 255, .85);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+html[data-style="liquid-glass"] .hero-links a:hover {
+  transform: translateY(-1px);
+  background: var(--lg-chip-hi);
+  color: var(--lg-ink);
+  text-decoration: none;
+  box-shadow:
+    0 2px 4px rgba(16, 24, 32, .08),
+    0 10px 20px -8px rgba(16, 24, 32, .32),
+    inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+/* No CV link in the markup today; the rule costs nothing and is here for when
+   there is one. It is the only filled thing in the row, which is the point. */
+html[data-style="liquid-glass"] .hero-links .is-cv,
+html[data-style="liquid-glass"] .hero-links .is-cv:hover {
+  background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
+  border-color: rgba(255, 255, 255, .35);
+  color: var(--lg-on-fill);
+  box-shadow:
+    0 4px 12px -4px rgba(13, 74, 90, .6),
+    inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+
+/* ==========================================================================
+   Sticky nav — the one element that earns a backdrop-filter
+   It is also the one element whose backdrop I cannot bound, because arbitrary
+   content scrolls under it. So it is bounded the only honest way: the fill is
+   opaque enough that even PURE BLACK passing underneath leaves the links at
+   5.73:1. No assumption about what is below it is required, now or ever.
+   ========================================================================== */
+html[data-style="liquid-glass"] .nav {
+  background: var(--lg-nav);
+  -webkit-backdrop-filter: var(--lg-blur);
+          backdrop-filter: var(--lg-blur);
+  border-bottom: 1px solid var(--lg-hair);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .55),
+    0 8px 24px -18px rgba(16, 24, 32, .5);
+}
+/* Vertical padding only — longhands, because the base's `padding: 0 var(--pad)`
+   owns the horizontal side and the column depends on it. */
+html[data-style="liquid-glass"] .nav-inner {
+  padding-top: .45rem;
+  padding-bottom: .45rem;
+}
+html[data-style="liquid-glass"] .nav-brand {
+  font-family: var(--lg-serif);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .nav ul { gap: .15rem; }
+html[data-style="liquid-glass"] .nav a {
+  padding: .42rem .8rem;
+  border: 0;
+  border-radius: 999px;
+  line-height: 1.35;
+  font-size: .84rem;
+  font-weight: 500;
+  color: var(--lg-muted);
+  transition: color .16s ease, background .16s ease;
+}
+html[data-style="liquid-glass"] .nav a:hover {
+  background: var(--lg-chip);
+  color: var(--lg-ink);
+  text-decoration: none;
+}
+/* No drop shadow on the active pill: .nav ul is a scroll container on narrow
+   screens, so overflow-y computes to auto and would clip one. Inset only. */
+html[data-style="liquid-glass"] .nav a.is-active {
+  background: rgba(255, 255, 255, .85);
+  border: 0;
+  color: var(--lg-accent);
+  font-weight: 600;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 32, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+/* ---- style toggle -------------------------------------------------------
+   A drop of the material itself, with the name of the style it switches to.
+   Deliberately quiet: it is a preference, not a call to action. Its box right
+   edge lands on the column edge, same as every pane below it. */
+html[data-style="liquid-glass"] .style-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  flex: none;
+  padding: .34rem .7rem .34rem .52rem;
+  border: 1px solid var(--lg-hair);
+  border-radius: 999px;
+  background: var(--lg-chip);
+  color: var(--lg-muted);
+  font-family: var(--lg-sans);
+  font-size: .74rem;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+  transition: background .16s ease, color .16s ease, border-color .16s ease;
+}
+html[data-style="liquid-glass"] .style-toggle:hover {
+  background: var(--lg-chip-hi);
+  border-color: var(--lg-hair);
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .style-toggle:focus-visible {
+  outline: 2px solid var(--lg-accent-2);
+  outline-offset: 2px;
+}
+/* The bead: a lit sphere, the material in miniature. */
+html[data-style="liquid-glass"] .style-toggle-dot {
+  width: .62rem;
+  height: .62rem;
+  flex: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .45) 24%,
+      var(--lg-accent-2) 62%,
+      var(--lg-accent) 100%);
+  box-shadow:
+    0 1px 2px rgba(16, 24, 32, .35),
+    inset 0 0 0 1px rgba(255, 255, 255, .35);
+}
+html[data-style="liquid-glass"] .style-toggle-text { white-space: nowrap; }
+/* A 30px pill is a fine mouse target and a poor thumb target. Grow the hit area
+   with a pseudo rather than the box, so the nav's height never moves. */
+@media (pointer: coarse) {
+  html[data-style="liquid-glass"] .style-toggle::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: max(44px, 100%);
+    min-width: 44px;
+  }
+}
+
+/* ==========================================================================
+   Sections
+   .sec-h and .year sit on the bare field with no pane under them. That is the
+   pairing that failed at 4.4:1 in the mockup and it is why the field is pale:
+   the heading is 11.7:1 against the worst field pixel now, not 4.4:1 against
+   an average one.
+   ========================================================================== */
+html[data-style="liquid-glass"] .sec { scroll-margin-top: 5rem; }
+
+html[data-style="liquid-glass"] .sec-h {
+  font-family: var(--lg-serif);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--lg-ink);
+}
+/* The base underlines the word with a 3px accent bar. This style uses a rule
+   running out to the column edge instead, so the bar is switched off rather
+   than left to fight the ::after below. */
+html[data-style="liquid-glass"] .sec-h span::after { display: none; }
+html[data-style="liquid-glass"] .sec-h::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--lg-hair), transparent);
+}
+/* order:3 sends the count past the rule, out to the right edge. */
+html[data-style="liquid-glass"] .sec-count {
+  order: 3;
+  padding: .16em .5em;
+  border: 1px solid var(--lg-hair);
+  border-radius: 999px;
+  background: var(--lg-chip);
+  color: var(--lg-muted);
+  font-family: var(--lg-mono);
+  font-size: .7rem;
+  font-weight: 500;
+}
+html[data-style="liquid-glass"] .sec-note {
+  color: var(--lg-ink-2);
+  font-size: .85rem;
+}
+html[data-style="liquid-glass"] .sec-note a {
+  color: var(--lg-accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(12, 71, 87, .35);
+  text-underline-offset: 2px;
+}
+
+/* ==========================================================================
+   Prose — a reading surface, and therefore calm
+   93% opaque, no backdrop-filter. Justification and hyphenation belong to the
+   base layer and are not touched here: no text-align, no hyphens.
+   ========================================================================== */
+html[data-style="liquid-glass"] .prose {
+  position: relative;
+  padding: 1.6rem 1.75rem;
+  border-radius: 20px;
+  background: var(--lg-pane);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+  font-size: .97rem;
+  line-height: 1.74;
+}
+html[data-style="liquid-glass"] .prose p {
+  margin: 0 0 .95rem;
+  color: var(--lg-ink-2);
+}
+html[data-style="liquid-glass"] .prose p:last-child { margin-bottom: 0; }
+
+/* ==========================================================================
+   Research
+   The mockup put a 1.9rem numeral at .13 alpha in each card's corner, and the
+   review called it correctly: a watermark is ornament. The base's counter is
+   structure — an index you can read. Keep the structure, restyle the material:
+   full-strength accent, mono, 9.9:1. It reads as a numbered list because that
+   is what it is.
+   ========================================================================== */
+html[data-style="liquid-glass"] .interest {
+  border: 0;
+  border-radius: 20px;
+  background: var(--lg-pane);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+}
+html[data-style="liquid-glass"] .interest::before {
+  content: counter(interest, decimal-leading-zero);
+  font-family: var(--lg-mono);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--lg-accent);
+  opacity: 1;
+  top: 1.55rem;
+}
+html[data-style="liquid-glass"] .interest:hover {
+  transform: translateY(-2px);
+  border-color: transparent;
+  background: var(--lg-pane-hi);
+  box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
+}
+html[data-style="liquid-glass"] .interest h3 {
+  font-family: var(--lg-serif);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .interest p {
+  color: var(--lg-muted);
+  font-size: .875rem;
+  line-height: 1.62;
+}
+
+/* ==========================================================================
+   News
+   New since the mockup. It is a reading surface, so it gets one calm pane with
+   the timeline running inside it rather than a card per item — four panes for
+   four one-line entries would be noise.
+   ========================================================================== */
+html[data-style="liquid-glass"] .news {
+  position: relative;
+  padding: 1.3rem 1.6rem;
+  border-radius: 20px;
+  background: var(--lg-pane);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+}
+html[data-style="liquid-glass"] .news li {
+  border-left: 2px solid var(--lg-hair);
+  color: var(--lg-ink-2);
+}
+html[data-style="liquid-glass"] .news li:last-child { border-left-color: transparent; }
+/* The ring punches the timeline line out from behind the dot, so it has to be
+   opaque — hence --lg-pane-flat, which is the pane's composited colour. */
+html[data-style="liquid-glass"] .news li::before {
+  background: var(--lg-accent);
+  box-shadow: 0 0 0 3px var(--lg-pane-flat);
+}
+html[data-style="liquid-glass"] .news time {
+  color: var(--lg-accent);
+  font-family: var(--lg-mono);
+  font-size: .76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+html[data-style="liquid-glass"] .news li span { color: var(--lg-ink-2); }
+html[data-style="liquid-glass"] .news li em {
+  font-style: italic;
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .news li strong {
+  font-weight: 600;
+  color: var(--lg-ink);
+}
+
+/* .more sits outside the pane, on the bare field, so it takes a field-legal ink. */
+html[data-style="liquid-glass"] .more summary {
+  color: var(--lg-muted);
+  font-size: .82rem;
+}
+html[data-style="liquid-glass"] .more summary::before { color: var(--lg-accent); }
+html[data-style="liquid-glass"] .more summary:hover { color: var(--lg-accent); }
+
+/* ==========================================================================
+   Publications
+   ========================================================================== */
+html[data-style="liquid-glass"] .year {
+  font-family: var(--lg-mono);
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--lg-muted);
+}
+html[data-style="liquid-glass"] .year::after {
+  background: linear-gradient(90deg, var(--lg-hair), transparent);
+}
+
+html[data-style="liquid-glass"] .pub {
+  padding: 1.15rem 1.3rem;
+  border: 0;
+  border-radius: 18px;
+  background: var(--lg-pane);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+}
+html[data-style="liquid-glass"] .pub:hover {
+  transform: translateY(-2px);
+  border-color: transparent;
+  background: var(--lg-pane-hi);
+  box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
+}
+html[data-style="liquid-glass"] .pub-title {
+  font-family: var(--lg-serif);
+  font-size: 1.04rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.005em;
+  color: var(--lg-ink);
+}
+html[data-style="liquid-glass"] .pub-authors {
+  color: var(--lg-muted);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+/* The base runs a tinted highlighter behind the author's own name. Under glass
+   that reads as a smudge, so it is a weight change and an ink change instead. */
+html[data-style="liquid-glass"] .pub-authors b {
+  background: none;
+  color: var(--lg-ink);
+  font-weight: 600;
+}
+
+/* Venue tags. Tinted glass nested on the pub pane, so their backdrop is the
+   pane, not the field — which is what keeps them at 6.3:1 and up rather than
+   3:1. Every venue in the data gets a rule; --pricai and --adc were not in the
+   mockup and are new here. .venue alone is the fallback for any venue added
+   later without one, and it is checked too (8.7:1). */
+html[data-style="liquid-glass"] .venue {
+  padding: .2rem .6rem;
+  border: 1px solid var(--lg-hair);
+  border-radius: 7px;
+  background: var(--lg-chip-pane);
+  color: var(--lg-muted);
+  font-family: var(--lg-mono);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+}
+html[data-style="liquid-glass"] .venue--sigmod { color: #0a3d4b; background: rgba(15, 76, 92, .16);   border-color: rgba(15, 76, 92, .24); }
+html[data-style="liquid-glass"] .venue--vldb   { color: #2b3583; background: rgba(59, 72, 175, .14);  border-color: rgba(59, 72, 175, .24); }
+html[data-style="liquid-glass"] .venue--vldbj  { color: #4c2b83; background: rgba(105, 60, 175, .14); border-color: rgba(105, 60, 175, .24); }
+html[data-style="liquid-glass"] .venue--tkde   { color: #7c1f56; background: rgba(170, 40, 110, .13); border-color: rgba(170, 40, 110, .24); }
+html[data-style="liquid-glass"] .venue--eaai   { color: #1c5434; background: rgba(30, 110, 70, .14);  border-color: rgba(30, 110, 70, .24); }
+html[data-style="liquid-glass"] .venue--pricai { color: #6f3f12; background: rgba(180, 110, 40, .16); border-color: rgba(180, 110, 40, .26); }
+html[data-style="liquid-glass"] .venue--adc    { color: #35404e; background: rgba(60, 75, 95, .14);   border-color: rgba(60, 75, 95, .24); }
+
+html[data-style="liquid-glass"] .award {
+  padding: .2rem .55rem;
+  border: 1px solid rgba(214, 158, 46, .35);
+  border-radius: 7px;
+  background: rgba(214, 158, 46, .18);
+  color: #7a4a05;
+  font-size: .7rem;
+  font-weight: 600;
+}
+html[data-style="liquid-glass"] .pub-link {
+  padding: .22rem .6rem;
+  border: 1px solid var(--lg-hair);
+  border-radius: 7px;
+  background: var(--lg-chip-pane);
+  color: var(--lg-ink-2);
+  font-size: .74rem;
+  font-weight: 500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+  transition: background .16s ease, color .16s ease, border-color .16s ease;
+}
+html[data-style="liquid-glass"] .pub-link:hover {
+  background: var(--lg-chip-hi);
+  border-color: var(--lg-hair);
+  color: var(--lg-accent);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Contact
+   ========================================================================== */
+html[data-style="liquid-glass"] .contact {
+  position: relative;
+  padding: 1.6rem 1.75rem;
+  border: 0;
+  border-radius: 22px;
+  background: var(--lg-pane);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+}
+html[data-style="liquid-glass"] .contact > p {
+  margin: 0;
+  color: var(--lg-ink-2);
+  font-size: .95rem;
+  line-height: 1.66;
+}
+html[data-style="liquid-glass"] .contact-mail {
+  margin: 1.1rem 0 0;
+  padding: .55rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-bottom: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
+  color: var(--lg-on-fill);
+  font-family: var(--lg-mono);
+  font-size: .87rem;
+  font-weight: 500;
+  box-shadow:
+    0 6px 16px -6px rgba(13, 74, 90, .55),
+    inset 0 1px 0 rgba(255, 255, 255, .4);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+html[data-style="liquid-glass"] .contact-mail:hover {
+  transform: translateY(-1px);
+  border-bottom-color: rgba(255, 255, 255, .28);
+  text-decoration: none;
+  box-shadow:
+    0 10px 24px -6px rgba(13, 74, 90, .65),
+    inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+html[data-style="liquid-glass"] .contact-addr {
+  margin: 1.1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--lg-hair);
+  color: var(--lg-faint);
+  font-size: .82rem;
+}
+
+/* ==========================================================================
+   Footer — a band, not bare field
+   In the mockup the footer's ink sat straight on the background at 2.9:1. It
+   gets a surface of its own here, which fixes the ratio and closes the page
+   with the same material it opened with.
+   ========================================================================== */
+html[data-style="liquid-glass"] .foot {
+  background: var(--lg-foot);
+  border-top: 1px solid var(--lg-hair);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
+
+/* ==========================================================================
+   DARK
+   The one real lesson from building this material: dark glass must DARKEN.
+   Tinting the pane white — the obvious mirror of light mode — lets a blob push
+   it to L=0.23 and drops muted text to 1.7:1.
+   The port adds a second edge to that lesson. With no hero pane, the link pills
+   now sit on the raw bloom, so --lg-chip has to smoke as well; only chips that
+   are already nested on a dark pane (--lg-chip-pane: venue tags, DOI links) can
+   tint upward, because the pane beneath them has already done the darkening.
+   That is why those are two tokens and not one.
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  html[data-style="liquid-glass"] {
+    --lg-ink:      #eef2f6;
+    --lg-ink-2:    #ccd5df;
+    --lg-muted:    #b3bfcb;
+    --lg-faint:    #93a1b0;
+    --lg-accent:   #7ad7ee;
+    --lg-accent-2: #a5e6f7;
+    --lg-on-fill:  #04161c;
+
+    --lg-base: #080c12;
+    --lg-blobs:
+      radial-gradient(70rem 46rem at 12% -18%, rgba(22, 116, 142, .16), transparent 62%),
+      radial-gradient(56rem 40rem at 88%  -6%, rgba(66, 80, 178, .14),  transparent 64%),
+      radial-gradient(50rem 40rem at 78%  96%, rgba(178, 104, 58, .07), transparent 62%),
+      radial-gradient(52rem 42rem at -6%  92%, rgba(22, 116, 142, .08), transparent 62%);
+
+    --lg-pane:      rgba(10, 15, 22, .90);
+    --lg-pane-hi:   rgba(24, 34, 49, .94);
+    --lg-pane-flat: #0b1118;
+    --lg-chip:      rgba(8, 12, 18, .55);
+    --lg-chip-hi:   rgba(8, 12, 18, .72);
+    --lg-chip-pane: rgba(255, 255, 255, .09);
+    --lg-nav:       rgba(11, 16, 23, .82);
+    --lg-foot:      rgba(8, 12, 18, .72);
+    --lg-hair:      rgba(255, 255, 255, .13);
+    --lg-hair-soft: rgba(255, 255, 255, .07);
+
+    --lg-edge: linear-gradient(150deg,
+                 rgba(255, 255, 255, .55) 0%,
+                 rgba(255, 255, 255, .14) 30%,
+                 rgba(255, 255, 255, 0)   54%,
+                 rgba(255, 255, 255, .06) 74%,
+                 rgba(255, 255, 255, .28) 100%);
+    --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .16);
+    --lg-inset-lo: inset 0 -1px 0 rgba(0, 0, 0, .22);
+    --lg-shadow:
+         0 1px 2px rgba(0, 0, 0, .4),
+         0 8px 18px -8px rgba(0, 0, 0, .6),
+         0 26px 50px -24px rgba(0, 0, 0, .7);
+    --lg-shadow-lift:
+         0 2px 4px rgba(0, 0, 0, .45),
+         0 12px 26px -8px rgba(0, 0, 0, .66),
+         0 38px 66px -26px rgba(0, 0, 0, .8);
+
+    --accent-tint: rgba(122, 215, 238, .12);
+    --shadow-sm:   0 1px 2px rgba(0, 0, 0, .4);
+  }
+
+  html[data-style="liquid-glass"] .hero-glow {
+    background:
+      radial-gradient(28rem 18rem at 32% 52%, rgba(34, 150, 180, .18),  transparent 66%),
+      radial-gradient(24rem 16rem at 68% 40%, rgba(104, 118, 220, .15), transparent 66%),
+      radial-gradient(18rem 12rem at 54% 78%, rgba(224, 150, 80, .10),  transparent 66%);
+  }
+
+  html[data-style="liquid-glass"] .hero-portrait {
+    background: var(--lg-chip-hi);
+    box-shadow:
+      0 12px 30px -12px rgba(0, 0, 0, .8),
+      0 0 0 1px rgba(255, 255, 255, .12),
+      inset 0 2px 3px rgba(255, 255, 255, .22);
+  }
+  html[data-style="liquid-glass"] .hero-portrait img {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .10);
+  }
+  html[data-style="liquid-glass"] .hero-portrait .mono {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+  }
+
+  /* Every white-tinted highlight in the light layer has to be re-cut, or the
+     pills glow like strip lights against a dark field. */
+  html[data-style="liquid-glass"] .hero-pronouns,
+  html[data-style="liquid-glass"] .sec-count,
+  html[data-style="liquid-glass"] .style-toggle {
+    border-color: var(--lg-hair);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
+  html[data-style="liquid-glass"] .hero-links a {
+    border-color: rgba(255, 255, 255, .14);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, .4),
+      0 4px 10px -6px rgba(0, 0, 0, .6),
+      inset 0 1px 0 rgba(255, 255, 255, .18);
+  }
+  html[data-style="liquid-glass"] .hero-links a:hover {
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, .45),
+      0 10px 20px -8px rgba(0, 0, 0, .7),
+      inset 0 1px 0 rgba(255, 255, 255, .26);
+  }
+  html[data-style="liquid-glass"] .hero-links .is-cv,
+  html[data-style="liquid-glass"] .hero-links .is-cv:hover,
+  html[data-style="liquid-glass"] .contact-mail,
+  html[data-style="liquid-glass"] .contact-mail:hover {
+    background: linear-gradient(180deg, #8fdff2, #4fb8d4);
+    border-color: rgba(255, 255, 255, .3);
+    color: var(--lg-on-fill);
+    box-shadow:
+      0 6px 16px -6px rgba(0, 0, 0, .7),
+      inset 0 1px 0 rgba(255, 255, 255, .5);
+  }
+
+  html[data-style="liquid-glass"] .nav {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .10),
+      0 8px 24px -18px rgba(0, 0, 0, .8);
+  }
+  html[data-style="liquid-glass"] .nav a:hover { background: rgba(255, 255, 255, .10); }
+  html[data-style="liquid-glass"] .nav a.is-active {
+    background: #8fdff2;
+    color: #06222b;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
+  }
+  html[data-style="liquid-glass"] .style-toggle-dot {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, .5),
+      inset 0 0 0 1px rgba(255, 255, 255, .25);
+  }
+
+  html[data-style="liquid-glass"] .sec-note a { text-decoration-color: rgba(122, 215, 238, .4); }
+
+  html[data-style="liquid-glass"] .venue { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
+  html[data-style="liquid-glass"] .venue--sigmod { color: #7fd8ee; background: rgba(56, 189, 248, .15);  border-color: rgba(125, 211, 240, .3); }
+  html[data-style="liquid-glass"] .venue--vldb   { color: #a9b4ff; background: rgba(129, 140, 248, .15); border-color: rgba(160, 170, 250, .3); }
+  html[data-style="liquid-glass"] .venue--vldbj  { color: #cbb0ff; background: rgba(167, 139, 250, .15); border-color: rgba(190, 165, 255, .3); }
+  html[data-style="liquid-glass"] .venue--tkde   { color: #ff9ecb; background: rgba(244, 114, 182, .15); border-color: rgba(248, 150, 200, .3); }
+  html[data-style="liquid-glass"] .venue--eaai   { color: #7fdcaa; background: rgba(52, 211, 153, .15);  border-color: rgba(110, 225, 180, .3); }
+  html[data-style="liquid-glass"] .venue--pricai { color: #f0b98a; background: rgba(230, 150, 90, .15);  border-color: rgba(235, 175, 130, .3); }
+  html[data-style="liquid-glass"] .venue--adc    { color: #adbccd; background: rgba(150, 175, 200, .15); border-color: rgba(175, 195, 215, .3); }
+  html[data-style="liquid-glass"] .award {
+    color: #f3ce7a;
+    background: rgba(214, 158, 46, .18);
+    border-color: rgba(214, 158, 46, .4);
+  }
+  html[data-style="liquid-glass"] .pub-link {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);
+  }
+  html[data-style="liquid-glass"] .pub-link:hover {
+    background: rgba(255, 255, 255, .16);
+    color: var(--lg-accent);
+  }
+
+  /* Footer only. Grouping the active nav pill in here once cost it the .5
+     highlight set above — same specificity, later in the source. */
+  html[data-style="liquid-glass"] .foot {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+  }
+}
+
+/* ==========================================================================
+   Narrow — matches the base's 40rem breakpoint, not the mockup's 46rem
+   A media query adds no specificity, so any base rule inside its own narrow
+   block loses to my scoped rule at every width. Anything I restyle that the
+   base also adjusts down here has to be re-adjusted here, or it silently
+   regresses on phones. That is what this block is for.
+   ========================================================================== */
+@media (max-width: 40rem) {
+  /* The base trims this panel on narrow screens for a real reason: its padding
+     made its justified text the narrowest column on the page and opened rivers.
+     My padding rule above would have quietly undone that. */
+  html[data-style="liquid-glass"] .contact { padding: 1.15rem; }
+  html[data-style="liquid-glass"] .prose { padding: 1.15rem; }
+  html[data-style="liquid-glass"] .news { padding: 1.1rem 1.15rem; }
+
+  /* The base hides .nav-brand here and packs the row to the left, which would
+     leave the toggle floating next to the links instead of on the column edge. */
+  html[data-style="liquid-glass"] .style-toggle { margin-left: auto; }
+
+  html[data-style="liquid-glass"] .hero-links { padding-top: 1rem; }
+  html[data-style="liquid-glass"] .prose { font-size: .95rem; }
+}
+
+/* ==========================================================================
+   Degradation
+   ========================================================================== */
+
+/* Only the nav blurs, so this is the only thing the fallback has to repair.
+   An unblurred 82% nav is legible — the black-backdrop bound guarantees that —
+   but it shows sharp content ghosting through, so it goes near-opaque instead. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html[data-style="liquid-glass"] { --lg-nav: rgba(255, 255, 255, .96); }
+  @media (prefers-color-scheme: dark) {
+    html[data-style="liquid-glass"] { --lg-nav: rgba(11, 16, 23, .96); }
+  }
+}
+
+/* Asked for less transparency: the effect is the thing they opted out of, so it
+   goes. Panes go opaque and the field flattens. Every ratio in this file only
+   improves — the numbers were computed against the translucent path, which is
+   the worst case by construction. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-style="liquid-glass"] {
+    --lg-pane:      var(--lg-pane-flat);
+    --lg-pane-hi:   #ffffff;
+    --lg-chip:      rgba(255, 255, 255, .94);
+    --lg-chip-hi:   #ffffff;
+    --lg-chip-pane: rgba(255, 255, 255, .94);
+    --lg-nav:       #ffffff;
+    --lg-foot:      rgba(255, 255, 255, .96);
+    --lg-blur:      none;
+  }
+  html[data-style="liquid-glass"] body::before { opacity: .35; }
+  @media (prefers-color-scheme: dark) {
+    html[data-style="liquid-glass"] {
+      --lg-pane-hi:   #18222f;
+      --lg-chip:      rgba(11, 16, 23, .96);
+      --lg-chip-hi:   #18222f;
+      --lg-chip-pane: rgba(255, 255, 255, .12);
+      --lg-nav:       #0b1017;
+      --lg-foot:      rgba(8, 12, 18, .96);
+    }
+  }
+}
+
+/* The base already kills transitions globally under reduced-motion, but it does
+   it with `*`, which my scoped hover transforms would out-specify. Restated. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-style="liquid-glass"] *,
+  html[data-style="liquid-glass"] *::before,
+  html[data-style="liquid-glass"] *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  html[data-style="liquid-glass"] .interest:hover,
+  html[data-style="liquid-glass"] .pub:hover,
+  html[data-style="liquid-glass"] .hero-links a:hover,
+  html[data-style="liquid-glass"] .contact-mail:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Print
+   The base's print block sets `.pub, .interest, .contact { background: none }`
+   and so on, but it is unscoped and my rules out-specify it — so without this,
+   the panes and the field would print. Restated at this layer's specificity.
+   ========================================================================== */
+@media print {
+  html[data-style="liquid-glass"] body::before { display: none; }
+  html[data-style="liquid-glass"] { background: #fff; }
+  html[data-style="liquid-glass"] .hero { border-bottom: 0; }
+  html[data-style="liquid-glass"] .pub,
+  html[data-style="liquid-glass"] .interest,
+  html[data-style="liquid-glass"] .contact,
+  html[data-style="liquid-glass"] .prose,
+  html[data-style="liquid-glass"] .news {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  html[data-style="liquid-glass"] .prose::before,
+  html[data-style="liquid-glass"] .news::before,
+  html[data-style="liquid-glass"] .pub::before,
+  html[data-style="liquid-glass"] .contact::before,
+  html[data-style="liquid-glass"] .interest::after { display: none; }
+  html[data-style="liquid-glass"] .contact-mail {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #000;
+    box-shadow: none;
+  }
+  html[data-style="liquid-glass"] .venue,
+  html[data-style="liquid-glass"] .pub-link,
+  html[data-style="liquid-glass"] .award {
+    background: none;
+    box-shadow: none;
+  }
 }

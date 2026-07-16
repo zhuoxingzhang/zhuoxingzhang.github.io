@@ -60,5 +60,15 @@
       <li><a href="#publications">Publications</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    {%- comment -%}
+      Rendered with the label for the style the reader is NOT on, matching the
+      default in <html>. The script rewrites it on load if their stored choice
+      differs, so the button never advertises the style already showing.
+    {%- endcomment -%}
+    <button class="style-toggle" type="button"
+            data-label-archival-warm="Glass" data-label-liquid-glass="Archival">
+      <span class="style-toggle-dot" aria-hidden="true"></span>
+      <span class="style-toggle-text">Glass</span>
+    </button>
   </div>
 </nav>
