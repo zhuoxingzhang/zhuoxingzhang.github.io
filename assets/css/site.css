@@ -348,17 +348,22 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   text-justify: inter-word;
 }
 
-/* Justification needs enough words per line to spread the slack across. Below
-   this width a line holds too few, and the gaps open into rivers, so the text
-   goes back to ragged-right. */
+/* Narrow screens keep the justification, but a 35–44 character line cannot
+   absorb the slack between words on its own — that is what opens rivers.
+   Hyphenation gives the slack somewhere to go, which is how narrow justified
+   columns have always been set. Needs the lang attribute on <html>.
+
+   Author lists are the exception: they are people's names, and breaking one
+   across a line ("Zhuox-ing") is worse than an uneven right edge. */
 @media (max-width: 40rem) {
   .prose p,
   .interest p,
   .news li span,
-  .contact > p,
-  .pub-authors {
-    text-align: left;
+  .contact > p {
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
+  .pub-authors { text-align: left; }
 }
 
 /* ==========================================================================
