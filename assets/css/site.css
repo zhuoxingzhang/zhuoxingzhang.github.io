@@ -809,14 +809,15 @@ html[data-style="archival-warm"] .style-toggle-text { display: inline-block; }
 /* ==========================================================================
    Sections
    ========================================================================== */
-/* Between sections. The base sets none, so the rhythm used to arrive by
-   accident: About ends in a paragraph whose UA margin (1em of the prose's
-   1.05rem) escaped its section and opened a gap above Research, while the
-   interest grid and the lists end flush — News, Publications and Contact sat
-   16.8px tighter above their headings than Research did. 1.05rem is that same
-   escaped margin stated on purpose; About's still collapses into it, so every
-   heading now clears the block above it by the same amount. */
-html[data-style="archival-warm"] .sec + .sec { margin-top: 1.05rem; }
+/* Between sections. Matched to the glass layer's 3.1rem (2.5rem narrow, below)
+   so a reader toggling styles sees the sections hold their place rather than
+   jump: the two layers now share one section rhythm. This was 1.05rem — the
+   escaped-paragraph margin that fell out of About's prose — which set a tighter
+   page than glass and, stacked with archival's taller serif cards, made the
+   toggle shove every heading tens of pixels. It only lands aligned because the
+   card trims below (interest p, interest h3, pub meta, contact) pull the block
+   heights back toward glass's; margin alone could not, and made it worse. */
+html[data-style="archival-warm"] .sec + .sec { margin-top: 3.1rem; }
 
 html[data-style="archival-warm"] .sec-h {
   font-family: var(--serif);
@@ -930,14 +931,21 @@ html[data-style="archival-warm"] .interest:hover {
 html[data-style="archival-warm"] .interest h3 {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 1.1rem;
+  /* 1.05 not 1.1: holds the title to one line, so the card sits at the glass
+     card's height and the grid does not tower over glass's when toggled — the
+     effect multiplies on phones, where the four cards stack instead of pairing. */
+  font-size: 1.05rem;
   line-height: 1.32;
   color: var(--ink);
-  padding: 0 2.6rem .55rem 0;       /* clears the corner number */
-  margin: 0 0 .7rem;
+  padding: 0 2.6rem .4rem 0;         /* clears the corner number */
+  margin: 0 0 .5rem;
   border-bottom: 1px solid var(--rule-soft);
 }
 html[data-style="archival-warm"] .interest p {
+  /* margin:0 like the glass card. Without it the UA's 1em top and bottom rode
+     on every card — ~29px of height the other style never had, which the toggle
+     read as the cards growing. */
+  margin: 0;
   font-family: var(--serif);
   font-size: .92rem;
   line-height: 1.66;
@@ -1035,7 +1043,7 @@ html[data-style="archival-warm"] .pub-title {
 }
 
 html[data-style="archival-warm"] .pub-authors {
-  margin: 0 0 .75rem;
+  margin: 0 0 .55rem;               /* trimmed with the meta rule, for toggle parity */
   font-family: var(--serif);
   font-size: .9rem;
   line-height: 1.55;
@@ -1055,7 +1063,10 @@ html[data-style="archival-warm"] .pub-authors b {
 html[data-style="archival-warm"] .pub-meta {
   gap: .5rem;
   margin: 0;
-  padding-top: .7rem;
+  /* .2 not .7: the rule stays but sits close to the tags, near glass's flush
+     meta. Over ten cards the old .7 inset was the single biggest reason the
+     publication list stood taller than glass's and dragged the toggle. */
+  padding-top: .2rem;
   border-top: 1px solid var(--rule-soft);
   font-size: .75rem;
 }
@@ -1146,7 +1157,7 @@ html[data-style="archival-warm"] .contact > p {
   color: var(--ink);
 }
 html[data-style="archival-warm"] .contact-mail {
-  margin: 1rem 0 0;
+  margin: .7rem 0 0;                 /* tightened toward glass's contact rhythm */
   border-bottom: 0;                 /* the base draws one; use a real underline */
   font-family: var(--serif);
   font-size: 1.22rem;
@@ -1168,8 +1179,8 @@ html[data-style="archival-warm"] .contact-mail:hover {
    comes out at 16px body copy. The base never tripped on this because it only
    sets margin on .contact > p. */
 html[data-style="archival-warm"] .contact > p.contact-addr {
-  margin: 1.15rem 0 0;
-  padding-top: .85rem;
+  margin: .9rem 0 0;
+  padding-top: .6rem;
   border-top: 1px solid var(--rule-soft);
   font-family: var(--sans);
   font-size: .8rem;
@@ -1196,6 +1207,10 @@ html[data-style="archival-warm"] .foot-inner {
    Responsive
    ========================================================================== */
 @media (max-width: 40rem) {
+  /* Glass narrows its section gap to 2.5rem here; match it so the toggle stays
+     put on phones too. */
+  html[data-style="archival-warm"] .sec + .sec { margin-top: 2.5rem; }
+
   /* The corner number and the heading share a line at this width and the
      heading has nowhere to go, so pull the number's reserved space in. */
   html[data-style="archival-warm"] .interest { padding: 1.1rem 1.15rem 1.2rem; }
