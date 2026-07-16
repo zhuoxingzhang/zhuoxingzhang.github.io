@@ -34,8 +34,11 @@
       column starts — indented past the portrait — so it ran narrower than every
       block below it. Spanning both columns lines its edges up with the page.
     {%- endcomment -%}
+    {%- comment -%}
+      No address here: Contact carries it, and repeating it in the hero only
+      widened the surface a harvester can scrape.
+    {%- endcomment -%}
     <ul class="hero-links">
-      <li>{% include email.html class="is-mail" %}</li>
       {% for l in p.links %}
         <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
       {% endfor %}
