@@ -1,8 +1,27 @@
 <!doctype html>
-<html lang="{{ site.lang | default: 'en' }}">
+{%- comment -%}
+  Two axes, kept separate:
+    prefers-color-scheme  -> light / dark, the reader's OS decides
+    data-style            -> archival-warm / liquid-glass, the reader picks
+  Every style has to work in both schemes.
+{%- endcomment -%}
+<html lang="{{ site.lang | default: 'en' }}"
+      data-style="{{ site.data.profile.style | default: 'archival-warm' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Before first paint: a returning reader's chosen style wins over the
+    // default rendered above. Any later and they see the wrong one flash.
+    (function () {
+      try {
+        var s = localStorage.getItem('site-style');
+        if (s === 'archival-warm' || s === 'liquid-glass') {
+          document.documentElement.setAttribute('data-style', s);
+        }
+      } catch (e) { /* private mode: keep the default */ }
+    })();
+  </script>
   <meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">
   {% seo %}
@@ -32,6 +51,39 @@
   </footer>
 
   <script>
+    // The style switch. data-style on <html> is the single source of truth;
+    // the choice is remembered per-browser, so it never overrides the owner's
+    // default for anyone who has not pressed the button.
+    (function () {
+      var STYLES = ['archival-warm', 'liquid-glass'];
+      var root = document.documentElement;
+      var btn = document.querySelector('.style-toggle');
+      if (!btn) return;
+
+      function current() {
+        var s = root.getAttribute('data-style');
+        return STYLES.indexOf(s) === -1 ? STYLES[0] : s;
+      }
+
+      // The button offers the style you are not on, so its label is the target.
+      function paint() {
+        var next = current() === STYLES[0] ? STYLES[1] : STYLES[0];
+        var label = btn.getAttribute('data-label-' + current()) || next;
+        btn.querySelector('.style-toggle-text').textContent = label;
+        btn.setAttribute('aria-label', 'Switch to the ' + label + ' style');
+        btn.setAttribute('title', 'Switch to the ' + label + ' style');
+      }
+
+      btn.addEventListener('click', function () {
+        var next = current() === STYLES[0] ? STYLES[1] : STYLES[0];
+        root.setAttribute('data-style', next);
+        try { localStorage.setItem('site-style', next); } catch (e) { /* private mode */ }
+        paint();
+      });
+
+      paint();
+    })();
+
     // Restore the contact address. It ships reversed (see _includes/email.html)
     // so that the markup a harvester downloads holds no usable address; the
     // " [at] " fallback in the markup is what shows if this never runs.
