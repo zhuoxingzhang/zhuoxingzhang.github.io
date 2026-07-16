@@ -1157,11 +1157,10 @@ html[data-style="archival-warm"] .contact > p {
   color: var(--ink);
 }
 html[data-style="archival-warm"] .contact-mail {
-  /* Left at the bookplate's own roomier spacing, not squeezed toward glass:
-     contact sits at the foot of the page, so its inner rhythm barely moves the
-     toggle, and the 1.22rem address wants air above it to read as a bookplate
-     rather than a form. */
-  margin: 1rem 0 0;
+  /* A modest gap above the email line, so it sits close under the invitation
+     rather than drifting toward the middle of the plate. The bookplate's air
+     sits below it, in the ruled address block. */
+  margin: .7rem 0 0;
   border-bottom: 0;                 /* the base draws one; use a real underline */
   font-family: var(--serif);
   font-size: 1.22rem;
@@ -2017,7 +2016,10 @@ html[data-style="liquid-glass"] .news time {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-html[data-style="liquid-glass"] .news li span { color: var(--lg-ink-2); }
+/* .9rem, not the inherited 1rem: unset, the news line was the largest body text
+   in this layer — bigger than the prose it sits near — which read as out of
+   scale, most of all on a phone. */
+html[data-style="liquid-glass"] .news li span { font-size: .9rem; color: var(--lg-ink-2); }
 html[data-style="liquid-glass"] .news li em { font-style: italic; color: var(--lg-ink); }
 html[data-style="liquid-glass"] .news li strong { font-weight: 600; color: var(--lg-ink); }
 
