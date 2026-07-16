@@ -27,17 +27,22 @@
       </p>
 
       {% if p.tagline %}<p class="hero-tagline">{{ p.tagline }}</p>{% endif %}
-
-      <ul class="hero-links">
-        <li>{% include email.html class="is-mail" %}</li>
-        {% for l in p.links %}
-          <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
-        {% endfor %}
-        {% if p.cv and p.cv != "" %}
-          <li><a class="is-cv" href="{{ p.cv | relative_url }}">CV</a></li>
-        {% endif %}
-      </ul>
     </div>
+
+    {%- comment -%}
+      Outside .hero-text on purpose. Inside it, the row started where the text
+      column starts — indented past the portrait — so it ran narrower than every
+      block below it. Spanning both columns lines its edges up with the page.
+    {%- endcomment -%}
+    <ul class="hero-links">
+      <li>{% include email.html class="is-mail" %}</li>
+      {% for l in p.links %}
+        <li><a href="{{ l.url }}" rel="me noopener">{{ l.name }}</a></li>
+      {% endfor %}
+      {% if p.cv and p.cv != "" %}
+        <li><a class="is-cv" href="{{ p.cv | relative_url }}">CV</a></li>
+      {% endif %}
+    </ul>
 
   </div>
 </header>

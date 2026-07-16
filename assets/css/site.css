@@ -118,7 +118,8 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   padding: 4.5rem var(--pad) 3.25rem;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 2.25rem;
+  column-gap: 2.25rem;
+  row-gap: 1.6rem;
   align-items: center;
 }
 
@@ -188,9 +189,13 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 
 .hero-links {
+  /* Spans the portrait column too, so the row starts on the same left edge as
+     the sections below rather than behind the portrait. Row spacing comes from
+     the grid's row-gap. */
+  grid-column: 1 / -1;
   list-style: none;
   display: flex; flex-wrap: wrap; gap: .45rem;
-  margin: 1.5rem 0 0; padding: 0;
+  margin: 0; padding: 0;
 }
 .hero-links a {
   display: inline-block;
@@ -251,7 +256,10 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 .nav ul {
   list-style: none;
-  display: flex; gap: .25rem;
+  /* Spacing comes from the gap, not from padding on the links. Padding would
+     inset the last item's text from the column edge, leaving "Contact" short of
+     the right edge that every block below lines up on. */
+  display: flex; gap: 1.4rem;
   margin: 0; padding: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -259,7 +267,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 .nav ul::-webkit-scrollbar { display: none; }
 .nav a {
   display: block;
-  padding: .95rem .7rem;
+  padding: .95rem 0;
   font-size: .84rem;
   color: var(--muted);
   white-space: nowrap;
