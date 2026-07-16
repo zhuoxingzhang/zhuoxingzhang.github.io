@@ -1157,7 +1157,11 @@ html[data-style="archival-warm"] .contact > p {
   color: var(--ink);
 }
 html[data-style="archival-warm"] .contact-mail {
-  margin: .7rem 0 0;                 /* tightened toward glass's contact rhythm */
+  /* Left at the bookplate's own roomier spacing, not squeezed toward glass:
+     contact sits at the foot of the page, so its inner rhythm barely moves the
+     toggle, and the 1.22rem address wants air above it to read as a bookplate
+     rather than a form. */
+  margin: 1rem 0 0;
   border-bottom: 0;                 /* the base draws one; use a real underline */
   font-family: var(--serif);
   font-size: 1.22rem;
@@ -1179,8 +1183,8 @@ html[data-style="archival-warm"] .contact-mail:hover {
    comes out at 16px body copy. The base never tripped on this because it only
    sets margin on .contact > p. */
 html[data-style="archival-warm"] .contact > p.contact-addr {
-  margin: .9rem 0 0;
-  padding-top: .6rem;
+  margin: 1.15rem 0 0;
+  padding-top: .85rem;
   border-top: 1px solid var(--rule-soft);
   font-family: var(--sans);
   font-size: .8rem;
