@@ -155,15 +155,17 @@ body { margin: 0; }
   .pub-authors { text-align: left; }
 
   /* The bookplate is still the narrowest measure on the page after its padding
-     trim (see the layout collapse below), and the 5-letter floor above left its
-     justified lines gappy. A ragged right was tried and rejected — the owner
-     wants every line filled — so the breaker gets more room instead: words of
-     four letters may break here, and engines that can plan the paragraph as a
-     whole (text-wrap: pretty) trade breaks between lines to even the spacing. */
+     trim (see the layout collapse below), and hyphens: auto alone was not
+     filling it: it only fires where the engine ships an English hyphenation
+     dictionary, and the phone this was debugged on broke nothing. So the
+     paragraph carries its own &shy; break points in the markup (index.html),
+     which every engine honours, and the floor here drops to 4 letters so none
+     of them is refused. text-wrap: pretty was tried too and made the gaps
+     worse — licensed to replan the paragraph, the engine traded hyphens away
+     for space — so it is gone. */
   .contact > p {
     -webkit-hyphenate-limit-chars: 4 2 2;
     hyphenate-limit-chars: 4 2 2;
-    text-wrap: pretty;
   }
 }
 
@@ -1938,7 +1940,22 @@ html[data-style="liquid-glass"] .news li {
   border-left: 2px solid var(--lg-hair);
   color: var(--lg-ink-2);
 }
+/* The rail must stop at the last dot rather than run on to the pane's edge —
+   but a transparent border alone cut the last entry off the timeline
+   altogether: it dangled below the item above with a dot and no line. Keep
+   the transparent border for its 2px of geometry, and draw the last stub of
+   rail on the ::after (the dot owns ::before), from the top of the entry down
+   to its dot's centre and no further. */
 html[data-style="liquid-glass"] .news li:last-child { border-left-color: transparent; }
+html[data-style="liquid-glass"] .news li:last-child::after {
+  content: "";
+  position: absolute;
+  left: -2px;                   /* the strip the others' border paints */
+  top: 0;
+  width: 2px;
+  height: calc(.85rem + 4px);   /* the dot's top offset plus its radius */
+  background: var(--lg-hair);
+}
 /* Centred on the 2px rail: `left` resolves against the li's padding box, whose
    left edge is the inner edge of that border. */
 html[data-style="liquid-glass"] .news li::before {
@@ -2418,7 +2435,8 @@ html[data-style="liquid-glass"] .foot-inner p { margin: 0; }
   html[data-style="liquid-glass"] .pub::before,
   html[data-style="liquid-glass"] .contact::before,
   html[data-style="liquid-glass"] .interest::after,
-  html[data-style="liquid-glass"] .news li::before { display: none; }
+  html[data-style="liquid-glass"] .news li::before,
+  html[data-style="liquid-glass"] .news li::after { display: none; }
   html[data-style="liquid-glass"] .interest::before { position: static; }
   html[data-style="liquid-glass"] .news li { border-left: 0; }
   html[data-style="liquid-glass"] .hero-portrait { box-shadow: none; }
