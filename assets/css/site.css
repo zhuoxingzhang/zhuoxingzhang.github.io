@@ -334,6 +334,34 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 .prose p:last-child { margin-bottom: 0; }
 
 /* ==========================================================================
+   Justified body text
+   Running text is justified, as on the previous version of this site.
+   Headings and titles are deliberately left out: justifying a heading that
+   wraps stretches its first line across the column and reads as a mistake.
+   ========================================================================== */
+.prose p,
+.interest p,
+.news li span,
+.contact > p,
+.pub-authors {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+/* Justification needs enough words per line to spread the slack across. Below
+   this width a line holds too few, and the gaps open into rivers, so the text
+   goes back to ragged-right. */
+@media (max-width: 40rem) {
+  .prose p,
+  .interest p,
+  .news li span,
+  .contact > p,
+  .pub-authors {
+    text-align: left;
+  }
+}
+
+/* ==========================================================================
    Research interests
    ========================================================================== */
 .interests {
