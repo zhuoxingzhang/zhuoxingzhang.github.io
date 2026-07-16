@@ -2131,7 +2131,13 @@ html[data-style="liquid-glass"] .contact > p.contact-addr {
   padding-top: 1rem;
   border-top: 1px solid var(--lg-hair);
   color: var(--lg-faint);
-  font-size: .82rem;
+  /* .8rem to match the archival address, and not .82 as it was: on a phone
+     the two styles resolve to the same system font, and at .82 the first
+     syllable of "Auckland" no longer fit the justified first line — its width
+     went into the word gaps instead. This pane is 2px wider inside than the
+     archival one (no real border), so whatever line the archival address can
+     compose, this one can compose at least as tightly. */
+  font-size: .8rem;
 }
 
 /* ==========================================================================
