@@ -88,6 +88,40 @@ body { margin: 0; }
   padding-right: var(--pad);
 }
 
+/* Vertical padding is a default, not a law — a style may set its own rhythm.
+   It has to exist here though: with only the horizontal padding above, the
+   hero and the content sat flush against their neighbours, because both styles
+   read "the base owns the containers" and left the whole box alone. */
+.hero-inner { padding-top: 4.5rem;  padding-bottom: 3.25rem; }
+.main       { padding-top: 3.5rem;  padding-bottom: 2rem; }
+.foot-inner { padding-top: 1.5rem;  padding-bottom: 1.5rem; }
+
+/* --------------------------------------------------------------------------
+   Component spacing — defaults carried over from the design these styles
+   replaced.
+
+   Every one of these is overridden by whichever style has an opinion, and both
+   styles have opinions about most of them. They live here because a style that
+   forgets one should get a sensible box, not a collapsed one: when this was
+   left entirely to the styles, archival shipped .contact with no padding at all
+   (its text ran straight across the ornamental rule inset 5px inside the
+   border) and liquid-glass shipped .interest with none (its counter overlapped
+   the heading it numbers).
+   -------------------------------------------------------------------------- */
+.nav a          { padding: .95rem 0; }
+.hero-links a   { padding: .5rem .75rem; }
+.hero-pronouns  { padding: .2rem .5rem; }
+.hero-portrait  { padding: 5px; }
+.sec-count      { padding: .2rem .5rem; }
+.interest       { padding: 1.4rem 1.4rem 1.4rem 3.4rem; }
+.news li        { padding: .6rem 0 .6rem 1.1rem; }
+.more summary   { padding-left: 1.1rem; }
+.pub            { padding: 1.15rem 1.25rem; }
+.venue,
+.award          { padding: .26rem .55rem; }
+.pub-link       { padding: .26rem .5rem; }
+.contact        { padding: 1.75rem; }
+
 /* --------------------------------------------------------------------------
    Justification. Running text only — never headings: a heading that wraps
    would have its first line stretched across the column, which reads as a
@@ -258,11 +292,22 @@ body { margin: 0; }
 /* Layout collapse. Look is the styles' business; where things go is this
    layer's, at every width. */
 @media (max-width: 40rem) {
-  .hero-inner { grid-template-columns: 1fr; row-gap: 1.35rem; }
+  .hero-inner {
+    grid-template-columns: 1fr;
+    row-gap: 1.35rem;
+    padding-top: 2.75rem;
+    padding-bottom: 2.25rem;
+  }
   .hero-portrait { width: 6.5rem; height: 6.5rem; }
+  .main { padding-top: 2.5rem; }
   .nav-brand { display: none; }
   .nav-inner { justify-content: flex-start; }
   .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+
+  /* This panel's padding made its text the narrowest column on the page — 269px
+     against 327px for the prose — so its justified lines held the fewest words
+     and opened the widest gaps. Trimmed, it sets like everything else. */
+  .contact { padding: 1.15rem; }
 }
 
 /* --------------------------------------------------------------------------
