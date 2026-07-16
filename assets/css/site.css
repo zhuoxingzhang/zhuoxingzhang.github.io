@@ -820,6 +820,14 @@ html[data-style="archival-warm"] .sec-h {
   gap: .85rem;
   margin: 0 0 1.35rem;
 }
+/* The margin below a heading is uniform, but the eye measures ink to ink:
+   Research and Contact open with a card whose border sits right at the
+   margin's edge, while About opens with bare prose whose first line spends
+   its own half-leading (1.75 line-height ≈ 6px) before any ink shows. Same
+   margin, wider-looking gap — so the heading over prose gives that lead back.
+   Engines without :has() keep the uniform margin, which is merely the old
+   look. */
+html[data-style="archival-warm"] .sec-h:has(+ .prose) { margin-bottom: .85rem; }
 /* The one place small caps are spent. Everything else stays in its own case. */
 html[data-style="archival-warm"] .sec-h > span {
   font-size: 1.2rem;
@@ -2320,16 +2328,18 @@ html[data-style="liquid-glass"] .foot-inner p { margin: 0; }
   /* The base trims this panel for a real reason: its padding made the justified
      text the narrowest column on the page and opened rivers. The pane rule above
      would have quietly undone that. */
-  html[data-style="liquid-glass"] .contact { padding: 1.15rem; }
-  /* 1.02rem — the archival bookplate's size — and not the pane's usual .95:
-     measured across phone fonts and widths, .95 put this panel's justified
-     lines in a narrow band of measure-per-em where the last short word of a
-     line just misses the fit and its width spreads into the word gaps (the
-     owner's phone sat exactly there; the archival panel, at 1.02rem on the
-     same phone, set tight). 1.02 lands well inside the band where the &shy;
-     points get used and the lines fill, and it means both styles read at the
-     same size on a phone. The address keeps its own smaller rule below. */
-  html[data-style="liquid-glass"] .contact > p { font-size: 1.02rem; }
+  /* 1rem inset, not the 1.15 the other panes keep: the owner wants this
+     panel's lines to carry the same text as the archival bookplate's, and on
+     his phone the system sans runs a few percent wider per character than the
+     serif — at the same nominal size the glass lines broke earlier and read
+     shorter. The extra measure and the size below buy those characters back. */
+  html[data-style="liquid-glass"] .contact { padding: 1.15rem 1rem; }
+  /* 1rem, between the pane's usual .95 (which sat exactly in the band where
+     the last short word of a justified line just misses and its width spreads
+     into the word gaps — measured on the owner's phone) and the archival
+     1.02 (whose nominal parity turned out optically bigger in his sans, see
+     above). The address keeps its own smaller rule below. */
+  html[data-style="liquid-glass"] .contact > p { font-size: 1rem; }
   html[data-style="liquid-glass"] .prose { padding: 1.15rem; font-size: .95rem; }
   html[data-style="liquid-glass"] .news { padding: 1.1rem 1.15rem; }
   /* The base hides .nav-brand here and packs the row left, which would leave the
