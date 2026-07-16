@@ -121,27 +121,32 @@
       // On a narrow screen the list scrolls sideways with its scrollbar hidden
       // (.nav ul), so the link the highlight moves to can sit past the edge —
       // Contact stayed hidden until the reader thought to swipe the bar itself.
-      // Walk the strip along with the highlight, plus a sliver of the next
-      // link as the hint that there is more. Not scrollIntoView: that scrolls
-      // every ancestor, which would cut short the page's own glide to the
-      // section the reader just tapped.
+      //
+      // The strip parks so the lit link sits SECOND from the left: its left
+      // neighbour stays whole beside it and the next one shows to its right,
+      // so either direction is one tap away, never a swipe. The first link has
+      // no neighbour and parks first; near the end the browser clamps the
+      // scroll, so Contact lands flush right with the others lined up before
+      // it. Nudging just enough to reveal was tried first and rejected — it
+      // left the neighbours cut off at the edges.
+      //
+      // Not scrollIntoView: that scrolls every ancestor, which would cut short
+      // the page's own glide to the section the reader just tapped.
       var strip = nav ? nav.querySelector('ul') : null;
-      function reveal(link) {
+      function reveal(i) {
         if (!strip || strip.scrollWidth <= strip.clientWidth) return;
-        var l = link.getBoundingClientRect();
-        var s = strip.getBoundingClientRect();
-        var d = 0;
-        if (l.left < s.left) d = l.left - s.left - 24;
-        else if (l.right > s.right) d = l.right - s.right + 24;
-        if (!d) return;
-        if (strip.scrollBy) {
-          strip.scrollBy({
-            left: d,
+        var lead = pairs[i > 0 ? i - 1 : 0].link;
+        var target = lead.getBoundingClientRect().left
+                   - strip.getBoundingClientRect().left
+                   + strip.scrollLeft;
+        if (strip.scrollTo) {
+          strip.scrollTo({
+            left: target,
             behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
               ? 'auto' : 'smooth'
           });
         } else {
-          strip.scrollLeft += d;
+          strip.scrollLeft = target;
         }
       }
 
@@ -155,23 +160,24 @@
       var active = null;
       function update() {
         var y = line();
-        var current = pairs[0];
+        var idx = 0;
         for (var i = 0; i < pairs.length; i++) {
           if (pairs[i].el.getBoundingClientRect().top + window.scrollY <= y) {
-            current = pairs[i];
+            idx = i;
           }
         }
         // The last section can sit too close to the end of the document to ever
         // scroll up to the line. At the bottom, it takes the highlight.
         var atEnd = window.innerHeight + window.scrollY >=
                     document.documentElement.scrollHeight - 2;
-        if (atEnd) current = pairs[pairs.length - 1];
+        if (atEnd) idx = pairs.length - 1;
 
+        var current = pairs[idx];
         if (current.link === active) return;
         if (active) active.classList.remove('is-active');
         current.link.classList.add('is-active');
         active = current.link;
-        reveal(active);
+        reveal(idx);
       }
 
       var queued = false;
