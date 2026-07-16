@@ -118,6 +118,33 @@
       });
       if (!pairs.length) return;
 
+      // On a narrow screen the list scrolls sideways with its scrollbar hidden
+      // (.nav ul), so the link the highlight moves to can sit past the edge —
+      // Contact stayed hidden until the reader thought to swipe the bar itself.
+      // Walk the strip along with the highlight, plus a sliver of the next
+      // link as the hint that there is more. Not scrollIntoView: that scrolls
+      // every ancestor, which would cut short the page's own glide to the
+      // section the reader just tapped.
+      var strip = nav ? nav.querySelector('ul') : null;
+      function reveal(link) {
+        if (!strip || strip.scrollWidth <= strip.clientWidth) return;
+        var l = link.getBoundingClientRect();
+        var s = strip.getBoundingClientRect();
+        var d = 0;
+        if (l.left < s.left) d = l.left - s.left - 24;
+        else if (l.right > s.right) d = l.right - s.right + 24;
+        if (!d) return;
+        if (strip.scrollBy) {
+          strip.scrollBy({
+            left: d,
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+              ? 'auto' : 'smooth'
+          });
+        } else {
+          strip.scrollLeft += d;
+        }
+      }
+
       // Track scroll-margin-top rather than repeat its value, so the line stays
       // tied to where anchors actually land if the CSS changes.
       function line() {
@@ -144,6 +171,7 @@
         if (active) active.classList.remove('is-active');
         current.link.classList.add('is-active');
         active = current.link;
+        reveal(active);
       }
 
       var queued = false;
