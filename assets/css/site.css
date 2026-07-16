@@ -31,8 +31,10 @@
   --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue", Arial,
            "PingFang SC", "Microsoft YaHei", sans-serif;
 
-  /* --wrap sizes the hero, nav, content and footer alike. */
-  --wrap: 60rem;
+  /* --wrap sizes the hero, nav, content and footer alike. 46rem left desktop
+     looking cramped, 60rem overshot; this sits between them. Keep it above
+     ~47rem or the interest cards drop from two columns to one. */
+  --wrap: 55rem;
   --pad:  1.5rem;
 }
 
@@ -362,6 +364,11 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   .contact > p {
     -webkit-hyphens: auto;
     hyphens: auto;
+    /* Default hyphenation is conservative — it leaves short words whole, and
+       short words are most of a 35-character line. Letting it break from five
+       characters gives justification more places to take up the slack. */
+    -webkit-hyphenate-limit-chars: 5 2 2;
+    hyphenate-limit-chars: 5 2 2;
   }
   .pub-authors { text-align: left; }
 }
@@ -649,6 +656,13 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   .main { padding-top: 2.5rem; }
   .sec { margin-bottom: 3rem; }
   .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+
+  /* This panel's padding made its text the narrowest column on the page — 269px
+     against 327px for the prose — so its justified lines held the fewest words
+     and opened the widest gaps. Trimmed, it sets like everything else.
+     Has to live here, after the .contact rule: a media query carries no extra
+     specificity, so an override earlier in the file would simply lose. */
+  .contact { padding: 1.15rem; }
 }
 
 /* ==========================================================================
