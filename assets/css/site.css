@@ -159,9 +159,26 @@ body { margin: 0; }
   row-gap: 1.6rem;
   align-items: center;
 }
+/* The portrait sizes the hero's first grid column, so its dimensions are
+   layout, not decoration — the styles only paint the ring around it. Leave the
+   size out and the photo renders at its natural 320px, ballooning the column to
+   332px and shoving the text off the page at narrow widths. It has to be here:
+   both styles inherited a mockup that used a monogram span and never met the
+   real <img>. */
+.hero-portrait { width: 8.5rem; height: 8.5rem; flex: none; }
+.hero-portrait img,
+.hero-portrait .mono {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .hero-portrait img { display: block; }
 .hero-portrait .mono { display: grid; place-items: center; }
 .hero-pronouns { display: inline-block; }
+
+/* Decorative, but it is sized in the layer that clips it (.hero has
+   overflow: hidden), so its dimensions belong with the geometry. */
+.hero-glow { width: 42rem; height: 42rem; }
 
 /* Spans the portrait column too, so the row starts on the same left edge as
    the sections below rather than behind the portrait. */
@@ -222,7 +239,14 @@ body { margin: 0; }
 .pub { position: relative; }
 .pub-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
 
-.contact-mail { display: inline-block; }
+/* An address carries no spaces to break at, so on a narrow screen it runs
+   straight out of its panel rather than wrapping. Both styles set it large,
+   which is exactly when it does not fit. */
+.contact-mail {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
 
 .foot-inner {
   display: flex;
@@ -235,6 +259,7 @@ body { margin: 0; }
    layer's, at every width. */
 @media (max-width: 40rem) {
   .hero-inner { grid-template-columns: 1fr; row-gap: 1.35rem; }
+  .hero-portrait { width: 6.5rem; height: 6.5rem; }
   .nav-brand { display: none; }
   .nav-inner { justify-content: flex-start; }
   .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
