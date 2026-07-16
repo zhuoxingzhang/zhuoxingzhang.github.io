@@ -804,6 +804,15 @@ html[data-style="archival-warm"] .style-toggle-text { display: inline-block; }
 /* ==========================================================================
    Sections
    ========================================================================== */
+/* Between sections. The base sets none, so the rhythm used to arrive by
+   accident: About ends in a paragraph whose UA margin (1em of the prose's
+   1.05rem) escaped its section and opened a gap above Research, while the
+   interest grid and the lists end flush — News, Publications and Contact sat
+   16.8px tighter above their headings than Research did. 1.05rem is that same
+   escaped margin stated on purpose; About's still collapses into it, so every
+   heading now clears the block above it by the same amount. */
+html[data-style="archival-warm"] .sec + .sec { margin-top: 1.05rem; }
+
 html[data-style="archival-warm"] .sec-h {
   font-family: var(--serif);
   font-weight: 400;
