@@ -94,9 +94,19 @@ layout: default
 <section id="contact" class="sec">
   <h2 class="sec-h"><span>Contact</span></h2>
   <div class="contact">
+    {%- comment -%}
+      The &shy;s mark the syllable breaks a hyphenation dictionary would
+      supply (in·ter·est·ed, ex·plor·ing, pos·si·ble, col·lab·o·ra·tions,
+      hes·i·tate). This panel is the narrowest justified column on the page,
+      and hyphens: auto only works where the engine ships an English
+      dictionary — several phone browsers ship none, which left these lines
+      gappy. A soft hyphen is honoured by every engine and invisible on any
+      line that does not break at it.
+    {%- endcomment -%}
     <p>
-      If you are interested in exploring possible collaborations, please don't
-      hesitate to reach out.
+      If you are in&shy;ter&shy;est&shy;ed in ex&shy;plor&shy;ing
+      pos&shy;si&shy;ble col&shy;lab&shy;o&shy;ra&shy;tions, please don't
+      hes&shy;i&shy;tate to reach out.
     </p>
     {% include email.html class="contact-mail" %}
     <p class="contact-addr">{{ p.department }}, {{ p.affiliation }} &middot; {{ p.location }}</p>
