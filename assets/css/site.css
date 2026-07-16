@@ -1298,96 +1298,122 @@ html[data-style="archival-warm"] .foot-inner {
 
 /* ==========================================================================
    LIQUID GLASS
-   Everything below is scoped to html[data-style="liquid-glass"]. Two style
-   layers ship in one stylesheet, so an unscoped selector here would corrupt
-   the other one. There are no bare selectors in this file — not one.
+   Every selector below is scoped to html[data-style="liquid-glass"]. Two style
+   layers ship in one stylesheet; one bare selector would corrupt the other.
 
-   Three findings from the review shaped this port, and it is worth writing
-   down what changed, because the changes are structural rather than cosmetic:
+   WHY THE LAST PASS CAME OUT FLAT, AND WHAT CHANGED
 
-   1. Text on glass measured ~5.25:1, and it was measured at a convenient spot.
-      Fixed by construction, not by tuning: the reading surfaces (.prose, .pub,
-      .interest, .news, .contact) are now 93% opaque, so what is behind them can
-      move by 35 rgb points and the text still lands at 8-17:1. Body copy is now
-      10.7:1 light / 12.7:1 dark — better than the flat design it replaces.
+   It kept the glass to the chrome and left the reading surfaces at .93 alpha
+   over a smooth pale wash. Both halves of that are why it read as white cards:
+   .93 alpha is a solid surface, and a smooth wash has no edge for a blur to
+   smear — which is why removing the blur cost nothing visually. That was the
+   tell. There was nothing behind the glass worth refracting.
 
-   2. The effect read as ornament. So the glass is confined to the chrome — the
-      nav, the pills, the ambient field. Reading surfaces are calm. The hairline
-      grid is gone: it existed only to give the blur something to refract, which
-      is decoration justifying decoration. The sticky nav blurs the actual page
-      scrolling underneath, which is real structure and a better argument.
+   So the material is rebuilt from the backdrop forwards:
 
-   3. The maintenance model was the real credibility problem — AA held only if
-      someone re-composited against a worst-case blob after every colour change,
-      and nobody was going to. So the field is now *bounded by design*: a fixed,
-      smooth, pale wash whose per-channel extremes are known. Every claim in
-      this file is the worst case over that whole box, computed by compositing
-      the blobs at simultaneous peak — a pixel that cannot actually occur, since
-      the blobs sit in opposite corners. The bound is deliberately unreachable
-      so that it survives edits nobody re-checks.
+   1. THE FIELD HAS STRUCTURE. Four blobs of real hue at .28-.36 alpha, sized
+      30-34rem and placed ON the column rather than 60rem monsters parked in the
+      corners — a blob that big only ever washes. Each falloff now crosses the
+      reading column, so there is a colour edge to see through a pane. Under it
+      a hairline weave: 1px lines an 18px blur genuinely dissolves, which is what
+      makes the seam at a pane's edge visible.
+   2. THE PANES ARE TRANSPARENT. .64 light / .62 dark, not .93. The headroom was
+      always there — body copy lands at 8.4:1 light and 9.7:1 dark against the
+      worst pixel the field can produce.
+   3. THE BLUR IS REAL. blur(18px) saturate(1.6): the weave dissolves and the
+      blob colour arrives enriched rather than merely dimmed.
+   4. SPECULAR EDGES. A masked gradient ring, bright at the top-left where the
+      light lands, gone at the bottom-right, returning faintly on the far rim.
+   5. DEPTH. Three-stop shadow plus an inner top sheen, so a pane is a slab.
 
-   Only .nav carries a backdrop-filter. The field is a smooth gradient, so
-   blurring it is a visual no-op — 40-odd backdrop layers of pure cost. The nav
-   is the one element with structured content behind it, so it is the one
-   element that blurs.
+   CONTRAST, AND HOW IT IS GUARANTEED
+   The field is bounded per channel by the LP over every reachable alpha
+   combination (a pixel is w0*base + sum(w_i*blob_i), sum(w)=1, w_i <= peak
+   alpha). The optimum wants blobs in opposite corners to peak on one pixel, so
+   it is deliberately unreachable: the bound survives edits nobody re-checks.
+   blur is a convex combination and cannot leave that box. saturate() is modelled
+   as a matrix on GAMMA-ENCODED sRGB, which is what CSS shorthand filters use.
+   Text painted straight on the field is checked against the RAW box — nothing
+   filters it — while panes composite over the saturate-widened box.
+   Worst pair anywhere, either scheme: 4.59:1 (.hero-affil / .hero-loc /
+   .hero-tagline, dark, on the hero field's simultaneous-peak corner).
+
+   NO INK IS TUNED WITH `opacity`. Last time opacity:.85 on .hero-loc composited
+   its glyphs against the bloom at 4.26:1 and sailed through an 80-pair sweep,
+   because a checker that reads tokens cannot see through an opacity. Ink is
+   tuned by the token or not at all. The only opacity in this file is on the
+   field itself, under prefers-reduced-transparency, and it is argued there.
    ========================================================================== */
 
 html[data-style="liquid-glass"] {
   /* ---- ink -------------------------------------------------------------
-     Four tiers, and one rule that governs where each may be used: on the bare
-     field only --lg-ink and --lg-ink-2 are legible against the worst pixel the
-     hero bloom can produce. --lg-muted and --lg-faint are pane-only inks.
-     .hero-affil / .hero-loc / .hero-tagline therefore use ink-2, not muted —
-     that is why they look heavier here than in the other style. */
-  --lg-ink:      #14181d;
-  --lg-ink-2:    #333d49;
+     Two of these are field-legal and two are not, and that is the whole rule:
+     --lg-ink and --lg-ink-2 survive the worst field pixel; --lg-muted and
+     --lg-faint are pane-only. --lg-ink-2 is the binding token of the layer — it
+     decides how much colour the field may carry, because it is the lightest ink
+     that ever touches bare field. It has 8:1 of unused headroom on the panes; it
+     is this dark for the field's sake, not theirs. */
+  --lg-ink:      #10161d;
+  --lg-ink-2:    #2b3440;
   --lg-muted:    #414c59;
-  --lg-faint:    #57616e;
-  --lg-accent:   #0c4757;
+  --lg-faint:    #4d5765;
+
+  /* --lg-accent is the field-legal accent, --lg-accent-2 the richer one for
+     fills and gradients. They swap lightness between schemes: on a light field
+     the legible one is the deep teal, on a dark field the bright cyan. */
+  --lg-accent:   #083846;
   --lg-accent-2: #17677c;
   --lg-on-fill:  #ffffff;
 
-  /* ---- ambient field ---------------------------------------------------
-     Pale on purpose. The mockup ran these blobs at .30/.26/.20/.18 and the
-     hero's own text failed AA against them at 1.86:1 — the effect was loudest
-     exactly where the reading was. At these alphas the whole field lives
-     between L=0.639 and L=0.877, which is what makes every later number hold.
-     The colour is not lost: saturate() in the nav's backdrop-filter puts it
-     back where the glass concentrates it. */
-  --lg-base: #eef1f5;
+  /* ---- the field -------------------------------------------------------
+     Sized and placed to put an edge under the column. The blobs are LIGHT and
+     SATURATED rather than dark and faint: a dark hue at .05 alpha is just grey,
+     which is how the last field ended up a wash. Bounded to L=[0.344, 0.861]. */
+  --lg-base: #e9eef7;
   --lg-blobs:
-    radial-gradient(70rem 46rem at 12% -18%, rgba(13, 74, 90, .070),  transparent 62%),
-    radial-gradient(56rem 40rem at 88%  -6%, rgba(72, 88, 166, .060), transparent 64%),
-    radial-gradient(50rem 40rem at 78%  96%, rgba(198, 132, 72, .045), transparent 62%),
-    radial-gradient(52rem 42rem at -6%  92%, rgba(13, 74, 90, .045),  transparent 62%);
+    radial-gradient(34rem 30rem at 16% 4%,  rgba(74, 190, 248, .36), transparent 62%),
+    radial-gradient(30rem 27rem at 84% 1%,  rgba(142, 154, 250, .32), transparent 62%),
+    radial-gradient(32rem 29rem at 90% 64%, rgba(250, 194, 124, .28), transparent 62%),
+    radial-gradient(31rem 28rem at 6%  94%, rgba(82, 212, 194, .28), transparent 62%);
+
+  /* The blur needs an edge or it is a no-op. This is it: a 1px weave at 9/14px
+     pitch, which an 18px blur dissolves completely. Outside a pane it is crisp
+     texture; inside it is flat haze. That difference, at the boundary, is what
+     frosted glass looks like. Static background — costs nothing on scroll.
+     These alphas are not a taste setting. The weave is a dark layer and it eats
+     straight into the field's floor: at .05/.034 it read fine and put dark hero
+     text at 4.39:1. It is bounded with the blobs, not eyeballed beside them. */
+  --lg-weave:
+    repeating-linear-gradient(58deg,  rgba(18, 32, 54, .038) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-58deg, rgba(18, 32, 54, .026) 0 1px, transparent 1px 14px);
 
   /* ---- material --------------------------------------------------------
-     --lg-pane is a reading surface: near-opaque, deliberately dull. The glass
-     in it is the edge and the shadow, not the fill.
-     --lg-chip is chrome sitting on the field; --lg-chip-pane is chrome nested
-     on a pane. They are separate tokens because in dark mode they must tint in
-     opposite directions — see the dark block. */
-  --lg-pane:      rgba(255, 255, 255, .93);
-  --lg-pane-hi:   rgba(255, 255, 255, .97);
-  --lg-pane-flat: #fbfcfd;                    /* opaque stand-in for ring tricks */
-  --lg-chip:      rgba(255, 255, 255, .62);
-  --lg-chip-hi:   rgba(255, 255, 255, .82);
-  --lg-chip-pane: rgba(255, 255, 255, .62);
-  --lg-nav:       rgba(255, 255, 255, .82);
-  --lg-foot:      rgba(255, 255, 255, .72);
+     --lg-chip is chrome on the field; --lg-chip-pane is chrome nested on a pane.
+     Two tokens because in dark they must tint in OPPOSITE directions — see the
+     dark block. */
+  --lg-pane:      rgba(255, 255, 255, .64);
+  --lg-pane-hi:   rgba(255, 255, 255, .74);
+  --lg-pane-flat: #f4f7fb;                 /* opaque stand-in: .skip, --surface */
+  --lg-chip:      rgba(255, 255, 255, .5);
+  --lg-chip-hi:   rgba(255, 255, 255, .68);
+  --lg-chip-pane: rgba(255, 255, 255, .55);
+  --lg-nav:       rgba(255, 255, 255, .78);
+  --lg-foot:      rgba(255, 255, 255, .62);
   --lg-hair:      rgba(16, 24, 32, .12);
   --lg-hair-soft: rgba(16, 24, 32, .07);
-  --lg-blur:      blur(20px) saturate(1.5);
+  --lg-blur:      blur(18px) saturate(1.6);
+  --lg-sheen:     linear-gradient(177deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 46%);
 
-  /* The specular edge: bright where the light lands, gone where it doesn't.
-     This and the shadow are what carry the material now the fills are calm. */
-  --lg-edge: linear-gradient(150deg,
-               rgba(255, 255, 255, .95) 0%,
-               rgba(255, 255, 255, .30) 28%,
-               rgba(255, 255, 255, 0)   52%,
-               rgba(255, 255, 255, .14) 72%,
-               rgba(255, 255, 255, .60) 100%);
-  --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .70);
+  /* The single strongest glass cue and the cheapest: bright where the light
+     catches the bevel, gone where it does not, returning faintly on the far rim
+     where the slab bounces it back. */
+  --lg-edge: linear-gradient(146deg,
+               rgba(255, 255, 255, 1)   0%,
+               rgba(255, 255, 255, .35) 26%,
+               rgba(255, 255, 255, 0)   50%,
+               rgba(255, 255, 255, .16) 72%,
+               rgba(255, 255, 255, .7)  100%);
+  --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .75);
   --lg-inset-lo: inset 0 -1px 0 rgba(16, 24, 32, .05);
   --lg-shadow:
        0 1px 2px rgba(16, 24, 32, .05),
@@ -1395,7 +1421,7 @@ html[data-style="liquid-glass"] {
        0 22px 44px -22px rgba(16, 24, 32, .26);
   --lg-shadow-lift:
        0 2px 4px rgba(16, 24, 32, .06),
-       0 10px 22px -8px rgba(16, 24, 32, .20),
+       0 10px 22px -8px rgba(16, 24, 32, .2),
        0 34px 60px -26px rgba(16, 24, 32, .34);
 
   --lg-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
@@ -1404,41 +1430,39 @@ html[data-style="liquid-glass"] {
   --lg-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   /* ---- safety net ------------------------------------------------------
-     The base layer's own tokens, re-pointed at this palette. Anything in the
-     base I have not explicitly overridden below still resolves into this style
-     rather than leaking the other one's colours through. Rule 8 says assume
-     nothing from the other style; this is how that is enforced rather than
-     merely intended.
-     --wrap and --pad are conspicuously absent: the base owns the column, and
-     every block on the page is aligned to it. */
-  --bg:         var(--lg-base);
-  --surface:    var(--lg-pane-flat);
-  --surface-2:  var(--lg-base);
-  --text:       var(--lg-ink);
-  --muted:      var(--lg-muted);
-  --faint:      var(--lg-faint);
-  --rule:       var(--lg-hair);
-  --rule-soft:  var(--lg-hair-soft);
-  --accent:     var(--lg-accent);
-  --accent-tint: rgba(12, 71, 87, .10);
+     The base's own token names, re-pointed. Anything in the base this layer has
+     not overridden still resolves into this palette rather than leaking the
+     other style's colours. --wrap and --pad are absent on purpose: the base owns
+     the column, and every block on the page is aligned to it. */
+  --bg: var(--lg-base);
+  --surface: var(--lg-pane-flat);
+  --surface-2: var(--lg-base);
+  --text: var(--lg-ink);
+  --muted: var(--lg-muted);
+  --faint: var(--lg-faint);
+  --rule: var(--lg-hair);
+  --rule-soft: var(--lg-hair-soft);
+  --accent: var(--lg-accent);
+  --accent-tint: rgba(8, 56, 70, .1);
   --accent-ink: var(--lg-accent);
-  --hero-from:  transparent;
-  --hero-to:    transparent;
-  --glow:       transparent;
-  --serif:      var(--lg-serif);
-  --sans:       var(--lg-sans);
-  --shadow-sm:  0 1px 2px rgba(16, 24, 32, .05);
-  --shadow-md:  var(--lg-shadow);
-  --shadow-lg:  var(--lg-shadow-lift);
+  --hero-from: transparent;
+  --hero-to: transparent;
+  --glow: transparent;
+  --serif: var(--lg-serif);
+  --sans: var(--lg-sans);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 32, .05);
+  --shadow-md: var(--lg-shadow);
+  --shadow-lg: var(--lg-shadow-lift);
 
   background-color: var(--lg-base);
+  color-scheme: light dark;
 }
 
-/* The field. Fixed, so it never scrolls: the nav always has colour to refract,
-   and — the load-bearing part — a given screen pixel has ONE field colour, which
-   is what turns "is this legible?" into a question with a finite answer.
-   z-index:-1 puts it behind the content but in front of the canvas, which only
-   works if body itself stays transparent. Hence the rule below it. */
+/* Fixed, so the field never scrolls: the blobs stay lit where they are and the
+   panes travel across them, which is the plainest possible proof that the panes
+   are transparent — the colour inside a card changes as it passes a blob.
+   z-index:-1 puts it behind the content but above the canvas, which only works
+   while body itself stays transparent. Hence the rule above it. */
 html[data-style="liquid-glass"] body {
   background: transparent;
   color: var(--lg-ink);
@@ -1452,18 +1476,12 @@ html[data-style="liquid-glass"] body::before {
   z-index: -1;
   pointer-events: none;
   background-color: var(--lg-base);
-  background-image: var(--lg-blobs);
-  background-repeat: no-repeat;
+  background-image: var(--lg-weave), var(--lg-blobs);
+  background-repeat: repeat, no-repeat;
 }
 
-html[data-style="liquid-glass"] a {
-  color: var(--lg-accent);
-  text-decoration: none;
-}
-html[data-style="liquid-glass"] a:hover {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
+html[data-style="liquid-glass"] a { color: var(--lg-accent); text-decoration: none; }
+html[data-style="liquid-glass"] a:hover { text-decoration: underline; text-underline-offset: 2px; }
 html[data-style="liquid-glass"] :focus-visible {
   outline: 2px solid var(--lg-accent-2);
   outline-offset: 3px;
@@ -1477,10 +1495,10 @@ html[data-style="liquid-glass"] .skip {
 }
 
 /* ==========================================================================
-   The specular hairline — one ring, six surfaces.
-   A 1px gradient border: fill the box, then mask out everything but the
-   padding ring. .interest is missing from this list on purpose: its ::before
-   is the counter, so its ring lives on ::after.
+   The specular hairline — one ring, five surfaces
+   A 1px gradient border: fill the box, then mask out all but the padding ring.
+   .interest is absent on purpose — its ::before is the counter the base
+   increments, so its ring lives on ::after.
    ========================================================================== */
 html[data-style="liquid-glass"] .prose::before,
 html[data-style="liquid-glass"] .news::before,
@@ -1502,37 +1520,41 @@ html[data-style="liquid-glass"] .interest::after {
 
 /* ==========================================================================
    Hero
-   No pane. The base gives .hero-inner the column geometry — max-width and
-   var(--pad) — so a background on it would draw a box whose edges sit var(--pad)
-   outside every other block on the page. The hero is the field itself instead,
-   and the glass is in the portrait ring and the pills. This is also why the
-   hero's secondary text is set in ink-2: it sits on the bloom, and muted does
-   not survive there.
+   No pane: the base gives .hero-inner the column geometry, so a background on it
+   would draw a box whose edges sit var(--pad) outside every other block on the
+   page. The hero IS the field — which is why its secondary text is ink-2, the
+   lightest ink that survives bare field, and never --lg-muted.
    ========================================================================== */
 html[data-style="liquid-glass"] .hero {
   background: none;
   border-bottom: 1px solid var(--lg-hair-soft);
 }
 
-/* The one bright bloom, clipped by .hero's overflow:hidden so it never reaches
-   the nav or the body — which is what lets the body field stay pale enough for
-   bare section headings while the hero still gets to be lit. */
+/* Glare, not colour. The sky and indigo blobs already sit over the hero; what
+   the hero needs from its own layer is the bright spot where the light enters,
+   so every stop here is near-white. That is also why it is free: a blob whose
+   channels all exceed the base cannot lower the field's per-channel floor, so
+   the hero's bound stays the field's bound and its text keeps its ratios. */
 html[data-style="liquid-glass"] .hero-glow {
-  top: -12rem;
+  top: -14rem;
   right: auto;
   left: 50%;
-  width: 78rem;
-  height: 40rem;
+  width: 76rem;
+  height: 44rem;
   transform: translateX(-50%);
   background:
-    radial-gradient(28rem 18rem at 32% 52%, rgba(28, 107, 128, .11), transparent 66%),
-    radial-gradient(24rem 16rem at 68% 40%, rgba(96, 110, 200, .09), transparent 66%),
-    radial-gradient(18rem 12rem at 54% 78%, rgba(226, 158, 92, .07), transparent 66%);
+    radial-gradient(26rem 17rem at 34% 54%, rgba(255, 255, 255, .55), transparent 66%),
+    radial-gradient(22rem 15rem at 62% 40%, rgba(238, 250, 255, .34), transparent 66%),
+    radial-gradient(17rem 12rem at 46% 74%, rgba(255, 246, 236, .22), transparent 66%);
 }
 
-/* A frosted ring around the photograph. The base's 5px padding is the ring;
-   the img fills the content box. .mono is the no-photo fallback. */
+/* A thick frosted ring. The base's 5px padding is the ring; the img fills the
+   content box — which is exactly why this one does NOT get a backdrop-filter.
+   The filter would apply to the whole 136px box while the photo covers all but
+   a 5px band of it, so ~96% of the work would be rasterised and then painted
+   over. The ring reads frosted from the chip fill and the inset highlight. */
 html[data-style="liquid-glass"] .hero-portrait {
+  border-radius: 26px;
   background: var(--lg-chip-hi);
   box-shadow:
     0 10px 26px -12px rgba(16, 24, 32, .45),
@@ -1540,48 +1562,70 @@ html[data-style="liquid-glass"] .hero-portrait {
     inset 0 2px 3px rgba(255, 255, 255, .85);
 }
 html[data-style="liquid-glass"] .hero-portrait img {
-  box-shadow: 0 0 0 1px rgba(16, 24, 32, .10);
+  border-radius: 21px;
+  box-shadow: 0 0 0 1px rgba(16, 24, 32, .1);
 }
 html[data-style="liquid-glass"] .hero-portrait .mono {
-  background: var(--lg-chip);
+  border-radius: 21px;
   color: var(--lg-accent);
   font-family: var(--lg-serif);
+  font-size: 2.4rem;
   letter-spacing: .04em;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
 }
 
 html[data-style="liquid-glass"] .hero-name {
+  margin: 0;
   font-family: var(--lg-serif);
+  font-size: clamp(2rem, 1.35rem + 2.4vw, 2.9rem);
   font-weight: 600;
+  line-height: 1.08;
   letter-spacing: -.015em;
   color: var(--lg-ink);
 }
 html[data-style="liquid-glass"] .hero-pronouns {
-  background: var(--lg-chip);
+  margin-left: .5em;
+  padding: .18em .55em;
   border: 1px solid var(--lg-hair);
+  border-radius: 999px;
+  background: var(--lg-chip);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
-  color: var(--lg-muted);
+  color: var(--lg-ink-2);
   font-family: var(--lg-sans);
-  font-size: .72rem;
+  font-size: .68rem;
   font-weight: 500;
   letter-spacing: .02em;
-  padding: .18em .55em;
+  vertical-align: .35em;
 }
+/* The most scannable fact on the page, so it takes full ink and weight rather
+   than a colour. It also has to: on a field this saturated the accent is only
+   field-legal in light, and a role that changes hue between schemes purely to
+   stay legible is one token doing two jobs badly. */
 html[data-style="liquid-glass"] .hero-role {
-  color: var(--lg-accent);
+  margin: .65rem 0 0;
+  font-size: 1.05rem;
   font-weight: 600;
+  color: var(--lg-ink);
 }
-html[data-style="liquid-glass"] .hero-affil,
-html[data-style="liquid-glass"] .hero-loc {
+html[data-style="liquid-glass"] .hero-affil {
+  margin: .25rem 0 0;
+  font-size: .875rem;
   color: var(--lg-ink-2);
 }
-/* No opacity on .hero-loc. It looked like a harmless half-tone, but opacity
-   composites the glyph against the bloom behind it: ink-2 at .85 measured
-   4.26:1 in light, under AA, and worse than the --lg-muted the ink rule above
-   forbids here. Colour tokens are the only way to tune ink on this field —
-   a contrast check that reads tokens cannot see through an opacity. */
+/* No opacity here. It looked like a harmless half-tone, but opacity composites
+   the glyph against the bloom: ink-2 at .85 measured 4.26:1 and passed a
+   token-level sweep, which cannot see an opacity at all. */
+html[data-style="liquid-glass"] .hero-loc { color: var(--lg-ink-2); }
+html[data-style="liquid-glass"] .hero-loc::before {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  height: 1px;
+  margin: 0 .5em;
+  vertical-align: .3em;
+  background: var(--lg-hair);
+}
 html[data-style="liquid-glass"] .hero-tagline {
-  margin-top: .9rem;
+  margin: .95rem 0 0;
   padding-top: .85rem;
   border-top: 1px solid var(--lg-hair);
   font-family: var(--lg-serif);
@@ -1590,9 +1634,10 @@ html[data-style="liquid-glass"] .hero-tagline {
   color: var(--lg-ink-2);
 }
 
-/* Six pills, spanning both columns. The rule above them starts at the same left
-   edge as everything below, which is the whole reason .hero-links spans 1/-1. */
+/* Six drops of the material, sitting straight on the glare. They blur: small,
+   numerous, and exactly where the eye checks whether the glass is real. */
 html[data-style="liquid-glass"] .hero-links {
+  margin-top: .2rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--lg-hair);
   gap: .5rem;
@@ -1602,6 +1647,8 @@ html[data-style="liquid-glass"] .hero-links a {
   border: 1px solid rgba(255, 255, 255, .6);
   border-radius: 999px;
   background: var(--lg-chip);
+  -webkit-backdrop-filter: var(--lg-blur);
+          backdrop-filter: var(--lg-blur);
   color: var(--lg-ink);
   font-size: .8rem;
   font-weight: 500;
@@ -1621,24 +1668,23 @@ html[data-style="liquid-glass"] .hero-links a:hover {
     0 10px 20px -8px rgba(16, 24, 32, .32),
     inset 0 1px 0 rgba(255, 255, 255, .95);
 }
-/* No CV link in the markup today; the rule costs nothing and is here for when
-   there is one. It is the only filled thing in the row, which is the point. */
+/* No CV link in the markup today; it would be the only filled thing in the row,
+   which is the point of it. */
 html[data-style="liquid-glass"] .hero-links .is-cv,
 html[data-style="liquid-glass"] .hero-links .is-cv:hover {
   background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
   border-color: rgba(255, 255, 255, .35);
   color: var(--lg-on-fill);
-  box-shadow:
-    0 4px 12px -4px rgba(13, 74, 90, .6),
-    inset 0 1px 0 rgba(255, 255, 255, .4);
+  box-shadow: 0 4px 12px -4px rgba(8, 56, 70, .6), inset 0 1px 0 rgba(255, 255, 255, .4);
 }
 
 /* ==========================================================================
-   Sticky nav — the one element that earns a backdrop-filter
-   It is also the one element whose backdrop I cannot bound, because arbitrary
-   content scrolls under it. So it is bounded the only honest way: the fill is
-   opaque enough that even PURE BLACK passing underneath leaves the links at
-   5.73:1. No assumption about what is below it is required, now or ever.
+   Sticky nav
+   The one element whose backdrop cannot be bounded — arbitrary content scrolls
+   under it. So it is bounded the only honest way: the fill is opaque enough that
+   PURE BLACK passing beneath still leaves the links at 5.16:1 (4.87:1 for pure
+   white in dark). No assumption
+   about what is below it is required, now or ever.
    ========================================================================== */
 html[data-style="liquid-glass"] .nav {
   background: var(--lg-nav);
@@ -1649,26 +1695,23 @@ html[data-style="liquid-glass"] .nav {
     inset 0 1px 0 rgba(255, 255, 255, .55),
     0 8px 24px -18px rgba(16, 24, 32, .5);
 }
-/* Vertical padding only — longhands, because the base's `padding: 0 var(--pad)`
-   owns the horizontal side and the column depends on it. */
-html[data-style="liquid-glass"] .nav-inner {
-  padding-top: .45rem;
-  padding-bottom: .45rem;
-}
+/* Vertical only — longhands, because the base's horizontal padding is the
+   column and every block on the page is aligned to it. */
+html[data-style="liquid-glass"] .nav-inner { padding-top: .45rem; padding-bottom: .45rem; }
 html[data-style="liquid-glass"] .nav-brand {
   font-family: var(--lg-serif);
   font-weight: 600;
   letter-spacing: -.01em;
   color: var(--lg-ink);
+  /* Deliberately no opacity: the base fades this in on scroll from opacity:0. */
 }
 html[data-style="liquid-glass"] .nav ul { gap: .15rem; }
 html[data-style="liquid-glass"] .nav a {
   padding: .42rem .8rem;
-  border: 0;
   border-radius: 999px;
-  line-height: 1.35;
   font-size: .84rem;
   font-weight: 500;
+  line-height: 1.35;
   color: var(--lg-muted);
   transition: color .16s ease, background .16s ease;
 }
@@ -1681,18 +1724,15 @@ html[data-style="liquid-glass"] .nav a:hover {
    screens, so overflow-y computes to auto and would clip one. Inset only. */
 html[data-style="liquid-glass"] .nav a.is-active {
   background: rgba(255, 255, 255, .85);
-  border: 0;
   color: var(--lg-accent);
   font-weight: 600;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 32, .10),
-    inset 0 1px 0 rgba(255, 255, 255, .9);
+  box-shadow: 0 1px 2px rgba(16, 24, 32, .1), inset 0 1px 0 rgba(255, 255, 255, .9);
 }
 
-/* ---- style toggle -------------------------------------------------------
-   A drop of the material itself, with the name of the style it switches to.
-   Deliberately quiet: it is a preference, not a call to action. Its box right
-   edge lands on the column edge, same as every pane below it. */
+/* --- style toggle --------------------------------------------------------
+   Nested inside .nav, which is already a backdrop root — a backdrop-filter here
+   would blur the nav's own output rather than the page. So it is a plain chip,
+   and it costs nothing. */
 html[data-style="liquid-glass"] .style-toggle {
   position: relative;
   display: inline-flex;
@@ -1708,18 +1748,16 @@ html[data-style="liquid-glass"] .style-toggle {
   font-size: .74rem;
   font-weight: 500;
   line-height: 1.35;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
-  transition: background .16s ease, color .16s ease, border-color .16s ease;
+  transition: background .16s ease, color .16s ease;
+  -webkit-appearance: none;
+          appearance: none;
 }
 html[data-style="liquid-glass"] .style-toggle:hover {
   background: var(--lg-chip-hi);
-  border-color: var(--lg-hair);
   color: var(--lg-ink);
-}
-html[data-style="liquid-glass"] .style-toggle:focus-visible {
-  outline: 2px solid var(--lg-accent-2);
-  outline-offset: 2px;
 }
 /* The bead: a lit sphere, the material in miniature. */
 html[data-style="liquid-glass"] .style-toggle-dot {
@@ -1727,17 +1765,12 @@ html[data-style="liquid-glass"] .style-toggle-dot {
   height: .62rem;
   flex: none;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 34% 28%,
-      rgba(255, 255, 255, .95) 0%,
-      rgba(255, 255, 255, .45) 24%,
-      var(--lg-accent-2) 62%,
-      var(--lg-accent) 100%);
-  box-shadow:
-    0 1px 2px rgba(16, 24, 32, .35),
-    inset 0 0 0 1px rgba(255, 255, 255, .35);
+  background: radial-gradient(circle at 34% 28%,
+    rgba(255, 255, 255, .95) 0%, rgba(255, 255, 255, .45) 24%,
+    var(--lg-accent-2) 62%, var(--lg-accent) 100%);
+  box-shadow: 0 1px 2px rgba(16, 24, 32, .35), inset 0 0 0 1px rgba(255, 255, 255, .35);
 }
-html[data-style="liquid-glass"] .style-toggle-text { white-space: nowrap; }
+html[data-style="liquid-glass"] .style-toggle-text { display: inline-block; }
 /* A 30px pill is a fine mouse target and a poor thumb target. Grow the hit area
    with a pseudo rather than the box, so the nav's height never moves. */
 @media (pointer: coarse) {
@@ -1755,23 +1788,25 @@ html[data-style="liquid-glass"] .style-toggle-text { white-space: nowrap; }
 
 /* ==========================================================================
    Sections
-   .sec-h and .year sit on the bare field with no pane under them. That is the
-   pairing that failed at 4.4:1 in the mockup and it is why the field is pale:
-   the heading is 11.7:1 against the worst field pixel now, not 4.4:1 against
-   an average one.
+   The base sets no margin on any heading or paragraph — it owns the column, the
+   justification and the component padding, and nothing else — so the vertical
+   rhythm is this layer's, and every margin below is load-bearing rather than
+   decorative. The previous pass left them out and got UA defaults: 1em above and
+   below every .pub-title, which is most of why the cards read as loose slabs.
    ========================================================================== */
 html[data-style="liquid-glass"] .sec { scroll-margin-top: 5rem; }
+html[data-style="liquid-glass"] .sec + .sec { margin-top: 3.1rem; }
 
 html[data-style="liquid-glass"] .sec-h {
+  margin: 0 0 1.15rem;
   font-family: var(--lg-serif);
+  font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: -.01em;
   color: var(--lg-ink);
 }
-/* The base underlines the word with a 3px accent bar. This style uses a rule
-   running out to the column edge instead, so the bar is switched off rather
-   than left to fight the ::after below. */
-html[data-style="liquid-glass"] .sec-h span::after { display: none; }
+/* The base builds no ::after here — .sec-h is a flex row and nothing more — so
+   the rule out to the column edge is drawn from scratch. */
 html[data-style="liquid-glass"] .sec-h::after {
   content: "";
   flex: 1;
@@ -1785,81 +1820,91 @@ html[data-style="liquid-glass"] .sec-count {
   border: 1px solid var(--lg-hair);
   border-radius: 999px;
   background: var(--lg-chip);
-  color: var(--lg-muted);
+  color: var(--lg-ink-2);
   font-family: var(--lg-mono);
   font-size: .7rem;
+  font-style: normal;
   font-weight: 500;
 }
 html[data-style="liquid-glass"] .sec-note {
+  margin: 0 0 1.4rem;
   color: var(--lg-ink-2);
   font-size: .85rem;
 }
 html[data-style="liquid-glass"] .sec-note a {
   color: var(--lg-accent);
   text-decoration: underline;
-  text-decoration-color: rgba(12, 71, 87, .35);
+  text-decoration-color: rgba(8, 56, 70, .35);
   text-underline-offset: 2px;
 }
 
 /* ==========================================================================
-   Prose — a reading surface, and therefore calm
-   93% opaque, no backdrop-filter. Justification and hyphenation belong to the
-   base layer and are not touched here: no text-align, no hyphens.
+   The panes
+   .64 alpha over a blurred, saturated field. No text-align and no hyphens
+   anywhere below: the base owns the justification and the owner has asked for it
+   repeatedly.
    ========================================================================== */
-html[data-style="liquid-glass"] .prose {
+html[data-style="liquid-glass"] .prose,
+html[data-style="liquid-glass"] .news,
+html[data-style="liquid-glass"] .interest,
+html[data-style="liquid-glass"] .pub,
+html[data-style="liquid-glass"] .contact {
   position: relative;
+  border: 0;
+  background-color: var(--lg-pane);
+  background-image: var(--lg-sheen);
+  -webkit-backdrop-filter: var(--lg-blur);
+          backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
+}
+
+html[data-style="liquid-glass"] .prose {
   padding: 1.6rem 1.75rem;
   border-radius: 20px;
-  background: var(--lg-pane);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
   font-size: .97rem;
   line-height: 1.74;
 }
-html[data-style="liquid-glass"] .prose p {
-  margin: 0 0 .95rem;
-  color: var(--lg-ink-2);
-}
+html[data-style="liquid-glass"] .prose p { margin: 0 0 .95rem; color: var(--lg-ink-2); }
 html[data-style="liquid-glass"] .prose p:last-child { margin-bottom: 0; }
 
 /* ==========================================================================
    Research
-   The mockup put a 1.9rem numeral at .13 alpha in each card's corner, and the
-   review called it correctly: a watermark is ornament. The base's counter is
-   structure — an index you can read. Keep the structure, restyle the material:
-   full-strength accent, mono, 9.9:1. It reads as a numbered list because that
-   is what it is.
+   The base reserves a 3.4rem left gutter on .interest and increments the counter
+   — but it sets no `content` and no `position`. The previous layer set `top` on
+   a static box, so the numeral rendered inline above each heading and the gutter
+   sat empty. It is an index you can read, so it goes in the gutter cut for it.
    ========================================================================== */
 html[data-style="liquid-glass"] .interest {
-  border: 0;
   border-radius: 20px;
-  background: var(--lg-pane);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
-  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
 }
 html[data-style="liquid-glass"] .interest::before {
   content: counter(interest, decimal-leading-zero);
+  position: absolute;
+  left: 1.45rem;
+  top: 1.5rem;
   font-family: var(--lg-mono);
   font-size: .8rem;
   font-weight: 600;
   letter-spacing: .04em;
   color: var(--lg-accent);
-  opacity: 1;
-  top: 1.55rem;
 }
 html[data-style="liquid-glass"] .interest:hover {
   transform: translateY(-2px);
-  border-color: transparent;
-  background: var(--lg-pane-hi);
+  background-color: var(--lg-pane-hi);
   box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
 }
 html[data-style="liquid-glass"] .interest h3 {
+  margin: 0 0 .55rem;
   font-family: var(--lg-serif);
   font-size: 1.06rem;
   font-weight: 600;
+  line-height: 1.35;
   letter-spacing: -.005em;
   color: var(--lg-ink);
 }
 html[data-style="liquid-glass"] .interest p {
+  margin: 0;
   color: var(--lg-muted);
   font-size: .875rem;
   line-height: 1.62;
@@ -1867,27 +1912,30 @@ html[data-style="liquid-glass"] .interest p {
 
 /* ==========================================================================
    News
-   New since the mockup. It is a reading surface, so it gets one calm pane with
-   the timeline running inside it rather than a card per item — four panes for
-   four one-line entries would be noise.
+   One calm pane with the timeline inside it — four panes for four one-line
+   entries would be noise. The base draws neither rail nor dot: its .news
+   li::before has no content, so both are built here.
    ========================================================================== */
 html[data-style="liquid-glass"] .news {
-  position: relative;
   padding: 1.3rem 1.6rem;
   border-radius: 20px;
-  background: var(--lg-pane);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
 }
 html[data-style="liquid-glass"] .news li {
   border-left: 2px solid var(--lg-hair);
   color: var(--lg-ink-2);
 }
 html[data-style="liquid-glass"] .news li:last-child { border-left-color: transparent; }
-/* The ring punches the timeline line out from behind the dot, so it has to be
-   opaque — hence --lg-pane-flat, which is the pane's composited colour. */
+/* Centred on the 2px rail: `left` resolves against the li's padding box, whose
+   left edge is the inner edge of that border. */
 html[data-style="liquid-glass"] .news li::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: .85rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--lg-accent);
-  box-shadow: 0 0 0 3px var(--lg-pane-flat);
 }
 html[data-style="liquid-glass"] .news time {
   color: var(--lg-accent);
@@ -1897,79 +1945,78 @@ html[data-style="liquid-glass"] .news time {
   font-variant-numeric: tabular-nums;
 }
 html[data-style="liquid-glass"] .news li span { color: var(--lg-ink-2); }
-html[data-style="liquid-glass"] .news li em {
-  font-style: italic;
-  color: var(--lg-ink);
-}
-html[data-style="liquid-glass"] .news li strong {
-  font-weight: 600;
-  color: var(--lg-ink);
-}
+html[data-style="liquid-glass"] .news li em { font-style: italic; color: var(--lg-ink); }
+html[data-style="liquid-glass"] .news li strong { font-weight: 600; color: var(--lg-ink); }
 
-/* .more sits outside the pane, on the bare field, so it takes a field-legal ink. */
+/* Sits outside the pane, on bare field, so it takes a field-legal ink. */
+html[data-style="liquid-glass"] .more { margin-top: .9rem; }
 html[data-style="liquid-glass"] .more summary {
-  color: var(--lg-muted);
+  list-style: none;
+  color: var(--lg-ink-2);
   font-size: .82rem;
+  cursor: pointer;
 }
-html[data-style="liquid-glass"] .more summary::before { color: var(--lg-accent); }
 html[data-style="liquid-glass"] .more summary:hover { color: var(--lg-accent); }
 
 /* ==========================================================================
    Publications
    ========================================================================== */
+html[data-style="liquid-glass"] .year-group + .year-group { margin-top: 1.5rem; }
 html[data-style="liquid-glass"] .year {
+  margin: 0 0 .6rem;
   font-family: var(--lg-mono);
   font-size: .76rem;
   font-weight: 600;
   letter-spacing: .1em;
-  color: var(--lg-muted);
+  color: var(--lg-ink-2);
 }
+/* As with .sec-h::after: the base builds no pseudo here either. */
 html[data-style="liquid-glass"] .year::after {
+  content: "";
+  flex: 1;
+  height: 1px;
   background: linear-gradient(90deg, var(--lg-hair), transparent);
 }
 
 html[data-style="liquid-glass"] .pub {
-  padding: 1.15rem 1.3rem;
-  border: 0;
   border-radius: 18px;
-  background: var(--lg-pane);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
-  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
 }
 html[data-style="liquid-glass"] .pub:hover {
   transform: translateY(-2px);
-  border-color: transparent;
-  background: var(--lg-pane-hi);
+  background-color: var(--lg-pane-hi);
   box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
 }
 html[data-style="liquid-glass"] .pub-title {
+  margin: 0 0 .3rem;
   font-family: var(--lg-serif);
   font-size: 1.04rem;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -.005em;
   color: var(--lg-ink);
+  text-wrap: pretty;
 }
 html[data-style="liquid-glass"] .pub-authors {
+  margin: 0 0 .7rem;
   color: var(--lg-muted);
   font-size: .85rem;
   line-height: 1.5;
 }
-/* The base runs a tinted highlighter behind the author's own name. Under glass
-   that reads as a smudge, so it is a weight change and an ink change instead. */
+/* The owner's name in an author list a committee is skimming: a weight change
+   and an ink change. The base's highlighter wash would read as a smudge here. */
 html[data-style="liquid-glass"] .pub-authors b {
   background: none;
   color: var(--lg-ink);
   font-weight: 600;
 }
+html[data-style="liquid-glass"] .pub-meta { margin: 0; }
 
-/* Venue tags. Tinted glass nested on the pub pane, so their backdrop is the
-   pane, not the field — which is what keeps them at 6.3:1 and up rather than
-   3:1. Every venue in the data gets a rule; --pricai and --adc were not in the
-   mockup and are new here. .venue alone is the fallback for any venue added
-   later without one, and it is checked too (8.7:1). */
+/* Venue tags. Nested on the pub pane, which is already a backdrop root — their
+   backdrop is the pane, not the field, so their contrast is a number this layer
+   can guarantee (5.0:1 and up) rather than hope for. Bare .venue is the fallback
+   for any venue added later without a rule, and it is checked too (7.3:1). */
 html[data-style="liquid-glass"] .venue {
-  padding: .2rem .6rem;
   border: 1px solid var(--lg-hair);
   border-radius: 7px;
   background: var(--lg-chip-pane);
@@ -1978,10 +2025,12 @@ html[data-style="liquid-glass"] .venue {
   font-size: .68rem;
   font-weight: 600;
   letter-spacing: .06em;
+  line-height: 1.35;
   text-transform: uppercase;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+  cursor: help;
 }
-html[data-style="liquid-glass"] .venue--sigmod { color: #0a3d4b; background: rgba(15, 76, 92, .16);   border-color: rgba(15, 76, 92, .24); }
+html[data-style="liquid-glass"] .venue--sigmod { color: #093a47; background: rgba(15, 76, 92, .16);   border-color: rgba(15, 76, 92, .24); }
 html[data-style="liquid-glass"] .venue--vldb   { color: #2b3583; background: rgba(59, 72, 175, .14);  border-color: rgba(59, 72, 175, .24); }
 html[data-style="liquid-glass"] .venue--vldbj  { color: #4c2b83; background: rgba(105, 60, 175, .14); border-color: rgba(105, 60, 175, .24); }
 html[data-style="liquid-glass"] .venue--tkde   { color: #7c1f56; background: rgba(170, 40, 110, .13); border-color: rgba(170, 40, 110, .24); }
@@ -1990,28 +2039,27 @@ html[data-style="liquid-glass"] .venue--pricai { color: #6f3f12; background: rgb
 html[data-style="liquid-glass"] .venue--adc    { color: #35404e; background: rgba(60, 75, 95, .14);   border-color: rgba(60, 75, 95, .24); }
 
 html[data-style="liquid-glass"] .award {
-  padding: .2rem .55rem;
   border: 1px solid rgba(214, 158, 46, .35);
   border-radius: 7px;
   background: rgba(214, 158, 46, .18);
-  color: #7a4a05;
+  color: #6f4304;
   font-size: .7rem;
   font-weight: 600;
+  line-height: 1.35;
 }
 html[data-style="liquid-glass"] .pub-link {
-  padding: .22rem .6rem;
   border: 1px solid var(--lg-hair);
   border-radius: 7px;
   background: var(--lg-chip-pane);
   color: var(--lg-ink-2);
   font-size: .74rem;
   font-weight: 500;
+  line-height: 1.35;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
-  transition: background .16s ease, color .16s ease, border-color .16s ease;
+  transition: background .16s ease, color .16s ease;
 }
 html[data-style="liquid-glass"] .pub-link:hover {
   background: var(--lg-chip-hi);
-  border-color: var(--lg-hair);
   color: var(--lg-accent);
   text-decoration: none;
 }
@@ -2019,14 +2067,7 @@ html[data-style="liquid-glass"] .pub-link:hover {
 /* ==========================================================================
    Contact
    ========================================================================== */
-html[data-style="liquid-glass"] .contact {
-  position: relative;
-  padding: 1.6rem 1.75rem;
-  border: 0;
-  border-radius: 22px;
-  background: var(--lg-pane);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
-}
+html[data-style="liquid-glass"] .contact { border-radius: 22px; }
 html[data-style="liquid-glass"] .contact > p {
   margin: 0;
   color: var(--lg-ink-2);
@@ -2037,27 +2078,24 @@ html[data-style="liquid-glass"] .contact-mail {
   margin: 1.1rem 0 0;
   padding: .55rem 1.2rem;
   border: 1px solid rgba(255, 255, 255, .28);
-  border-bottom: 1px solid rgba(255, 255, 255, .28);
   border-radius: 999px;
   background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
   color: var(--lg-on-fill);
   font-family: var(--lg-mono);
   font-size: .87rem;
   font-weight: 500;
-  box-shadow:
-    0 6px 16px -6px rgba(13, 74, 90, .55),
-    inset 0 1px 0 rgba(255, 255, 255, .4);
+  box-shadow: 0 6px 16px -6px rgba(8, 56, 70, .55), inset 0 1px 0 rgba(255, 255, 255, .4);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 html[data-style="liquid-glass"] .contact-mail:hover {
   transform: translateY(-1px);
-  border-bottom-color: rgba(255, 255, 255, .28);
   text-decoration: none;
-  box-shadow:
-    0 10px 24px -6px rgba(13, 74, 90, .65),
-    inset 0 1px 0 rgba(255, 255, 255, .5);
+  box-shadow: 0 10px 24px -6px rgba(8, 56, 70, .65), inset 0 1px 0 rgba(255, 255, 255, .5);
 }
-html[data-style="liquid-glass"] .contact-addr {
+/* Qualified with p. on purpose: the address IS a .contact > p, and that rule is
+   one element more specific than a bare .contact-addr — without the p. here the
+   intro paragraph's ink wins and the address comes out at body size. */
+html[data-style="liquid-glass"] .contact > p.contact-addr {
   margin: 1.1rem 0 0;
   padding-top: 1rem;
   border-top: 1px solid var(--lg-hair);
@@ -2067,62 +2105,71 @@ html[data-style="liquid-glass"] .contact-addr {
 
 /* ==========================================================================
    Footer — a band, not bare field
-   In the mockup the footer's ink sat straight on the background at 2.9:1. It
-   gets a surface of its own here, which fixes the ratio and closes the page
-   with the same material it opened with.
    ========================================================================== */
 html[data-style="liquid-glass"] .foot {
   background: var(--lg-foot);
+  -webkit-backdrop-filter: var(--lg-blur);
+          backdrop-filter: var(--lg-blur);
   border-top: 1px solid var(--lg-hair);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
 }
-html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
+html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); font-size: .76rem; }
+html[data-style="liquid-glass"] .foot-inner p { margin: 0; }
 
 /* ==========================================================================
    DARK
-   The one real lesson from building this material: dark glass must DARKEN.
-   Tinting the pane white — the obvious mirror of light mode — lets a blob push
-   it to L=0.23 and drops muted text to 1.7:1.
-   The port adds a second edge to that lesson. With no hero pane, the link pills
-   now sit on the raw bloom, so --lg-chip has to smoke as well; only chips that
-   are already nested on a dark pane (--lg-chip-pane: venue tags, DOI links) can
-   tint upward, because the pane beneath them has already done the darkening.
-   That is why those are two tokens and not one.
+   The one real lesson of this material: dark glass must DARKEN. Tinting the pane
+   white — the obvious mirror of light mode — lets a blob push it to L=0.23 and
+   drops muted text to 1.7:1.
+   The transparent panes add a second edge to that lesson. The link pills sit on
+   the raw glare, so --lg-chip has to smoke; only chips already nested on a dark
+   pane (--lg-chip-pane: venue tags, DOI links) may tint upward, because the pane
+   beneath them has done the darkening. That is why those are two tokens.
+   The field is dimmer here than in light for a reason that is not taste: the
+   bright cyan accent and ink-2 are the inks that touch bare field, and both need
+   a dark backdrop. Bounded to L_max = 0.091 body, 0.117 hero.
    ========================================================================== */
 @media (prefers-color-scheme: dark) {
   html[data-style="liquid-glass"] {
     --lg-ink:      #eef2f6;
-    --lg-ink-2:    #ccd5df;
+    --lg-ink-2:    #d5dde5;
     --lg-muted:    #b3bfcb;
-    --lg-faint:    #93a1b0;
-    --lg-accent:   #7ad7ee;
-    --lg-accent-2: #a5e6f7;
+    --lg-faint:    #a3b1bf;
+    --lg-accent:   #a5e6f7;
+    --lg-accent-2: #4fb8d4;
     --lg-on-fill:  #04161c;
 
-    --lg-base: #080c12;
+    --lg-base: #060910;
     --lg-blobs:
-      radial-gradient(70rem 46rem at 12% -18%, rgba(22, 116, 142, .16), transparent 62%),
-      radial-gradient(56rem 40rem at 88%  -6%, rgba(66, 80, 178, .14),  transparent 64%),
-      radial-gradient(50rem 40rem at 78%  96%, rgba(178, 104, 58, .07), transparent 62%),
-      radial-gradient(52rem 42rem at -6%  92%, rgba(22, 116, 142, .08), transparent 62%);
+      radial-gradient(34rem 30rem at 16% 4%,  rgba(10, 96, 122, .32), transparent 62%),
+      radial-gradient(30rem 27rem at 84% 1%,  rgba(56, 60, 150, .28), transparent 62%),
+      radial-gradient(32rem 29rem at 90% 64%, rgba(122, 68, 30, .19), transparent 62%),
+      radial-gradient(31rem 28rem at 6%  94%, rgba(10, 108, 94, .19), transparent 62%);
+    --lg-weave:
+      repeating-linear-gradient(58deg,  rgba(170, 205, 255, .028) 0 1px, transparent 1px 9px),
+      repeating-linear-gradient(-58deg, rgba(170, 205, 255, .019) 0 1px, transparent 1px 14px);
 
-    --lg-pane:      rgba(10, 15, 22, .90);
-    --lg-pane-hi:   rgba(24, 34, 49, .94);
+    --lg-pane:      rgba(8, 12, 19, .62);
+    --lg-pane-hi:   rgba(22, 31, 44, .72);
     --lg-pane-flat: #0b1118;
-    --lg-chip:      rgba(8, 12, 18, .55);
-    --lg-chip-hi:   rgba(8, 12, 18, .72);
-    --lg-chip-pane: rgba(255, 255, 255, .09);
-    --lg-nav:       rgba(11, 16, 23, .82);
-    --lg-foot:      rgba(8, 12, 18, .72);
+    --lg-chip:      rgba(6, 10, 16, .46);
+    --lg-chip-hi:   rgba(6, 10, 16, .64);
+    --lg-chip-pane: rgba(255, 255, 255, .1);
+    /* .82 not .76: an independent audit put the dark inactive nav link at
+       4.87:1 — a pass, but the thinnest margin on the page. A touch more
+       opacity here settles it against pale content scrolling under the bar. */
+    --lg-nav:       rgba(10, 15, 22, .82);
+    --lg-foot:      rgba(6, 10, 16, .6);
     --lg-hair:      rgba(255, 255, 255, .13);
     --lg-hair-soft: rgba(255, 255, 255, .07);
+    --lg-sheen:     linear-gradient(177deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 46%);
 
-    --lg-edge: linear-gradient(150deg,
-                 rgba(255, 255, 255, .55) 0%,
-                 rgba(255, 255, 255, .14) 30%,
-                 rgba(255, 255, 255, 0)   54%,
-                 rgba(255, 255, 255, .06) 74%,
-                 rgba(255, 255, 255, .28) 100%);
+    --lg-edge: linear-gradient(146deg,
+                 rgba(255, 255, 255, .6)  0%,
+                 rgba(255, 255, 255, .16) 28%,
+                 rgba(255, 255, 255, 0)   52%,
+                 rgba(255, 255, 255, .07) 74%,
+                 rgba(255, 255, 255, .3)  100%);
     --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .16);
     --lg-inset-lo: inset 0 -1px 0 rgba(0, 0, 0, .22);
     --lg-shadow:
@@ -2134,37 +2181,31 @@ html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
          0 12px 26px -8px rgba(0, 0, 0, .66),
          0 38px 66px -26px rgba(0, 0, 0, .8);
 
-    --accent-tint: rgba(122, 215, 238, .12);
-    --shadow-sm:   0 1px 2px rgba(0, 0, 0, .4);
+    --accent-tint: rgba(165, 230, 247, .12);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
   }
 
+  /* The hero glare inverts. On a dark field a white bloom would be a headlight,
+     and it would raise the very bound the bare hero text is measured against. */
   html[data-style="liquid-glass"] .hero-glow {
     background:
-      radial-gradient(28rem 18rem at 32% 52%, rgba(34, 150, 180, .18),  transparent 66%),
-      radial-gradient(24rem 16rem at 68% 40%, rgba(104, 118, 220, .15), transparent 66%),
-      radial-gradient(18rem 12rem at 54% 78%, rgba(224, 150, 80, .10),  transparent 66%);
+      radial-gradient(26rem 17rem at 34% 54%, rgba(10, 90, 116, .2), transparent 66%),
+      radial-gradient(22rem 15rem at 62% 40%, rgba(62, 68, 156, .17), transparent 66%),
+      radial-gradient(17rem 12rem at 46% 74%, rgba(124, 74, 36, .1), transparent 66%);
   }
 
+  /* Every white-tinted highlight in the light layer has to be re-cut, or the
+     chrome glows like strip lighting against a dark field. */
   html[data-style="liquid-glass"] .hero-portrait {
-    background: var(--lg-chip-hi);
     box-shadow:
       0 12px 30px -12px rgba(0, 0, 0, .8),
       0 0 0 1px rgba(255, 255, 255, .12),
       inset 0 2px 3px rgba(255, 255, 255, .22);
   }
-  html[data-style="liquid-glass"] .hero-portrait img {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .10);
-  }
-  html[data-style="liquid-glass"] .hero-portrait .mono {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
-  }
-
-  /* Every white-tinted highlight in the light layer has to be re-cut, or the
-     pills glow like strip lights against a dark field. */
+  html[data-style="liquid-glass"] .hero-portrait img { box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
   html[data-style="liquid-glass"] .hero-pronouns,
   html[data-style="liquid-glass"] .sec-count,
   html[data-style="liquid-glass"] .style-toggle {
-    border-color: var(--lg-hair);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
   }
   html[data-style="liquid-glass"] .hero-links a {
@@ -2184,33 +2225,24 @@ html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
   html[data-style="liquid-glass"] .hero-links .is-cv:hover,
   html[data-style="liquid-glass"] .contact-mail,
   html[data-style="liquid-glass"] .contact-mail:hover {
-    background: linear-gradient(180deg, #8fdff2, #4fb8d4);
+    background: linear-gradient(180deg, var(--lg-accent), var(--lg-accent-2));
     border-color: rgba(255, 255, 255, .3);
     color: var(--lg-on-fill);
-    box-shadow:
-      0 6px 16px -6px rgba(0, 0, 0, .7),
-      inset 0 1px 0 rgba(255, 255, 255, .5);
+    box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .5);
   }
-
   html[data-style="liquid-glass"] .nav {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .10),
-      0 8px 24px -18px rgba(0, 0, 0, .8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 8px 24px -18px rgba(0, 0, 0, .8);
   }
-  html[data-style="liquid-glass"] .nav a:hover { background: rgba(255, 255, 255, .10); }
+  html[data-style="liquid-glass"] .nav a:hover { background: rgba(255, 255, 255, .1); }
   html[data-style="liquid-glass"] .nav a.is-active {
-    background: #8fdff2;
-    color: #06222b;
+    background: var(--lg-accent);
+    color: var(--lg-on-fill);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
   }
   html[data-style="liquid-glass"] .style-toggle-dot {
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, .5),
-      inset 0 0 0 1px rgba(255, 255, 255, .25);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 255, 255, .25);
   }
-
-  html[data-style="liquid-glass"] .sec-note a { text-decoration-color: rgba(122, 215, 238, .4); }
-
+  html[data-style="liquid-glass"] .sec-note a { text-decoration-color: rgba(165, 230, 247, .4); }
   html[data-style="liquid-glass"] .venue { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
   html[data-style="liquid-glass"] .venue--sigmod { color: #7fd8ee; background: rgba(56, 189, 248, .15);  border-color: rgba(125, 211, 240, .3); }
   html[data-style="liquid-glass"] .venue--vldb   { color: #a9b4ff; background: rgba(129, 140, 248, .15); border-color: rgba(160, 170, 250, .3); }
@@ -2224,88 +2256,100 @@ html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
     background: rgba(214, 158, 46, .18);
     border-color: rgba(214, 158, 46, .4);
   }
-  html[data-style="liquid-glass"] .pub-link {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);
-  }
-  html[data-style="liquid-glass"] .pub-link:hover {
-    background: rgba(255, 255, 255, .16);
-    color: var(--lg-accent);
-  }
-
+  html[data-style="liquid-glass"] .pub-link { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
+  html[data-style="liquid-glass"] .pub-link:hover { background: rgba(255, 255, 255, .16); color: var(--lg-accent); }
   /* Footer only. Grouping the active nav pill in here once cost it the .5
      highlight set above — same specificity, later in the source. */
-  html[data-style="liquid-glass"] .foot {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-  }
+  html[data-style="liquid-glass"] .foot { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
 }
 
 /* ==========================================================================
-   Narrow — matches the base's 40rem breakpoint, not the mockup's 46rem
-   A media query adds no specificity, so any base rule inside its own narrow
-   block loses to my scoped rule at every width. Anything I restyle that the
-   base also adjusts down here has to be re-adjusted here, or it silently
-   regresses on phones. That is what this block is for.
+   Narrow — the base's 40rem breakpoint, not the mockup's 46rem
+   A media query adds no specificity, so a base rule inside its own narrow block
+   still loses to any scoped rule above at every width. Anything this layer
+   restyles that the base also adjusts down here has to be re-adjusted, or it
+   silently regresses on phones.
    ========================================================================== */
 @media (max-width: 40rem) {
-  /* The base trims this panel on narrow screens for a real reason: its padding
-     made its justified text the narrowest column on the page and opened rivers.
-     My padding rule above would have quietly undone that. */
+  /* The base trims this panel for a real reason: its padding made the justified
+     text the narrowest column on the page and opened rivers. The pane rule above
+     would have quietly undone that. */
   html[data-style="liquid-glass"] .contact { padding: 1.15rem; }
-  html[data-style="liquid-glass"] .prose { padding: 1.15rem; }
+  html[data-style="liquid-glass"] .prose { padding: 1.15rem; font-size: .95rem; }
   html[data-style="liquid-glass"] .news { padding: 1.1rem 1.15rem; }
-
-  /* The base hides .nav-brand here and packs the row to the left, which would
-     leave the toggle floating next to the links instead of on the column edge. */
+  /* The base hides .nav-brand here and packs the row left, which would leave the
+     toggle floating beside the links instead of on the column edge. */
   html[data-style="liquid-glass"] .style-toggle { margin-left: auto; }
-
   html[data-style="liquid-glass"] .hero-links { padding-top: 1rem; }
-  html[data-style="liquid-glass"] .prose { font-size: .95rem; }
+  html[data-style="liquid-glass"] .hero-portrait { border-radius: 20px; }
+  html[data-style="liquid-glass"] .hero-portrait img { border-radius: 15px; }
+  html[data-style="liquid-glass"] .sec + .sec { margin-top: 2.5rem; }
 }
 
 /* ==========================================================================
    Degradation
    ========================================================================== */
 
-/* Only the nav blurs, so this is the only thing the fallback has to repair.
-   An unblurred 82% nav is legible — the black-backdrop bound guarantees that —
-   but it shows sharp content ghosting through, so it goes near-opaque instead. */
+/* Without backdrop-filter the panes still composite over the field, which is
+   exactly the path every ratio in this file was computed against — so nothing
+   becomes illegible. What breaks is the LOOK: the weave and anything under the
+   nav come through sharp instead of dissolved. So the fills go up. Every ratio
+   only improves, because a higher alpha moves each surface toward white (light)
+   or toward black (dark), away from its ink. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  html[data-style="liquid-glass"] { --lg-nav: rgba(255, 255, 255, .96); }
-  @media (prefers-color-scheme: dark) {
-    html[data-style="liquid-glass"] { --lg-nav: rgba(11, 16, 23, .96); }
-  }
-}
-
-/* Asked for less transparency: the effect is the thing they opted out of, so it
-   goes. Panes go opaque and the field flattens. Every ratio in this file only
-   improves — the numbers were computed against the translucent path, which is
-   the worst case by construction. */
-@media (prefers-reduced-transparency: reduce) {
   html[data-style="liquid-glass"] {
-    --lg-pane:      var(--lg-pane-flat);
-    --lg-pane-hi:   #ffffff;
-    --lg-chip:      rgba(255, 255, 255, .94);
-    --lg-chip-hi:   #ffffff;
-    --lg-chip-pane: rgba(255, 255, 255, .94);
-    --lg-nav:       #ffffff;
-    --lg-foot:      rgba(255, 255, 255, .96);
-    --lg-blur:      none;
+    --lg-pane:    rgba(255, 255, 255, .88);
+    --lg-pane-hi: rgba(255, 255, 255, .94);
+    --lg-chip:    rgba(255, 255, 255, .86);
+    --lg-chip-hi: rgba(255, 255, 255, .94);
+    --lg-nav:     rgba(255, 255, 255, .96);
+    --lg-foot:    rgba(255, 255, 255, .9);
   }
-  html[data-style="liquid-glass"] body::before { opacity: .35; }
   @media (prefers-color-scheme: dark) {
     html[data-style="liquid-glass"] {
-      --lg-pane-hi:   #18222f;
-      --lg-chip:      rgba(11, 16, 23, .96);
-      --lg-chip-hi:   #18222f;
-      --lg-chip-pane: rgba(255, 255, 255, .12);
-      --lg-nav:       #0b1017;
-      --lg-foot:      rgba(8, 12, 18, .96);
+      --lg-pane:    rgba(8, 12, 19, .88);
+      --lg-pane-hi: rgba(22, 31, 44, .94);
+      --lg-chip:    rgba(6, 10, 16, .86);
+      --lg-chip-hi: rgba(6, 10, 16, .94);
+      --lg-nav:     rgba(10, 15, 22, .96);
+      --lg-foot:    rgba(6, 10, 16, .9);
     }
   }
 }
 
-/* The base already kills transitions globally under reduced-motion, but it does
-   it with `*`, which my scoped hover transforms would out-specify. Restated. */
+/* Asked for less transparency: the effect is precisely what they opted out of,
+   so it goes — panes opaque, blur off, glare off, field damped toward its base.
+   Damping the field is monotone safe: it moves every pixel toward --lg-base,
+   which is the lightest colour in the light field and the darkest in the dark
+   one, so L_min rises in light and L_max falls in dark. Both help.
+   That opacity is on the FIELD. It is never on ink — see the header. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-style="liquid-glass"] {
+    --lg-pane:      var(--lg-pane-flat);
+    --lg-pane-hi:   #ffffff;
+    --lg-chip:      rgba(255, 255, 255, .95);
+    --lg-chip-hi:   #ffffff;
+    --lg-chip-pane: rgba(255, 255, 255, .95);
+    --lg-nav:       #ffffff;
+    --lg-foot:      var(--lg-pane-flat);
+    --lg-blur:      none;
+    --lg-sheen:     none;
+  }
+  html[data-style="liquid-glass"] body::before { opacity: .4; }
+  html[data-style="liquid-glass"] .hero-glow { display: none; }
+  @media (prefers-color-scheme: dark) {
+    html[data-style="liquid-glass"] {
+      --lg-pane-hi:   #18222f;
+      --lg-chip:      rgba(11, 16, 23, .95);
+      --lg-chip-hi:   #18222f;
+      --lg-chip-pane: rgba(255, 255, 255, .14);
+      --lg-nav:       #0b1017;
+    }
+  }
+}
+
+/* The base kills transitions globally under reduced-motion, but it does it with
+   `*`, which this layer's scoped hover transforms out-specify. Restated. */
 @media (prefers-reduced-motion: reduce) {
   html[data-style="liquid-glass"] *,
   html[data-style="liquid-glass"] *::before,
@@ -2316,37 +2360,58 @@ html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); }
   html[data-style="liquid-glass"] .interest:hover,
   html[data-style="liquid-glass"] .pub:hover,
   html[data-style="liquid-glass"] .hero-links a:hover,
-  html[data-style="liquid-glass"] .contact-mail:hover {
-    transform: none;
+  html[data-style="liquid-glass"] .contact-mail:hover { transform: none; }
+}
+
+@media (prefers-contrast: more) {
+  html[data-style="liquid-glass"] {
+    --lg-muted: var(--lg-ink-2);
+    --lg-faint: var(--lg-ink-2);
+    --lg-hair: rgba(16, 24, 32, .3);
   }
+  @media (prefers-color-scheme: dark) {
+    html[data-style="liquid-glass"] { --lg-hair: rgba(255, 255, 255, .32); }
+  }
+  html[data-style="liquid-glass"] .venue,
+  html[data-style="liquid-glass"] .award { border-color: currentColor; }
 }
 
 /* ==========================================================================
    Print
-   The base's print block sets `.pub, .interest, .contact { background: none }`
-   and so on, but it is unscoped and my rules out-specify it — so without this,
-   the panes and the field would print. Restated at this layer's specificity.
+   The base's print block strips the cards and the field, but with single-class
+   selectors — every rule in this layer out-specifies them, so without this the
+   panes, the blobs and the weave would all go to the printer.
    ========================================================================== */
 @media print {
-  html[data-style="liquid-glass"] body::before { display: none; }
   html[data-style="liquid-glass"] { background: #fff; }
+  html[data-style="liquid-glass"] body::before { display: none; }
   html[data-style="liquid-glass"] .hero { border-bottom: 0; }
-  html[data-style="liquid-glass"] .pub,
-  html[data-style="liquid-glass"] .interest,
-  html[data-style="liquid-glass"] .contact,
   html[data-style="liquid-glass"] .prose,
-  html[data-style="liquid-glass"] .news {
+  html[data-style="liquid-glass"] .news,
+  html[data-style="liquid-glass"] .interest,
+  html[data-style="liquid-glass"] .pub,
+  html[data-style="liquid-glass"] .contact {
     padding: 0;
     border: 0;
     border-radius: 0;
     background: none;
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
     box-shadow: none;
   }
   html[data-style="liquid-glass"] .prose::before,
   html[data-style="liquid-glass"] .news::before,
   html[data-style="liquid-glass"] .pub::before,
   html[data-style="liquid-glass"] .contact::before,
-  html[data-style="liquid-glass"] .interest::after { display: none; }
+  html[data-style="liquid-glass"] .interest::after,
+  html[data-style="liquid-glass"] .news li::before { display: none; }
+  html[data-style="liquid-glass"] .interest::before { position: static; }
+  html[data-style="liquid-glass"] .news li { border-left: 0; }
+  html[data-style="liquid-glass"] .hero-portrait { box-shadow: none; }
+  html[data-style="liquid-glass"] .hero-links a {
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+  }
   html[data-style="liquid-glass"] .contact-mail {
     padding: 0;
     border: 0;
