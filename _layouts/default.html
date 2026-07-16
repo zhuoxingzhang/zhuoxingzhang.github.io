@@ -46,26 +46,64 @@
     })();
 
     // Light up the nav link whose section is currently in view.
+    //
+    // Deliberately not an IntersectionObserver watching a band across the
+    // middle of the viewport: clicking a nav link parks that section's top near
+    // the top of the viewport, so any section shorter than the distance down to
+    // the band never reaches it. News and Contact are short enough that they
+    // never would, and the tall Publications block behind the band kept the
+    // highlight instead.
+    //
+    // Instead: whichever section has most recently crossed the line the anchor
+    // scrolls to. That is the same line the browser aligns to, so a clicked
+    // section always wins its own highlight regardless of height.
     (function () {
-      var links = [].slice.call(document.querySelectorAll('.nav a[href^="#"]'));
-      if (!links.length || !('IntersectionObserver' in window)) return;
-
-      var byId = {};
-      var targets = links.map(function (a) {
+      var nav = document.querySelector('.nav');
+      var pairs = [];
+      [].forEach.call(document.querySelectorAll('.nav a[href^="#"]'), function (a) {
         var el = document.getElementById(a.getAttribute('href').slice(1));
-        if (el) byId[el.id] = a;
-        return el;
-      }).filter(Boolean);
+        if (el) pairs.push({ link: a, el: el });
+      });
+      if (!pairs.length) return;
 
-      var seen = {};
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting; });
-        var current = targets.filter(function (t) { return seen[t.id]; })[0];
-        links.forEach(function (a) { a.classList.remove('is-active'); });
-        if (current) byId[current.id].classList.add('is-active');
-      }, { rootMargin: '-45% 0px -50% 0px' });
+      // Track scroll-margin-top rather than repeat its value, so the line stays
+      // tied to where anchors actually land if the CSS changes.
+      function line() {
+        var m = parseFloat(getComputedStyle(pairs[0].el).scrollMarginTop) || 0;
+        return window.scrollY + m + 4;
+      }
 
-      targets.forEach(function (t) { io.observe(t); });
+      var active = null;
+      function update() {
+        var y = line();
+        var current = pairs[0];
+        for (var i = 0; i < pairs.length; i++) {
+          if (pairs[i].el.getBoundingClientRect().top + window.scrollY <= y) {
+            current = pairs[i];
+          }
+        }
+        // The last section can sit too close to the end of the document to ever
+        // scroll up to the line. At the bottom, it takes the highlight.
+        var atEnd = window.innerHeight + window.scrollY >=
+                    document.documentElement.scrollHeight - 2;
+        if (atEnd) current = pairs[pairs.length - 1];
+
+        if (current.link === active) return;
+        if (active) active.classList.remove('is-active');
+        current.link.classList.add('is-active');
+        active = current.link;
+      }
+
+      var queued = false;
+      function onScroll() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () { queued = false; update(); });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
     })();
   </script>
 </body>
