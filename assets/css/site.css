@@ -31,8 +31,11 @@
   --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue", Arial,
            "PingFang SC", "Microsoft YaHei", sans-serif;
 
-  --wrap: 46rem;
-  --pad:  1.5rem;
+  /* --wrap sizes the hero, nav, content and footer alike. --measure keeps
+     running prose to a readable line length inside that wider column. */
+  --wrap:    60rem;
+  --measure: 46rem;
+  --pad:     1.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -180,8 +183,6 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 
 .hero-tagline {
   margin: 1rem 0 0;
-  padding-left: .85rem;
-  border-left: 2px solid var(--accent);
   font-size: .86rem;
   color: var(--muted);
 }
@@ -210,20 +211,18 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   box-shadow: var(--shadow-md);
   text-decoration: none;
 }
-.hero-links .is-mail,
+/* The address sits in the same row as Scholar/DBLP/… and reads as one of them,
+   so it carries no fill. Only the CV, an actual call to action, is filled. */
 .hero-links .is-cv {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
   font-weight: 500;
 }
-.hero-links .is-mail:hover,
 .hero-links .is-cv:hover { color: #fff; opacity: .9; }
 
 @media (prefers-color-scheme: dark) {
-  .hero-links .is-mail,
-  .hero-links .is-cv { color: #0d1417; }
-  .hero-links .is-mail:hover,
+  .hero-links .is-cv,
   .hero-links .is-cv:hover { color: #0d1417; }
 }
 
@@ -330,6 +329,8 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   color: var(--faint);
 }
 
+/* Cards and grids span the full column; prose stays at a readable measure. */
+.prose { max-width: var(--measure); }
 .prose p { margin: 0 0 1.1rem; }
 .prose p:last-child { margin-bottom: 0; }
 
@@ -339,43 +340,51 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 .interests {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: .75rem;
-  margin: 2rem 0 0; padding: 0;
+  /* 22rem lands on two columns at full width, so an even number of interests
+     forms a block rather than leaving one stranded on its own row. */
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: .9rem;
+  margin: 0; padding: 0;
+  counter-reset: interest;
 }
 .interest {
   position: relative;
-  padding: 1.1rem 1.15rem;
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  background: var(--surface);
+  padding: 1.4rem 1.4rem 1.4rem 3.4rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--rule));
+  background: linear-gradient(160deg, var(--accent-tint) 0%, var(--surface) 70%);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
   transition: transform .18s, box-shadow .18s, border-color .18s;
 }
+/* A counter reads as structure where a left rule read as decoration. */
 .interest::before {
-  content: "";
+  counter-increment: interest;
+  content: counter(interest, decimal-leading-zero);
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  background: var(--accent);
-  opacity: .55;
+  left: 1.4rem; top: 1.35rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--accent);
+  opacity: .5;
 }
 .interest:hover {
   transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  border-color: var(--accent);
   box-shadow: var(--shadow-md);
 }
 .interest h3 {
   font-family: var(--serif);
-  font-size: 1rem;
+  font-size: 1.12rem;
   font-weight: 500;
-  margin: 0 0 .3rem;
+  line-height: 1.3;
+  margin: 0 0 .4rem;
+  color: var(--accent-ink);
 }
 .interest p {
   margin: 0;
-  font-size: .84rem;
-  line-height: 1.55;
+  font-size: .855rem;
+  line-height: 1.6;
   color: var(--muted);
 }
 

@@ -8,8 +8,11 @@ layout: default
   <div class="prose">
     {% for para in p.about %}<p>{{ para }}</p>{% endfor %}
   </div>
+</section>
 
-  {% if p.interests and p.interests.size > 0 %}
+{% if p.interests and p.interests.size > 0 %}
+<section id="research" class="sec">
+  <h2 class="sec-h"><span>Research</span></h2>
   <ul class="interests">
     {% for i in p.interests %}
       <li class="interest">
@@ -22,8 +25,8 @@ layout: default
       </li>
     {% endfor %}
   </ul>
-  {% endif %}
 </section>
+{% endif %}
 
 {% if site.data.news and site.data.news.size > 0 %}
 <section id="news" class="sec">
