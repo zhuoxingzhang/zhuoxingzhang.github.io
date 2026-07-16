@@ -1841,6 +1841,28 @@ html[data-style="liquid-glass"] .style-toggle-text { display: inline-block; }
     height: max(44px, 100%);
     min-width: 44px;
   }
+  /* Glass keeps its chrome compact for a mouse, but a finger needs ~44px. The
+     archival layer gets there from the base's nav padding plus its own coarse
+     block; this layer overrode the nav padding down to .42rem and never wrote a
+     coarse block beyond the toggle, so on a phone the nav links (32px), index
+     tabs (34px) and stamps (25px) were all under the touch floor. Match the
+     archival layer's targets — the nav grows on touch only, never for a mouse. */
+  html[data-style="liquid-glass"] .nav a {
+    padding-top: .78rem;
+    padding-bottom: .78rem;
+  }
+  html[data-style="liquid-glass"] .hero-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  html[data-style="liquid-glass"] .pub-link,
+  html[data-style="liquid-glass"] .venue {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+  }
+  html[data-style="liquid-glass"] .more summary { padding-block: .6rem; }
 }
 
 /* ==========================================================================
