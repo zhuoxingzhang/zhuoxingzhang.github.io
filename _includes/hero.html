@@ -47,6 +47,7 @@
     <span class="nav-brand">{{ p.name }}</span>
     <ul>
       <li><a href="#about">About</a></li>
+      {% if p.interests and p.interests.size > 0 %}<li><a href="#research">Research</a></li>{% endif %}
       {% if site.data.news and site.data.news.size > 0 %}<li><a href="#news">News</a></li>{% endif %}
       <li><a href="#publications">Publications</a></li>
       <li><a href="#contact">Contact</a></li>
