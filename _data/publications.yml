@@ -9,7 +9,7 @@
 #     venue: SIGMOD                                        # short name, shown as a tag
 #     venue_full: Proceedings of the ACM on Management of Data
 #     year: 2026
-#     type: journal            # journal | conference  (only used for the filter tabs)
+#     type: journal            # journal | conference  (not shown on the page yet)
 #     award: Best Paper        # optional, omit if none
 #     links:                   # optional, omit if none
 #       - {name: DOI, url: "https://doi.org/..."}
