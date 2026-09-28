@@ -832,12 +832,18 @@ a {
   border-radius: 16px;
   box-shadow: 4px 4px 0 var(--shadow);
 }
+/* Plain greedy wrapping, on purpose: each line is filled before the title
+   breaks. Both alternatives were tried and rejected because the first line of
+   a two-line title stopped visibly short of the card's edge —
+   balance evens the lines, so a title barely longer than the card broke near
+   its middle; pretty pulls a word down to keep the last one company ("Data /
+   under Updates" instead of "Data under / Updates"). A lone last word is the
+   accepted price of a full first line. */
 .pub-title {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.12rem;
   line-height: 1.35;
-  text-wrap: balance;
 }
 .pub-authors {
   margin-top: .35rem;
