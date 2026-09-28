@@ -40,38 +40,26 @@ about:
     anomalies never seen in training. My work has appeared at SIGMOD and VLDB,
     and in TKDE, the VLDB Journal and EAAI.
 
-# One card each. `icon` picks the doodle: database | key | search | log.
+# The Research card: one line each, in order. `icon` picks the doodle used as
+# its bullet: database | key | search | log (see README for the rest).
+# HTML is allowed; <strong> marks the phrase a skimming eye should catch.
 interests:
-  - name: Normal forms, by the numbers
-    icon: database
-    detail: >-
-      Textbook design stops at "3NF, and BCNF where possible", which admits many
-      schemata and gives no principled way to pick one. I parameterize BCNF by
-      its number of minimal keys, and 3NF by its numbers of minimal keys and
-      functional dependencies, so the cost of keeping data consistent becomes
-      something you can measure and optimize at design time.
-  - name: Letting keys do the work
-    icon: key
-    detail: >-
-      Database systems enforce keys natively but leave functional dependencies
-      to triggers or application code. A mixed cover pairs the minimal keys with
-      a cover of the remaining FDs: orders of magnitude less integrity
-      maintenance, and faster queries, refreshes and inserts on
-      <span class="nb">TPC-H</span>.
-  - name: Finding the rules in data
-    icon: search
-    detail: >-
-      Which dependencies does a dataset actually satisfy? For cross joins I
-      settled the complexity (NP-complete, and W[3]-complete in the arity) and
-      gave the first algorithms to discover them, including approximate ones
-      that trade discovery time against a target ratio.
-  - name: Catching trouble in logs
-    icon: log
-    detail: >-
-      Graph models capture how log events depend on each other but overlook the
-      small substructures that give a fault away. My recent work finds those
-      substructures and distills them for fast inference, and extends detection
-      to the file level and to anomalies never seen in training.
+  - icon: database
+    text: >-
+      <strong>Normal forms by the numbers</strong>: choosing among 3NF and BCNF
+      schemata by counting their minimal keys and functional dependencies.
+  - icon: key
+    text: >-
+      <strong>Mixed covers</strong> that let the keys a database already
+      enforces do most of the integrity work.
+  - icon: search
+    text: >-
+      <strong>Dependency discovery</strong>: finding the rules a dataset
+      actually satisfies, such as cross joins.
+  - icon: log
+    text: >-
+      <strong>Log anomaly detection</strong> with graph models, down to the
+      file level and to anomalies never seen in training.
 
 # Shown as colourful buttons in the banner. Delete or add entries as needed.
 links:

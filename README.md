@@ -48,7 +48,7 @@
 | 加一篇论文                        | `_data/publications.yml`    | 3.5      |
 | 发一条新闻                        | `_data/news.yml`            | 3.4      |
 | 改自我介绍（About）               | `_data/profile.yml`         | 3.2      |
-| 改研究方向卡片                    | `_data/profile.yml`         | 3.3      |
+| 改研究方向（Research）            | `_data/profile.yml`         | 3.3      |
 | 改名字、职位、单位、一句话简介      | `_data/profile.yml`         | 3.1      |
 | 加/删页头的链接按钮（Scholar 等）  | `_data/profile.yml`         | 3.1      |
 | 换邮箱                            | `_data/profile.yml`         | 3.6      |
@@ -108,23 +108,27 @@ about:
 
 段落里可以写 HTML，比如 `<a href="https://...">链接</a>`、`<em>斜体</em>`。
 
-### 3.3 Research 卡片
+### 3.3 Research
 
-`profile.yml` 里的 `interests`，一项就是一张卡片：
+所有研究方向都在**一张卡片**里，一个方向一句话，前面用小图标当项目符号。
+对应 `profile.yml` 里的 `interests`，一个 `-` 就是一条：
 
 ```yaml
 interests:
-  - name: Letting keys do the work     # 卡片标题
-    icon: key                          # 卡片上的小图标
-    detail: >-
-      卡片正文……
+  - icon: key                          # 这一条前面的小图标
+    text: >-
+      <strong>Mixed covers</strong> that let the keys a database already
+      enforces do most of the integrity work.
 ```
 
+- 用 `<strong>…</strong>` 括起来的词会加粗，下面还会画一道和图标同色的荧光笔。
+  每条最好只标一个关键词，扫一眼就知道是哪个方向。
 - `icon` 可选 `database`、`key`、`search`、`log`，另外还有 `mail`、`pin`、`sparkle`、`moon`。
   不写会显示一颗星星（sparkle）；名字拼错的话，图标框里是空的。
-- 卡片颜色按顺序轮换：黄、粉、蓝、绿。
-- 电脑上两张一排，所以卡片数**最好是双数**，不然最后一张会单独占一行。
-- 正文里如果有不想被拆开的词（比如 `TPC-H` 不希望断成 `TPC-` 和 `H`），
+- 图标颜色按顺序轮换：黄、粉、蓝、绿。
+- 懒得配图标的话，也可以直接写一句话：`- Some new direction.`，前面自动用星星。
+- 句子尽量短，电脑上一行、手机上三四行最合适。详细的介绍放在 About 里。
+- 句子里如果有不想被拆开的词（比如 `TPC-H` 不希望断成 `TPC-` 和 `H`），
   这样写：`<span class="nb">TPC-H</span>`。
 
 ### 3.4 News

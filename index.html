@@ -20,20 +20,27 @@ layout: default
     <h2 class="sec-tag">Research</h2>
     <p class="sec-sub">what keeps me busy</p>
   </div>
-  <ul class="interests">
-    {% for i in p.interests %}
-      <li class="interest">
-        {% if i.name %}
+  {%- comment -%}
+    One card, one line per interest, each with a doodle for a bullet. An entry
+    may also be a bare string, which gets a sparkle.
+  {%- endcomment -%}
+  <div class="interests-card">
+    <ul class="interests">
+      {% for i in p.interests %}
+        {%- if i.text -%}
           {%- assign ic = i.icon | default: "sparkle" -%}
+          {%- assign line = i.text -%}
+        {%- else -%}
+          {%- assign ic = "sparkle" -%}
+          {%- assign line = i -%}
+        {%- endif %}
+        <li class="interest">
           <span class="interest-icon">{% include icon.html name=ic %}</span>
-          <h3>{{ i.name }}</h3>
-          <p>{{ i.detail }}</p>
-        {% else %}
-          <h3>{{ i }}</h3>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
+          <p>{{ line }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
 {% endif %}
 

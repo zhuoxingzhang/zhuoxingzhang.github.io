@@ -41,6 +41,8 @@
   --link:       #2a5bd7;
   --highlight:  rgba(255, 214, 92, .65);
   --tape:       rgba(158, 212, 255, .78);
+  --tape-pink:  rgba(255, 159, 207, .75);
+  --marker:     70%;                     /* strength of the research markers */
 
   /* The banner and footer: the night behind the portrait. */
   --night-top:     #172d5e;
@@ -92,6 +94,8 @@
     --link:       #9cc0ff;
     --highlight:  rgba(255, 214, 92, .3);
     --tape:       rgba(158, 212, 255, .5);
+    --tape-pink:  rgba(255, 159, 207, .5);
+    --marker:     38%;
 
     --night-top:    #081028;
     --night:        #0d1a3d;
@@ -208,13 +212,12 @@ a {
    on <html>. Do not add text-wrap: pretty here: licensed to replan the
    paragraph, the engine trades hyphens away for space and the gaps get worse.
 
-   The research cards and the postcard are narrow at every width — two cards
-   to a row on a desktop leave each about 45 characters — so they hyphenate
-   everywhere; the rest only once the phone narrows them too.
+   The postcard's message is narrow at every width — half a card on a desktop
+   leaves it about 45 characters — so it hyphenates everywhere; the rest only
+   once the phone narrows them too.
 
    Author lists are the exception: they are people's names, and breaking one
    across a line ("Zhuox-ing") reads worse than an uneven edge. */
-.interest p,
 .postcard-body {
   -webkit-hyphens: auto;
   hyphens: auto;
@@ -669,26 +672,37 @@ a {
 /* ==========================================================================
    Research
    ========================================================================== */
-/* min(22rem, 100%) rather than a bare 22rem: at full width 22rem still lands
-   on two columns, but a bare 22rem overflows a phone's column by a pixel. */
-.interests {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
-  gap: 1.4rem;
+/* One card, one line per interest; the bullets are the doodles, each on a
+   little sticker of its own colour. */
+.interests-card {
+  position: relative;
+  padding: 1.6rem 2rem;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--shadow);
 }
+/* Taped down by one corner — the right one, clear of the section tag. */
+.interests-card::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: -22px;
+  width: 5.5rem;
+  height: 24px;
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .35) 0 6px, transparent 6px 12px),
+    var(--tape-pink);
+  transform: rotate(38deg);
+}
+.interests { display: grid; gap: 1.15rem; }
 .interest {
   --c: var(--yellow);
   --c-deep: var(--yellow-deep);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 1rem;
+  column-gap: 1.1rem;
   align-items: center;
-  align-content: start;
-  padding: 1.35rem 1.5rem 1.5rem;
-  background: var(--card);
-  border: 3px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 5px 5px 0 var(--shadow);
 }
 .interest:nth-child(4n+2) { --c: var(--pink); --c-deep: var(--pink-deep); }
 .interest:nth-child(4n+3) { --c: var(--sky);  --c-deep: var(--sky-deep); }
@@ -697,30 +711,25 @@ a {
 .interest-icon {
   display: grid;
   place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 2.7rem;
+  height: 2.7rem;
   color: var(--on-color);
   background: var(--c);
-  border: 3px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 3px 3px 0 var(--shadow);
-  transform: rotate(-4deg);
+  border: 2.5px solid var(--line);
+  border-radius: 13px;
+  box-shadow: 2px 2px 0 var(--shadow);
+  transform: rotate(-5deg);
 }
-.interest-icon .doodle { width: 2.35rem; height: 2.35rem; }
-.interest:nth-child(even) .interest-icon { transform: rotate(4deg); }
+.interest-icon .doodle { width: 1.9rem; height: 1.9rem; }
+.interest:nth-child(even) .interest-icon { transform: rotate(5deg); }
 
-.interest h3 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.28rem;
-  line-height: 1.25;
-  text-wrap: balance;
-}
-.interest p {
-  grid-column: 1 / -1;
-  margin-top: 1rem;
-  font-size: 1rem;
-  line-height: 1.68;
+.interest p { line-height: 1.6; }
+/* The phrase to catch, run over with a marker in the bullet's colour. Left
+   plain where color-mix() is unsupported. */
+.interest strong {
+  font-weight: 800;
+  background: linear-gradient(transparent 60%,
+    color-mix(in srgb, var(--c) var(--marker), transparent) 60%);
 }
 
 
@@ -1146,11 +1155,15 @@ a {
   .sec-sub { font-size: 1rem; }
 
   .prose { padding: 1.4rem 1.2rem; box-shadow: 5px 5px 0 var(--shadow); }
-  .interests { gap: 1.2rem; }
-  .interest { padding: 1.15rem 1.2rem 1.25rem; }
-  .interest-icon { width: 3rem; height: 3rem; border-radius: 14px; }
-  .interest-icon .doodle { width: 2.05rem; height: 2.05rem; }
-  .interest h3 { font-size: 1.18rem; }
+  .interests-card { padding: 1.3rem 1.2rem; box-shadow: 5px 5px 0 var(--shadow); }
+  /* No corner tape on a phone: the text runs right up to that corner here,
+     and the tape covered the end of the first line. */
+  .interests-card::before { display: none; }
+  .interests { gap: 1.1rem; }
+  /* Items run three or four lines here; a bullet belongs by the first. */
+  .interest { column-gap: .85rem; align-items: start; }
+  .interest-icon { width: 2.4rem; height: 2.4rem; border-radius: 11px; }
+  .interest-icon .doodle { width: 1.7rem; height: 1.7rem; }
 
   /* The date moves above its item: beside it, it took a fifth of a column
      already too narrow to justify without gaping. */
@@ -1238,13 +1251,13 @@ a {
     transform: none;
     background: none;
   }
-  .prose, .interest, .news-card, .pub, .postcard, .contact {
+  .prose, .interests-card, .news-card, .pub, .postcard, .contact {
     border: none !important;
     box-shadow: none !important;
     background: none !important;
     padding: 0 !important;
     margin-bottom: .6rem;
   }
-  .prose::before { display: none; }
+  .prose::before, .interests-card::before { display: none; }
   .pub-link::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
 }
