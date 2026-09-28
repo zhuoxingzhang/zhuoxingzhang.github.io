@@ -1,11 +1,22 @@
 {%- assign p = site.data.profile -%}
-<header class="hero">
-  <div class="hero-glow" aria-hidden="true"></div>
+<header class="hero" id="top">
+  {%- comment -%}
+    The night sky is decoration only: hidden from assistive tech, and clipped
+    by .hero so nothing in it can widen the page.
+  {%- endcomment -%}
+  <div class="hero-sky" aria-hidden="true">
+    <span class="moon">{% include icon.html name="moon" %}</span>
+    <span class="twinkle t1">{% include icon.html name="sparkle" %}</span>
+    <span class="twinkle t2">{% include icon.html name="sparkle" %}</span>
+    <span class="twinkle t3">{% include icon.html name="sparkle" %}</span>
+    <span class="twinkle t4">{% include icon.html name="sparkle" %}</span>
+  </div>
+
   <div class="hero-inner">
 
     <div class="hero-portrait">
       {% if p.photo and p.photo != "" %}
-        <img src="{{ p.photo | relative_url }}" alt="{{ p.name }}">
+        <img src="{{ p.photo | relative_url }}" alt="{{ p.name }}" width="320" height="320">
       {% else %}
         {%- assign parts = p.name | split: " " -%}
         <span class="mono" aria-hidden="true">
@@ -13,6 +24,8 @@
         </span>
       {% endif %}
     </div>
+
+    {% if p.greeting and p.greeting != "" %}<p class="greeting">{{ p.greeting }}</p>{% endif %}
 
     <div class="hero-text">
       <h1 class="hero-name">
@@ -22,18 +35,14 @@
 
       <p class="hero-role">{{ p.title }}</p>
       <p class="hero-affil">
-        {% if p.department %}{{ p.department }} &middot; {% endif %}{{ p.affiliation }}
-        {% if p.location %}<span class="hero-loc">{{ p.location }}</span>{% endif %}
+        {%- comment -%} The nbsp keeps the dot on the department's line when this wraps. {%- endcomment -%}
+        {% if p.department %}{{ p.department }}&nbsp;&middot; {% endif %}{{ p.affiliation }}
+        {% if p.location %}<span class="hero-loc">{% include icon.html name="pin" %}{{ p.location }}</span>{% endif %}
       </p>
 
       {% if p.tagline %}<p class="hero-tagline">{{ p.tagline }}</p>{% endif %}
     </div>
 
-    {%- comment -%}
-      Outside .hero-text on purpose. Inside it, the row started where the text
-      column starts — indented past the portrait — so it ran narrower than every
-      block below it. Spanning both columns lines its edges up with the page.
-    {%- endcomment -%}
     {%- comment -%}
       No address here: Contact carries it, and repeating it in the hero only
       widened the surface a harvester can scrape.
@@ -52,23 +61,17 @@
 
 <nav class="nav" aria-label="Sections">
   <div class="nav-inner">
-    <span class="nav-brand">{{ p.name }}</span>
+    <a class="nav-brand" href="#top">{% include icon.html name="moon" %}{{ p.name }}</a>
+    {%- comment -%}
+      "Papers", not "Publications", so all five fit across a phone without the
+      strip having to scroll. The section it points to keeps its full name.
+    {%- endcomment -%}
     <ul>
       <li><a href="#about">About</a></li>
       {% if p.interests and p.interests.size > 0 %}<li><a href="#research">Research</a></li>{% endif %}
       {% if site.data.news and site.data.news.size > 0 %}<li><a href="#news">News</a></li>{% endif %}
-      <li><a href="#publications">Publications</a></li>
+      <li><a href="#publications">Papers</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    {%- comment -%}
-      Rendered with the label for the style the reader is NOT on, matching the
-      default in <html>. The script rewrites it on load if their stored choice
-      differs, so the button never advertises the style already showing.
-    {%- endcomment -%}
-    <button class="style-toggle" type="button"
-            data-label-archival-warm="Glass" data-label-liquid-glass="Archival">
-      <span class="style-toggle-dot" aria-hidden="true"></span>
-      <span class="style-toggle-text">Glass</span>
-    </button>
   </div>
 </nav>

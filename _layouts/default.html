@@ -1,30 +1,21 @@
 <!doctype html>
-{%- comment -%}
-  Two axes, kept separate:
-    prefers-color-scheme  -> light / dark, the reader's OS decides
-    data-style            -> archival-warm / liquid-glass, the reader picks
-  Every style has to work in both schemes.
-{%- endcomment -%}
-<html lang="{{ site.lang | default: 'en' }}"
-      data-style="{{ site.data.profile.style | default: 'archival-warm' }}">
+<html lang="{{ site.lang | default: 'en' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
-    // Before first paint: a returning reader's chosen style wins over the
-    // default rendered above. Any later and they see the wrong one flash.
-    (function () {
-      try {
-        var s = localStorage.getItem('site-style');
-        if (s === 'archival-warm' || s === 'liquid-glass') {
-          document.documentElement.setAttribute('data-style', s);
-        }
-      } catch (e) { /* private mode: keep the default */ }
-    })();
-  </script>
-  <meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1f3b73" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1430" media="(prefers-color-scheme: dark)">
   {% seo %}
+  {%- comment -%}
+    Fonts from jsDelivr rather than Google Fonts, which is unreachable from
+    mainland China. Versions are pinned so a new release can never change the
+    page under us. If the CDN is slow, font-display: swap in these files shows
+    the fallback stacks in site.css first.
+  {%- endcomment -%}
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fredoka@5.3.0/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/nunito@5.3.0/index.css">
   {%- comment -%}
     Not style.css: GitHub Pages applies jekyll-theme-primer when _config.yml
     names no theme, and the theme's own assets/css/style.scss compiles to that
@@ -51,48 +42,22 @@
   </footer>
 
   <script>
-    // The style switch. data-style on <html> is the single source of truth;
-    // the choice is remembered per-browser, so it never overrides the owner's
-    // default for anyone who has not pressed the button.
-    (function () {
-      var STYLES = ['archival-warm', 'liquid-glass'];
-      var root = document.documentElement;
-      var btn = document.querySelector('.style-toggle');
-      if (!btn) return;
-
-      function current() {
-        var s = root.getAttribute('data-style');
-        return STYLES.indexOf(s) === -1 ? STYLES[0] : s;
-      }
-
-      // The button offers the style you are not on, so its label is the target.
-      function paint() {
-        var next = current() === STYLES[0] ? STYLES[1] : STYLES[0];
-        var label = btn.getAttribute('data-label-' + current()) || next;
-        btn.querySelector('.style-toggle-text').textContent = label;
-        btn.setAttribute('aria-label', 'Switch to the ' + label + ' style');
-        btn.setAttribute('title', 'Switch to the ' + label + ' style');
-      }
-
-      btn.addEventListener('click', function () {
-        var next = current() === STYLES[0] ? STYLES[1] : STYLES[0];
-        root.setAttribute('data-style', next);
-        try { localStorage.setItem('site-style', next); } catch (e) { /* private mode */ }
-        paint();
-      });
-
-      paint();
-    })();
-
     // Restore the contact address. It ships reversed (see _includes/email.html)
     // so that the markup a harvester downloads holds no usable address; the
     // " [at] " fallback in the markup is what shows if this never runs.
+    //
+    // A <wbr> after the @ gives a narrow screen somewhere sensible to wrap,
+    // instead of splitting the domain mid-word. It adds nothing to a copy.
     (function () {
       var els = document.querySelectorAll('a[data-mail]');
       for (var i = 0; i < els.length; i++) {
         var addr = els[i].getAttribute('data-mail').split('').reverse().join('');
+        var at = addr.indexOf('@') + 1;
+        var t = els[i].querySelector('.mail-text') || els[i];
+        t.textContent = addr.slice(0, at);
+        t.appendChild(document.createElement('wbr'));
+        t.appendChild(document.createTextNode(addr.slice(at)));
         els[i].href = 'mailto:' + addr;
-        els[i].textContent = addr;
         els[i].removeAttribute('data-mail');
       }
     })();
@@ -112,15 +77,15 @@
     (function () {
       var nav = document.querySelector('.nav');
       var pairs = [];
-      [].forEach.call(document.querySelectorAll('.nav a[href^="#"]'), function (a) {
+      [].forEach.call(document.querySelectorAll('.nav ul a[href^="#"]'), function (a) {
         var el = document.getElementById(a.getAttribute('href').slice(1));
         if (el) pairs.push({ link: a, el: el });
       });
       if (!pairs.length) return;
 
-      // On a narrow screen the list scrolls sideways with its scrollbar hidden
-      // (.nav ul), so the link the highlight moves to can sit past the edge —
-      // Contact stayed hidden until the reader thought to swipe the bar itself.
+      // On the narrowest screens the list scrolls sideways with its scrollbar
+      // hidden (.nav ul), so the link the highlight moves to can sit past the
+      // edge.
       //
       // The strip parks so the lit link sits SECOND from the left: its left
       // neighbour stays whole beside it and the next one shows to its right,

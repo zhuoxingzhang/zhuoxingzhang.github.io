@@ -51,12 +51,19 @@ in `images/` and point `_data/profile.yml` at it:
 photo: "/images/my-new-photo.jpg"
 ```
 
-Leave `photo: ""` and you get a typeset monogram instead.
+Leave `photo: ""` and you get a monogram sticker instead.
+
+### The greeting and the research cards
+
+`greeting` in `_data/profile.yml` is the speech bubble beside the portrait;
+leave it empty to hide the bubble. Each entry under `interests` becomes a card,
+and its `icon` picks the doodle on it: `database`, `key`, `search` or `log`
+(the drawings live in `_includes/icon.html`).
 
 ### Adding a CV
 
 Save it as `assets/cv.pdf`, then in `_data/profile.yml` set `cv: "/assets/cv.pdf"`.
-A CV pill appears in the sidebar. Leave it empty to hide it.
+A CV button appears in the banner. Leave it empty to hide it.
 
 ## Deploying
 
@@ -84,17 +91,26 @@ _config.yml            site settings, SEO
 _data/profile.yml      name, bio, interests, links
 _data/news.yml         news items (empty -> the News section hides itself)
 _data/publications.yml papers
-_layouts/default.html  page shell
-_includes/sidebar.html sidebar
+_layouts/default.html  page shell and its scripts
+_includes/hero.html    the night-sky banner and the section nav
+_includes/icon.html    the hand-drawn doodles (research cards, moon, stamp)
+_includes/email.html   the contact address, shipped scrambled against scrapers
 index.html             the page itself
 assets/css/site.css    all styling (design tokens at the top)
-images/                photos, incl. the profile picture
+images/                photos, incl. the profile picture, and the favicons
 _portfolio/            dormant: 2025 South Island road-trip gallery, not linked
                        from the current site (see images/nz/)
 ```
 
-Colours, fonts, and spacing are CSS variables in the `:root` block at the top of
-`assets/css/site.css`. Dark mode follows the reader's system setting.
+The look is a cartoon one: cream paper, ink outlines, hard shadows and pastel
+stickers, with a night-sky banner in the navy of the portrait. Colours, fonts,
+and spacing are CSS variables in the `:root` block at the top of
+`assets/css/site.css`; dark mode follows the reader's system setting and has
+its own block right after.
+
+The fonts (Fredoka and Nunito) load from jsDelivr rather than Google Fonts,
+which is blocked in mainland China. If the CDN is ever unreachable the page
+falls back to system fonts and still works.
 
 One gotcha worth knowing: because `_config.yml` names no theme, GitHub Pages
 applies `jekyll-theme-primer` by default. That theme ships its own

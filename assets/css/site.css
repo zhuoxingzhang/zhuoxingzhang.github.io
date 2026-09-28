@@ -4,77 +4,167 @@
 
 /* ==========================================================================
 
-   site.css
+   site.css — the cartoon style
 
    Not style.css: GitHub Pages applies jekyll-theme-primer when _config.yml
    names no theme, and that theme's own assets/css/style.scss compiles to that
    path and would win. assets/css/style.scss shadows it and points here.
 
-   THREE LAYERS, IN THIS ORDER:
+   THE LOOK: cream paper with a halftone dot, ink outlines, hard offset
+   shadows and pastel stickers; a night-sky banner in the navy of the portrait
+   behind it. Fredoka for anything that is a label or a heading, Nunito for
+   reading.
 
-     1. BASE           what must hold whichever style is showing — the column
-                       geometry, justification, print, accessibility floors.
-     2. STYLE: archival-warm      scoped to html[data-style="archival-warm"]
-     3. STYLE: liquid-glass       scoped to html[data-style="liquid-glass"]
-
-   The two style layers are complete and independent: each owns colour, type,
-   surfaces and decoration for the whole page, and assumes nothing from the
-   other. Every selector in them starts with html[data-style="<key>"]. That is
-   not a convention — it is the thing that keeps them from corrupting each
-   other. A single unscoped selector leaks.
-
-   WHICH STYLE SHOWS: _data/profile.yml sets the default (`style:`); the button
-   in the nav lets a reader switch, and their choice is remembered in their own
-   browser. Both styles must work in light AND dark — those are separate axes.
-
-   TO EDIT COLOUR OR TYPE: find the layer for the style you mean and change its
-   tokens at the top. Do not add rules to BASE unless they must apply to both.
+   TO EDIT COLOUR OR TYPE: change the tokens in :root below (and their dark
+   twins right after). Every rule reads from them.
 
    ========================================================================== */
 
 
 /* ==========================================================================
-   LAYER 1 — BASE
-   Applies to every style. If it is a look, it does not belong here.
+   Tokens
    ========================================================================== */
+:root {
+  /* Column geometry — the hero, nav, content and footer share one box and
+     every block lines up on its two edges. */
+  --wrap: 55rem;
+  --pad:  1.5rem;
 
-/* ==========================================================================
-   BASE — everything that must hold no matter which style is showing.
+  --paper:      #fdf6e3;
+  --dot:        rgba(29, 34, 51, .075);
+  --card:       #fffdf8;
+  --text:       #1d2233;
+  --text-soft:  #4a5068;
+  --line:       #1d2233;               /* every outline */
+  --shadow:     #1d2233;               /* every hard shadow on paper */
+  --rule:       rgba(29, 34, 51, .26); /* dashed separators */
+  --link:       #2a5bd7;
+  --highlight:  rgba(255, 214, 92, .65);
+  --tape:       rgba(158, 212, 255, .78);
 
-   The site ships two complete style layers (see the end of site.css), each
-   scoped to html[data-style="..."]. They own colour, type, surfaces and
-   decoration. This layer owns only what must not vary between them:
+  /* The banner and footer: the night behind the portrait. */
+  --night-top:     #172d5e;
+  --night:         #1f3b73;
+  --night-shadow:  #0c1838;
+  --on-night:      #fff6e0;
+  --on-night-soft: #cdd8f3;
 
-     - the column geometry every block's edges align to
-     - justification and hyphenation, which the owner asked to keep
-     - the switch control's behaviour (not its look)
-     - print and accessibility floors
+  /* Pastel stickers. Text on them is always --on-color, in both schemes,
+     because the fills stay light in both. -deep is the accent inside doodles. */
+  --on-color: #1d2233;
+  --cream:    #fffdf8;
+  --yellow: #ffd65c;  --yellow-deep: #f2a91c;
+  --pink:   #ff9fcf;  --pink-deep:   #f0609f;
+  --sky:    #9ed4ff;  --sky-deep:    #4a9df0;
+  --mint:   #93e2c0;  --mint-deep:   #2fb383;
+  --lilac:  #cbb6ff;  --lilac-deep:  #8f6cf0;
+  --peach:  #ffc49e;  --peach-deep:  #f2874a;
+  --orange: #ffb561;
+  --air-red:  #ff6f7f;
+  --air-blue: #4f8ff7;
 
-   Anything added here applies to BOTH styles. If it is a look, it does not
-   belong here.
-   ========================================================================== */
+  --font-display: "Fredoka Variable", "Fredoka", ui-rounded, "Arial Rounded MT Bold",
+                  "Nunito Variable", system-ui, sans-serif;
+  --font-body:    "Nunito Variable", "Nunito", ui-rounded, system-ui, -apple-system,
+                  "Segoe UI", Roboto, sans-serif;
 
-*, *::before, *::after { box-sizing: border-box; }
+  --radius: 20px;
+  --wave-h: 20px;
 
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    transition: none !important;
-    animation: none !important;
+  /* One 80px period of the wave that edges the banner and the footer.
+     -down is filled above the curve (the banner's lower edge), -up below it
+     (the footer's upper edge). Used as masks so the colour stays a token. */
+  --wave-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 20' preserveAspectRatio='none'%3E%3Cpath d='M0 0H80V10C70 16.5 50 16.5 40 10S10 3.5 0 10Z'/%3E%3C/svg%3E");
+  --wave-up:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 20' preserveAspectRatio='none'%3E%3Cpath d='M0 20H80V10C70 3.5 50 3.5 40 10S10 16.5 0 10Z'/%3E%3C/svg%3E");
+  --postmark:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 132 64' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='100' cy='32' r='28'/%3E%3Ccircle cx='100' cy='32' r='20' stroke-dasharray='3 4'/%3E%3Cpath d='M2 20q8-6 16 0t16 0 16 0 16 0M2 32q8-6 16 0t16 0 16 0 16 0M2 44q8-6 16 0t16 0 16 0 16 0'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:      #131a33;
+    --dot:        rgba(255, 246, 224, .055);
+    --card:       #1d2647;
+    --text:       #f3ecd9;
+    --text-soft:  #b9c0d9;
+    --line:       #060914;
+    --shadow:     #060914;
+    --rule:       rgba(243, 236, 217, .22);
+    --link:       #9cc0ff;
+    --highlight:  rgba(255, 214, 92, .3);
+    --tape:       rgba(158, 212, 255, .5);
+
+    --night-top:    #081028;
+    --night:        #0d1a3d;
+    --night-shadow: #03060f;
   }
 }
 
-body { margin: 0; }
 
-/* --------------------------------------------------------------------------
-   Column geometry. The hero, nav, content and footer share one box; their
-   contents share another. Every block lines up on those two edges — the
-   styles are forbidden from touching this.
-   -------------------------------------------------------------------------- */
-:root {
-  --wrap: 55rem;
-  --pad:  1.5rem;
+/* ==========================================================================
+   Base
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.8px);
+  background-size: 22px 22px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p { margin: 0; }
+img { max-width: 100%; }
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+::selection { background: var(--yellow); color: var(--on-color); }
+
+:focus-visible {
+  outline: 3px solid var(--link);
+  outline-offset: 3px;
+}
+.hero :focus-visible { outline-color: var(--yellow); }
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 1rem;
+  z-index: 20;
+  padding: .6rem 1rem;
+  font-weight: 800;
+  color: var(--on-color);
+  background: var(--yellow);
+  border: 3px solid var(--line);
+  border-radius: 12px;
+}
+.skip:focus { left: 1rem; }
+
+/* Every list here is a layout device — a row of links, a grid of cards, a
+   stack of entries — not prose enumeration. */
+.hero-links,
+.nav ul,
+.interests,
+.news,
+.pubs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .hero-inner,
@@ -88,65 +178,56 @@ body { margin: 0; }
   padding-right: var(--pad);
 }
 
-/* Vertical padding is a default, not a law — a style may set its own rhythm.
-   It has to exist here though: with only the horizontal padding above, the
-   hero and the content sat flush against their neighbours, because both styles
-   read "the base owns the containers" and left the whole box alone. */
-.hero-inner { padding-top: 4.5rem;  padding-bottom: 3.25rem; }
-.main       { padding-top: 3.5rem;  padding-bottom: 2rem; }
-.foot-inner { padding-top: 1.5rem;  padding-bottom: 1.5rem; }
+/* The doodles in _includes/icon.html: cream body, the card's deeper shade for
+   the accent. A container sets --c-deep to recolour them. */
+.doodle { display: block; }
+.doodle .i-a { fill: var(--cream); }
+.doodle .i-b { fill: var(--c-deep, var(--yellow-deep)); }
 
-/* --------------------------------------------------------------------------
-   Component spacing — defaults carried over from the design these styles
-   replaced.
+.moon-face   { fill: var(--yellow); }
+.moon-crater { fill: var(--yellow-deep); }
+.moon-blush  { fill: var(--pink); }
 
-   Every one of these is overridden by whichever style has an opinion, and both
-   styles have opinions about most of them. They live here because a style that
-   forgets one should get a sensible box, not a collapsed one: when this was
-   left entirely to the styles, archival shipped .contact with no padding at all
-   (its text ran straight across the ornamental rule inset 5px inside the
-   border) and liquid-glass shipped .interest with none (its counter overlapped
-   the heading it numbers).
-   -------------------------------------------------------------------------- */
-.nav a          { padding: .95rem 0; }
-.hero-links a   { padding: .5rem .75rem; }
-.hero-pronouns  { padding: .2rem .5rem; }
-.hero-portrait  { padding: 5px; }
-.sec-count      { padding: .2rem .5rem; }
-.interest       { padding: 1.4rem 1.4rem 1.4rem 3.4rem; }
-.news li        { padding: .6rem 0 .6rem 1.1rem; }
-.more summary   { padding-left: 1.1rem; }
-.pub            { padding: 1.15rem 1.25rem; }
-.venue,
-.award          { padding: .26rem .55rem; }
-.pub-link       { padding: .26rem .5rem; }
-.contact        { padding: 1.75rem; }
 
-/* --------------------------------------------------------------------------
-   Justification. Running text only — never headings: a heading that wraps
-   would have its first line stretched across the column, which reads as a
-   mistake rather than as typesetting.
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   Justification
+   Running text only — never headings: a heading that wraps would have its
+   first line stretched across the column.
+   ========================================================================== */
 .prose p,
 .interest p,
 .news li span,
-.contact > p,
+.postcard-body,
 .pub-authors {
   text-align: justify;
   text-justify: inter-word;
 }
 
 /* A narrow line holds too few words to absorb the slack between them — that is
-   what opens rivers. Hyphenation gives the slack somewhere to go, which is how
-   narrow justified columns have always been set. Needs lang on <html>.
+   what opens rivers. Hyphenation gives the slack somewhere to go. Needs lang
+   on <html>. Do not add text-wrap: pretty here: licensed to replan the
+   paragraph, the engine trades hyphens away for space and the gaps get worse.
+
+   The research cards and the postcard are narrow at every width — two cards
+   to a row on a desktop leave each about 45 characters — so they hyphenate
+   everywhere; the rest only once the phone narrows them too.
 
    Author lists are the exception: they are people's names, and breaking one
    across a line ("Zhuox-ing") reads worse than an uneven edge. */
+.interest p,
+.postcard-body {
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  -webkit-hyphenate-limit-chars: 5 2 2;
+  hyphenate-limit-chars: 5 2 2;
+}
+.nb { white-space: nowrap; }
+
 @media (max-width: 40rem) {
   .prose p,
   .interest p,
   .news li span,
-  .contact > p {
+  .postcard-body {
     -webkit-hyphens: auto;
     hyphens: auto;
     -webkit-hyphenate-limit-chars: 5 2 2;
@@ -154,2388 +235,1016 @@ body { margin: 0; }
   }
   .pub-authors { text-align: left; }
 
-  /* The bookplate is still the narrowest measure on the page after its padding
-     trim (see the layout collapse below), and hyphens: auto alone was not
-     filling it: it only fires where the engine ships an English hyphenation
-     dictionary, and the phone this was debugged on broke nothing. So the
-     paragraph carries its own &shy; break points in the markup (index.html),
-     which every engine honours, and the floor here drops to 4 letters so none
-     of them is refused. text-wrap: pretty was tried too and made the gaps
-     worse — licensed to replan the paragraph, the engine traded hyphens away
-     for space — so it is gone. */
-  .contact > p {
+  /* The postcard is the narrowest measure on the page. Its paragraph also
+     carries its own &shy; break points (index.html), since hyphens: auto only
+     fires where the engine ships an English dictionary; the lower floor here
+     keeps any of them from being refused. */
+  .postcard-body {
     -webkit-hyphenate-limit-chars: 4 2 2;
     hyphenate-limit-chars: 4 2 2;
   }
 }
 
-/* --------------------------------------------------------------------------
-   Lists. Every list here is a layout device — a row of links, a grid of cards,
-   a stack of entries — not prose enumeration. Left alone, the UA gives them
-   markers and a 40px indent, which shows bullets beside the cards and pushes
-   entries off the column every other block lines up on.
 
-   This is structure, so it lives here rather than in a style: both styles built
-   on the assumption it was already done.
-   -------------------------------------------------------------------------- */
-.hero-links,
-.nav ul,
-.interests,
-.news,
-.pubs {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ==========================================================================
+   Banner — the night sky
+   ========================================================================== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  color: var(--on-night);
+  /* The sky stops a wave's height short of the bottom; the wave below paints
+     the rest, so the paper shows through under its curve. */
+  background: linear-gradient(180deg, var(--night-top), var(--night) 78%)
+              top / 100% calc(100% - var(--wave-h)) no-repeat;
+  padding-bottom: var(--wave-h);
 }
 
-/* --------------------------------------------------------------------------
-   Layout. Where things sit, not what they look like — both styles arrange the
-   page the same way and differ in how they paint it.
+/* The wave, twice: an ink copy 3px lower, then the night on top of it, so the
+   edge reads as an outline without a stroke that would scale with the tile. */
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--wave-h);
+  -webkit-mask: var(--wave-down) 0 0 / 80px 100% repeat-x;
+  mask: var(--wave-down) 0 0 / 80px 100% repeat-x;
+  pointer-events: none;
+}
+.hero::before { background: var(--line); transform: translateY(3px); }
+.hero::after  { background: var(--night); }
 
-   Everything here is single-class on purpose: a style's html[data-style="…"]
-   selector outranks it, so a style that wants a different gap or a bigger
-   portrait just says so and wins.
-   -------------------------------------------------------------------------- */
-.hero { position: relative; overflow: hidden; }
-.hero-glow { position: absolute; top: -34%; right: -8%; pointer-events: none; }
+.hero-sky {
+  position: absolute;
+  inset: 0 0 var(--wave-h);
+  pointer-events: none;
+  /* Three star fields tiled at sizes that share no factor, so the pattern
+     never visibly repeats. */
+  background-image:
+    radial-gradient(circle at 18px 26px, rgba(255, 246, 224, .85) 1.3px, transparent 1.9px),
+    radial-gradient(circle at 97px 71px, rgba(255, 246, 224, .55) 1px, transparent 1.6px),
+    radial-gradient(circle at 150px 18px, rgba(255, 214, 92, .75) 1.4px, transparent 2px);
+  background-size: 131px 97px, 173px 113px, 223px 149px;
+}
+
+/* Decorations are placed against the column, not the viewport, so they stay
+   next to the content at any width: --col-l / --col-r are the column's edges. */
+.hero-sky {
+  --col-l: calc(50% - min(var(--wrap) / 2, 50%) + var(--pad));
+  --col-r: calc(50% - min(var(--wrap) / 2, 50%) + var(--pad));
+}
+
+.moon {
+  position: absolute;
+  top: 1.75rem;
+  right: var(--col-r);
+  width: 5.5rem;
+  color: var(--line);
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 22px rgba(255, 214, 92, .35));
+  animation: bob 7s ease-in-out infinite;
+}
+.moon .doodle { width: 100%; height: auto; }
+
+.twinkle {
+  position: absolute;
+  width: 1.4rem;
+  color: var(--line);
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+.twinkle .doodle { width: 100%; height: auto; }
+.twinkle .doodle .i-b { fill: var(--c); }
+.t1 { --c: var(--yellow); top: 1.6rem;  left: calc(var(--col-l) - .6rem); }
+.t2 { --c: var(--pink);   top: 8.2rem;  right: calc(var(--col-r) + 1.2rem); width: 1rem; animation-delay: -1.1s; }
+.t3 { --c: var(--sky);    bottom: 2.6rem; right: calc(var(--col-r) + 4.5rem); width: 1.15rem; animation-delay: -2.2s; }
+.t4 { --c: var(--mint);   top: 1.4rem;  left: 47%; width: .9rem; animation-delay: -.6s; }
+
+@keyframes twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50%      { transform: scale(.72) rotate(18deg); opacity: .75; }
+}
+@keyframes bob {
+  0%, 100% { transform: rotate(-12deg) translateY(0); }
+  50%      { transform: rotate(-8deg) translateY(-5px); }
+}
+@keyframes pop {
+  0%   { transform: scale(.4) rotate(-8deg); opacity: 0; }
+  70%  { transform: scale(1.06) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
 
 .hero-inner {
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 2.25rem;
-  row-gap: 1.6rem;
+  grid-template-areas:
+    "portrait bubble"
+    "portrait text"
+    "links    links";
+  column-gap: 2.5rem;
   align-items: center;
+  padding-top: 3.75rem;
+  padding-bottom: 2.75rem;
 }
-/* The portrait sizes the hero's first grid column, so its dimensions are
-   layout, not decoration — the styles only paint the ring around it. Leave the
-   size out and the photo renders at its natural 320px, ballooning the column to
-   332px and shoving the text off the page at narrow widths. It has to be here:
-   both styles inherited a mockup that used a monogram span and never met the
-   real <img>. */
-.hero-portrait { width: 8.5rem; height: 8.5rem; flex: none; }
+
+/* A die-cut sticker: white margin, ink outline, stuck on slightly crooked. */
+.hero-portrait {
+  grid-area: portrait;
+  width: 11rem;
+  aspect-ratio: 1;
+  padding: 6px;
+  background: var(--cream);
+  border: 3px solid var(--line);
+  border-radius: 30px;
+  box-shadow: 7px 7px 0 var(--night-shadow);
+  transform: rotate(-3deg);
+}
 .hero-portrait img,
 .hero-portrait .mono {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 22px;
 }
-.hero-portrait img { display: block; }
-.hero-portrait .mono { display: grid; place-items: center; }
-.hero-pronouns { display: inline-block; }
+.hero-portrait .mono {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3rem;
+  color: var(--on-color);
+  background: var(--yellow);
+}
 
-/* Decorative, but it is sized in the layer that clips it (.hero has
-   overflow: hidden), so its dimensions belong with the geometry. */
-.hero-glow { width: 42rem; height: 42rem; }
+.greeting {
+  grid-area: bubble;
+  justify-self: start;
+  align-self: end;
+  position: relative;
+  margin-bottom: 1rem;
+  padding: .45rem 1.05rem .5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  color: var(--on-color);
+  background: var(--cream);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 4px 4px 0 var(--night-shadow);
+  transform-origin: 0 100%;
+  animation: pop .6s .25s cubic-bezier(.3, 1.4, .5, 1) both;
+}
+/* The tail: a square with two borders, turned so its corner points at the
+   portrait. */
+.greeting::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  bottom: 9px;
+  width: 16px;
+  height: 16px;
+  background: inherit;
+  border-left: 3px solid var(--line);
+  border-bottom: 3px solid var(--line);
+  border-bottom-left-radius: 3px;
+  transform: rotate(45deg);
+}
 
-/* Spans the portrait column too, so the row starts on the same left edge as
-   the sections below rather than behind the portrait. */
+.hero-text { grid-area: text; align-self: start; }
+
+.hero-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.3rem, 1.4rem + 3.6vw, 3.6rem);
+  line-height: 1.05;
+  color: var(--on-night);
+  text-shadow: 3px 3px 0 var(--pink-deep);
+}
+.hero-pronouns {
+  display: inline-block;
+  margin-left: .3rem;
+  padding: .3rem .6rem;
+  vertical-align: middle;
+  position: relative;
+  top: -.2em;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: .8rem;
+  line-height: 1;
+  letter-spacing: .02em;
+  color: var(--on-color);
+  text-shadow: none;
+  background: var(--mint);
+  border: 2.5px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--night-shadow);
+  transform: rotate(6deg);
+}
+
+.hero-role {
+  margin-top: .8rem;
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--on-night);
+}
+.hero-affil {
+  margin-top: .1rem;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--on-night-soft);
+  text-wrap: balance;
+}
+.hero-loc {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-top: .1rem;
+}
+.hero-loc .doodle {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: none;
+  color: var(--line);
+  --c-deep: var(--pink);
+}
+.hero-tagline {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  color: var(--yellow);
+  text-wrap: balance;
+}
+
 .hero-links {
-  grid-column: 1 / -1;
+  grid-area: links;
   display: flex;
   flex-wrap: wrap;
-  gap: .45rem;
+  gap: .7rem .6rem;
+  margin-top: 2.1rem;
 }
-.hero-links a { display: inline-block; }
+.hero-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: .3rem 1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.1;
+  color: var(--on-color);
+  text-decoration: none;
+  background: var(--c);
+  border: 2.5px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--night-shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.hero-links li:nth-child(6n+1) a { --c: var(--yellow); }
+.hero-links li:nth-child(6n+2) a { --c: var(--pink); }
+.hero-links li:nth-child(6n+3) a { --c: var(--sky); }
+.hero-links li:nth-child(6n+4) a { --c: var(--mint); }
+.hero-links li:nth-child(6n+5) a { --c: var(--lilac); }
+.hero-links li:nth-child(6n+6) a { --c: var(--peach); }
+.hero-links a.is-cv { --c: var(--cream); }
+.hero-links a:hover  { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--night-shadow); }
+.hero-links a:active { transform: translate(2px, 2px);   box-shadow: 1px 1px 0 var(--night-shadow); }
 
-.nav { position: sticky; top: 0; z-index: 10; }
+
+/* ==========================================================================
+   Nav
+   ========================================================================== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--paper);
+  border-bottom: 3px solid var(--line);
+}
 .nav-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
-/* Spacing from the gap, never padding on the links: padding would inset the
-   last item's text from the column edge, leaving "Contact" short of the edge
-   every block below lines up on. */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-brand .doodle {
+  width: 1.9rem;
+  height: 1.9rem;
+  color: var(--line);
+  transform: rotate(-12deg);
+}
+/* The strip scrolls sideways only when it cannot fit (a 320px phone); the
+   script in the layout keeps the lit link in view. The 4px on the right
+   leaves room for the lit pill's shadow, which the scroller would clip. */
 .nav ul {
   display: flex;
-  gap: 1.4rem;
+  gap: .3rem;
+  padding: .5rem 4px .5rem 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
 .nav ul::-webkit-scrollbar { display: none; }
-.nav a { display: block; }
+.nav ul a {
+  display: flex;
+  align-items: center;
+  padding: .3rem .8rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 999px;
+  transition: background-color .15s ease;
+}
+/* Rings drawn with inset shadows, not borders, so lighting a link never
+   changes its width and the row never shifts. */
+.nav ul a:hover { box-shadow: inset 0 0 0 2.5px var(--line); }
+.nav ul a.is-active {
+  color: var(--on-color);
+  background: var(--yellow);
+  box-shadow: inset 0 0 0 2.5px var(--line), 2px 2px 0 var(--line);
+}
 
-.sec { scroll-margin-top: 4.5rem; }
-.sec-h { display: flex; align-items: center; gap: .75rem; }
 
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+.main { padding-top: 3.5rem; padding-bottom: 1rem; }
+
+.sec { scroll-margin-top: 5rem; }
+.sec + .sec { margin-top: 4.5rem; }
+
+.sec--about    { --c: var(--sky); }
+.sec--research { --c: var(--yellow); }
+.sec--news     { --c: var(--pink); }
+.sec--papers   { --c: var(--mint); }
+.sec--contact  { --c: var(--lilac); }
+
+.sec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 1.1rem;
+  margin-bottom: 1.6rem;
+}
+.sec-tag {
+  display: inline-block;
+  padding: .3rem 1rem .38rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.65rem;
+  line-height: 1.1;
+  color: var(--on-color);
+  background: var(--c);
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--shadow);
+  transform: rotate(-2deg);
+}
+.sec-sub {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--text-soft);
+}
+.sec-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  margin-right: .25rem;
+  padding: 0 .4rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--card);
+  border: 2.5px solid var(--line);
+  border-radius: 999px;
+}
+
+/* One card for the about text, taped to the page. */
+.prose {
+  position: relative;
+  padding: 1.75rem 2rem;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+.prose::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 7rem;
+  height: 26px;
+  margin-left: -3.5rem;
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .35) 0 6px, transparent 6px 12px),
+    var(--tape);
+  transform: rotate(-3deg);
+}
+.prose p + p { margin-top: 1em; }
+
+
+/* ==========================================================================
+   Research
+   ========================================================================== */
 /* min(22rem, 100%) rather than a bare 22rem: at full width 22rem still lands
-   on two columns, so an even number of interests forms a block instead of
-   stranding one — but a bare 22rem is 352px, and at 375px the content box is
-   only 327px, so the track overflowed and the page scrolled sideways by a
-   pixel. min() lets the track collapse when there isn't room for it. */
+   on two columns, but a bare 22rem overflows a phone's column by a pixel. */
 .interests {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
-  gap: .9rem;
-  counter-reset: interest;
+  gap: 1.4rem;
 }
-.interest { position: relative; }
-.interest::before { counter-increment: interest; }
-
-.news li {
-  position: relative;
+.interest {
+  --c: var(--yellow);
+  --c-deep: var(--yellow-deep);
   display: grid;
-  grid-template-columns: 3.25rem minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: center;
+  align-content: start;
+  padding: 1.35rem 1.5rem 1.5rem;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 5px 5px 0 var(--shadow);
+}
+.interest:nth-child(4n+2) { --c: var(--pink); --c-deep: var(--pink-deep); }
+.interest:nth-child(4n+3) { --c: var(--sky);  --c-deep: var(--sky-deep); }
+.interest:nth-child(4n+4) { --c: var(--mint); --c-deep: var(--mint-deep); }
+
+.interest-icon {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  color: var(--on-color);
+  background: var(--c);
+  border: 3px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  transform: rotate(-4deg);
+}
+.interest-icon .doodle { width: 2.35rem; height: 2.35rem; }
+.interest:nth-child(even) .interest-icon { transform: rotate(4deg); }
+
+.interest h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.28rem;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.interest p {
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+
+/* ==========================================================================
+   News
+   ========================================================================== */
+.news-card {
+  padding: .5rem 1.75rem;
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+.news li {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
   gap: 1.1rem;
+  align-items: baseline;
+  padding: 1rem 0;
+}
+.news li + li { border-top: 2.5px dashed var(--rule); }
+.news time {
+  justify-self: start;
+  padding: .32rem .6rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: .95rem;
+  line-height: 1;
+  color: var(--on-color);
+  background: var(--pink);
+  border: 2.5px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--shadow);
+  transform: rotate(-3deg);
+}
+.news li:nth-child(even) time { transform: rotate(2deg); }
+.news strong { font-weight: 800; }
+
+.more { border-top: 2.5px dashed var(--rule); padding: .8rem 0; }
+.more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem .9rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  border: 2.5px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--shadow);
 }
 .more summary::-webkit-details-marker { display: none; }
+.more summary::after { content: "+"; font-weight: 700; }
+.more[open] summary::after { content: "\2212"; }
 
-.year { display: flex; align-items: center; gap: .75rem; }
-.pubs { display: grid; gap: .6rem; }
-.pub { position: relative; }
-.pub-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
 
-/* An address carries no spaces to break at, so on a narrow screen it runs
-   straight out of its panel rather than wrapping. Both styles set it large,
-   which is exactly when it does not fit. */
-.contact-mail {
-  display: inline-block;
-  max-width: 100%;
-  overflow-wrap: anywhere;
+/* ==========================================================================
+   Publications
+   ========================================================================== */
+.sec-note {
+  margin: -.35rem 0 1.9rem;
+  font-size: .98rem;
+  color: var(--text-soft);
 }
 
+.year-group + .year-group { margin-top: 2.1rem; }
+.year {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  margin-bottom: 1.05rem;
+}
+.year span {
+  padding: .38rem .7rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--on-color);
+  background: var(--mint);
+  border: 2.5px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.year::after {
+  content: "";
+  flex: 1;
+  border-top: 3px dotted var(--rule);
+}
+
+.pubs { display: grid; gap: 1rem; }
+.pub {
+  padding: 1.05rem 1.35rem 1.15rem;
+  background: var(--card);
+  border: 2.5px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+.pub-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.12rem;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.pub-authors {
+  margin-top: .35rem;
+  font-size: .98rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+/* Your own name, run over with a highlighter. */
+.pub-authors b {
+  font-weight: 800;
+  color: var(--text);
+  background: linear-gradient(transparent 60%, var(--highlight) 60%);
+}
+.pub-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .75rem;
+}
+.venue,
+.award,
+.pub-link {
+  display: inline-flex;
+  align-items: center;
+  padding: .3rem .6rem;
+  font-family: var(--font-display);
+  font-size: .85rem;
+  line-height: 1;
+  border: 2.5px solid var(--line);
+}
+/* Venues as rubber stamps, one ink per venue. */
+.venue {
+  --c: var(--sky);
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--on-color);
+  background: var(--c);
+  border-radius: 8px;
+  transform: rotate(-2deg);
+}
+.venue--sigmod { --c: var(--pink); }
+.venue--vldb   { --c: var(--sky); }
+.venue--vldbj  { --c: var(--lilac); }
+.venue--tkde   { --c: var(--yellow); }
+.venue--eaai   { --c: var(--mint); }
+.venue--adc    { --c: var(--peach); }
+.venue--pricai { --c: var(--orange); }
+.award {
+  font-weight: 700;
+  color: var(--on-color);
+  background: var(--yellow);
+  border-radius: 999px;
+}
+.pub-link {
+  position: relative;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--card);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.pub-link:hover {
+  color: var(--on-color);
+  background: var(--yellow);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+
+/* ==========================================================================
+   Contact — a postcard
+   ========================================================================== */
+.postcard {
+  padding: 10px;
+  background: repeating-linear-gradient(-45deg,
+    var(--air-red) 0 14px, var(--card) 14px 28px,
+    var(--air-blue) 28px 42px, var(--card) 42px 56px);
+  border: 3px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+.contact {
+  --stamp-w: 70px;
+  --stamp-h: 80px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: 1.4rem 1.75rem 1.6rem;
+  background: var(--card);
+  border: 2.5px solid var(--line);
+  border-radius: 13px;
+}
+
+/* The stamp: perforated by a mask, then outlined by drop-shadows that follow
+   the perforations. Its size must stay a multiple of the 10px perforation
+   pitch or the holes stop landing on the edges. */
+.stamp {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.5rem;
+  width: var(--stamp-w);
+  height: var(--stamp-h);
+  transform: rotate(5deg);
+  filter:
+    drop-shadow(1.5px 0 0 var(--line)) drop-shadow(-1.5px 0 0 var(--line))
+    drop-shadow(0 1.5px 0 var(--line)) drop-shadow(0 -1.5px 0 var(--line))
+    drop-shadow(3px 3px 0 var(--shadow));
+}
+.stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--cream);
+  -webkit-mask:
+    radial-gradient(circle, transparent 3px, #000 3.4px) -5px -5px / 10px 10px,
+    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat;
+  mask:
+    radial-gradient(circle, transparent 3px, #000 3.4px) -5px -5px / 10px 10px,
+    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat;
+}
+.stamp-art {
+  position: absolute;
+  inset: 7px;
+  display: grid;
+  place-items: center;
+  color: var(--on-color);
+  background: var(--night);
+  border: 2px solid var(--line);
+  border-radius: 3px;
+}
+.stamp-art .doodle { width: 62%; height: auto; }
+.stamp-mark {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .62rem;
+  letter-spacing: .06em;
+  color: var(--on-night);
+}
+/* Cancelled by a postmark, which overlaps the stamp's left edge. */
+.contact::after {
+  content: "";
+  position: absolute;
+  top: calc(1.2rem + 14px);
+  right: calc(1.5rem + var(--stamp-w) - 36px);
+  width: 84px;
+  height: 41px;
+  background: var(--text-soft);
+  opacity: .5;
+  -webkit-mask: var(--postmark) center / contain no-repeat;
+  mask: var(--postmark) center / contain no-repeat;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.postcard-msg { padding-right: 1.75rem; }
+.postcard-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: .78rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.postcard-hello {
+  margin-top: .3rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+.postcard-body { margin-top: .7rem; }
+.postcard-sign {
+  margin-top: .7rem;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: var(--text-soft);
+}
+
+/* The address side: the stamp sits at its top, the address below it on
+   ruled lines. */
+.postcard-addr {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: calc(var(--stamp-h) + .9rem);
+  padding-left: 1.75rem;
+  border-left: 2.5px dashed var(--rule);
+}
+
+/* An address carries no spaces to break at. The script inserts a <wbr> after
+   the @; anywhere is the last resort for a screen too narrow even for half. */
+.contact-mail {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  max-width: 100%;
+  padding: .4rem 1rem .4rem .5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: var(--on-color);
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--pink);
+  border: 2.5px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+  --c-deep: var(--pink-deep);
+}
+.contact-mail .doodle { width: 1.75rem; height: 1.75rem; flex: none; }
+.contact-mail .mail-text { min-width: 0; overflow-wrap: anywhere; }
+.contact-mail:hover  { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--shadow); }
+.contact-mail:active { transform: translate(2px, 2px);   box-shadow: 1px 1px 0 var(--shadow); }
+
+.contact-addr {
+  align-self: stretch;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.contact-addr span {
+  display: block;
+  padding: .3rem .1rem;
+  line-height: 1.5;
+  border-bottom: 2px dashed var(--rule);
+}
+
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.foot {
+  position: relative;
+  overflow: hidden;
+  margin-top: 5rem;
+  padding-top: var(--wave-h);
+  color: var(--on-night-soft);
+  background: linear-gradient(180deg, var(--night), var(--night-top))
+              bottom / 100% calc(100% - var(--wave-h)) no-repeat;
+}
+.foot::before,
+.foot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--wave-h);
+  -webkit-mask: var(--wave-up) 0 0 / 80px 100% repeat-x;
+  mask: var(--wave-up) 0 0 / 80px 100% repeat-x;
+  pointer-events: none;
+}
+.foot::before { background: var(--line); transform: translateY(-3px); }
+.foot::after  { background: var(--night); }
 .foot-inner {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: .5rem;
+  gap: .3rem 1rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.75rem;
+  font-size: .92rem;
+  font-weight: 600;
 }
 
-/* Layout collapse. Look is the styles' business; where things go is this
-   layer's, at every width. */
+
+/* ==========================================================================
+   Narrow screens
+   ========================================================================== */
 @media (max-width: 40rem) {
+  :root { --pad: 1rem; }
+  body { font-size: 1rem; }
+
   .hero-inner {
-    grid-template-columns: 1fr;
-    row-gap: 1.35rem;
-    padding-top: 2.75rem;
+    grid-template-areas:
+      "portrait bubble"
+      "text     text"
+      "links    links";
+    column-gap: 1.15rem;
+    padding-top: 2.5rem;
     padding-bottom: 2.25rem;
   }
-  .hero-portrait { width: 6.5rem; height: 6.5rem; }
-  .main { padding-top: 2.5rem; }
+  .hero-portrait { width: 7.25rem; padding: 5px; border-radius: 24px; box-shadow: 5px 5px 0 var(--night-shadow); }
+  .hero-portrait img,
+  .hero-portrait .mono { border-radius: 17px; }
+  .greeting { align-self: center; margin-bottom: 0; font-size: 1.02rem; }
+  .hero-text { margin-top: 1.5rem; }
+  .hero-role { font-size: 1.08rem; }
+  .hero-tagline { font-size: 1.1rem; }
+  .hero-links { margin-top: 1.6rem; gap: .6rem .5rem; }
+  .hero-links a { padding: .3rem .85rem; font-size: .95rem; }
+
+  .moon { width: 3.6rem; top: .9rem; }
+  .t1 { top: .9rem; left: calc(var(--col-l) + 8rem); }
+  .t2 { top: auto; bottom: 7.5rem; right: calc(var(--col-r) + .2rem); }
+  .t3 { bottom: 1.4rem; right: calc(var(--col-r) + .6rem); }
+  .t4 { display: none; }
+
+  /* Five links across the phone with no scrolling. */
   .nav-brand { display: none; }
-  .nav-inner { justify-content: flex-start; }
-  .news li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+  .nav ul { flex: 1; justify-content: space-between; gap: 0; }
+  .nav ul a { padding: .3rem .5rem; font-size: .95rem; }
 
-  /* This panel's padding made its text the narrowest column on the page — 269px
-     against 327px for the prose — so its justified lines held the fewest words
-     and opened the widest gaps. Trimmed it is still the narrowest, which is
-     why the justification block above also lets its words break earlier than
-     the running text's. */
-  .contact { padding: 1.15rem; }
+  .main { padding-top: 2.75rem; }
+  .sec + .sec { margin-top: 3.5rem; }
+  .sec-head { margin-bottom: 1.35rem; }
+  .sec-tag { font-size: 1.45rem; }
+  .sec-sub { font-size: 1rem; }
+
+  .prose { padding: 1.4rem 1.2rem; box-shadow: 5px 5px 0 var(--shadow); }
+  .interests { gap: 1.2rem; }
+  .interest { padding: 1.15rem 1.2rem 1.25rem; }
+  .interest-icon { width: 3rem; height: 3rem; border-radius: 14px; }
+  .interest-icon .doodle { width: 2.05rem; height: 2.05rem; }
+  .interest h3 { font-size: 1.18rem; }
+
+  /* The date moves above its item: beside it, it took a fifth of a column
+     already too narrow to justify without gaping. */
+  .news-card { padding: .3rem 1.2rem; }
+  .news li { grid-template-columns: minmax(0, 1fr); gap: .55rem; padding: 1rem 0 1.05rem; }
+  .news time { font-size: .88rem; padding: .3rem .55rem; }
+
+  .pub { padding: .95rem 1.05rem 1.05rem; }
+  .pub-title { font-size: 1.06rem; }
+
+  .postcard { padding: 8px; }
+  .contact {
+    --stamp-w: 60px;
+    --stamp-h: 70px;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.1rem 1.1rem 1.25rem;
+  }
+  .stamp { top: 1rem; right: 1rem; }
+  .contact::after { top: calc(1rem + 10px); right: calc(1rem + var(--stamp-w) - 30px); width: 70px; height: 34px; }
+  .postcard-msg { padding-right: 0; }
+  /* The stamp shares the top of the card with the greeting, so the greeting
+     keeps clear of it and the letter starts below it. */
+  .postcard-head { min-height: calc(var(--stamp-h) + .2rem); padding-right: calc(var(--stamp-w) + 3.2rem); }
+  .postcard-hello { font-size: 1.4rem; }
+  .postcard-addr {
+    padding: 1.15rem 0 0;
+    margin-top: 1.15rem;
+    border-left: 0;
+    border-top: 2.5px dashed var(--rule);
+  }
+  .contact-mail { font-size: .98rem; padding-right: .85rem; }
+  .contact-mail .doodle { width: 1.55rem; height: 1.55rem; }
+
+  .foot { margin-top: 4rem; }
 }
 
-/* --------------------------------------------------------------------------
-   Accessibility floors. A style may restyle these; it may not remove them.
-   -------------------------------------------------------------------------- */
-.skip {
-  position: absolute;
-  left: -9999px;
-  z-index: 20;
-  padding: .6rem 1rem;
-}
-.skip:focus { left: 1rem; top: 1rem; }
 
-:focus-visible { outline-offset: 3px; }
-
-/* The switch is a real button; keep it from inheriting UA chrome regardless of
-   which style is painting it. */
-.style-toggle {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  cursor: pointer;
+/* ==========================================================================
+   Touch — ~44px for a finger, without growing the look for a mouse
+   ========================================================================== */
+@media (pointer: coarse) {
+  .nav ul { padding-top: .2rem; padding-bottom: .2rem; }
+  .nav ul a { min-height: 44px; }
+  .hero-links a { min-height: 44px; }
+  .contact-mail { min-height: 44px; }
+  /* The pills stay small; an invisible pad around each takes the tap. */
+  .pub-link::before {
+    content: "";
+    position: absolute;
+    inset: -8px -3px;
+  }
+  .more summary { min-height: 44px; }
 }
 
-/* --------------------------------------------------------------------------
-   Print. Neither style's decoration survives paper, and neither should try.
-   -------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   Preferences
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root { --text-soft: var(--text); --rule: var(--line); }
+}
+
+
+/* ==========================================================================
+   Print — the stickers stay on screen
+   ========================================================================== */
 @media print {
-  .nav, .skip, .foot, .hero-glow, .style-toggle { display: none !important; }
+  .nav, .skip, .foot, .hero-sky, .greeting, .stamp, .contact::after { display: none !important; }
+  body { font-size: 11pt; color: #000; background: none; }
+  .hero { color: #000; background: none; padding: 0; }
+  .hero::before, .hero::after { display: none; }
   .hero-inner, .main { max-width: none; padding: 0; }
-  body { font-size: 11pt; }
-  .pub, .interest, .contact {
+  .hero-name, .hero-role, .hero-affil, .hero-tagline { color: #000; text-shadow: none; }
+  .hero-portrait { box-shadow: none; transform: none; }
+  .hero-links a, .venue, .pub-link, .contact-mail, .sec-tag, .year span, .news time {
+    box-shadow: none;
+    transform: none;
+    background: none;
+  }
+  .prose, .interest, .news-card, .pub, .postcard, .contact {
     border: none !important;
     box-shadow: none !important;
     background: none !important;
     padding: 0 !important;
     margin-bottom: .6rem;
   }
+  .prose::before { display: none; }
   .pub-link::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
-}
-
-
-/* ==========================================================================
-   LAYER 2 — STYLE: archival-warm
-   html[data-style="archival-warm"] — scholarly print: laid ground, oxblood rules.
-   ========================================================================== */
-
-/* ==========================================================================
-   ARCHIVAL WARM — style layer, scoped to html[data-style="archival-warm"]
-
-   The idea in one line: a scholarly offprint. Laid-paper ground, oxblood
-   rules, the book face for anything you read and a small sans for the
-   apparatus around it.
-
-   What this layer deliberately does NOT do: old-style figures, sepia-toned
-   portraits, small caps on everything with a pulse. The earlier draft wore
-   those and read as costume rather than as a CV. Small caps now appear in
-   exactly one place — section headings — and the numerals are lining and
-   tabular everywhere, because years and counts get scanned, not savoured.
-
-   Two style layers share one stylesheet, so EVERY selector below is scoped.
-   The shared base owns --wrap/--pad, the column geometry of .hero-inner /
-   .nav-inner / .main / .foot-inner, and the justification + hyphenation of
-   running text. None of that is touched here.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   Tokens.
-
-   The base's own token names are re-pointed at this palette on purpose: any
-   base rule this layer does not restate still lands in warm paper rather than
-   in the other style's colours. The layer restates essentially everything
-   anyway, but the belt matters as much as the braces when two themes share a
-   file. --wrap and --pad are conspicuously absent: they are the base's.
-
-   Ratios (measured, WCAG 2.1): the weakest pairing anywhere in this layer is
-   4.75:1 (dark --faint on --tint). Body ink runs 13–16:1. See the header
-   comment on each colour for where it is spent.
-   -------------------------------------------------------------------------- */
-html[data-style="archival-warm"] {
-  --paper:      #f3eee3;  /* page ground */
-  --paper-deep: #eae3d4;  /* furniture: hero band, nav band, footer */
-  --panel:      #fbf9f4;  /* cards: interests, publications, bookplate */
-  --tint:       #f0e9db;  /* stamp grounds and hover fills */
-
-  --ink:        #221c17;  /* 14.6:1 on paper, 16.0:1 on panel */
-  --muted:      #5a4d45;  /* 7.0:1 on paper, 6.4:1 on paper-deep */
-  --faint:      #6b5d51;  /* 5.5:1 on paper, 5.0:1 on paper-deep (footer) */
-  --accent:     #7b2d26;  /* oxblood — 8.1:1 on paper */
-  --accent-ink: #6b2620;  /* oxblood for text under ~0.9rem — 9.4:1 on paper */
-
-  --rule:       #cfc3ad;
-  --rule-soft:  #e2d9c7;
-  --emboss:     rgba(255, 255, 255, .8);
-  --wash:       rgba(123, 45, 38, .055);
-
-  /* Laid paper: wire lines every 4px, chain lines every 26px. Kept at ~3%
-     alpha — at anything stronger it stops being paper and starts being a
-     texture effect. Static background, so it costs nothing on scroll. */
-  --grain-a:    rgba(96, 66, 34, .028);
-  --grain-b:    rgba(96, 66, 34, .020);
-  --laid:
-    repeating-linear-gradient(0deg,  var(--grain-a) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, var(--grain-b) 0 1px, transparent 1px 26px);
-
-  /* Letterpress: a white edge along the top of a panel and a short, warm
-     shadow beneath it. Warm-tinted, because a neutral grey shadow on oatmeal
-     reads as dirt. */
-  --press:
-    inset 0 1px 0 var(--emboss),
-    0 1px 2px rgba(60, 40, 20, .07),
-    0 6px 16px -12px rgba(60, 40, 20, .3);
-  --press-hi:
-    inset 0 1px 0 var(--emboss),
-    0 1px 2px rgba(60, 40, 20, .09),
-    0 10px 22px -14px rgba(60, 40, 20, .4);
-
-  /* Venue inks. One card stock, many stamp inks — colour still codes the
-     venue, but every tag sits on the same known ground, so the contrast is
-     provable rather than hopeful. All 6.6–9.0:1 on --tint. */
-  --v-sigmod: #0d4756;
-  --v-vldb:   #2c3a72;
-  --v-vldbj:  #4f2f66;
-  --v-tkde:   #7a2246;
-  --v-eaai:   #275030;
-  --v-pricai: #6f3e10;
-  --v-adc:    #3f464d;
-  --v-award:  #6b4a12;
-
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-           Georgia, "Times New Roman", serif;
-  --sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-           "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-
-  /* Base token names, re-pointed. */
-  --bg:          var(--paper);
-  --surface:     var(--panel);
-  --surface-2:   var(--paper-deep);
-  --text:        var(--ink);
-  --accent-tint: var(--tint);
-  --hero-from:   var(--paper-deep);
-  --hero-to:     var(--paper);
-  --glow:        var(--wash);
-  --shadow-sm:   0 1px 2px rgba(60, 40, 20, .07);
-  --shadow-md:   var(--press-hi);
-  --shadow-lg:   var(--press);
-
-  color-scheme: light dark;
-}
-
-/* Dark. Note the specificity trap this avoids: html[data-style=…] outranks the
-   base's :root, and a media query adds no specificity — so without this block
-   the base's own dark tokens would lose to the light values above and the page
-   would come up cream at 2am. The palette is the same ledger seen by lamplight:
-   the oxblood has to climb to a warm terracotta to stay legible on near-black. */
-@media (prefers-color-scheme: dark) {
-  html[data-style="archival-warm"] {
-    --paper:      #16120f;
-    --paper-deep: #0f0c0a;
-    --panel:      #201b16;
-    --tint:       #2b2520;
-
-    --ink:        #ece3d5;  /* 14.7:1 on paper, 13.4:1 on panel */
-    --muted:      #ab9d8e;  /* 7.1:1 on paper, 5.7:1 on tint */
-    --faint:      #9c8e7f;  /* 5.8:1 on paper, 4.8:1 on tint */
-    --accent:     #e59a83;  /* 8.2:1 on paper */
-    --accent-ink: #eeae99;  /* 9.9:1 on paper */
-
-    --rule:       #453a31;
-    --rule-soft:  #322a23;
-    --emboss:     rgba(255, 240, 220, .05);
-    --wash:       rgba(229, 154, 131, .07);
-
-    --grain-a:    rgba(255, 232, 200, .020);
-    --grain-b:    rgba(255, 232, 200, .014);
-
-    --press:
-      inset 0 1px 0 var(--emboss),
-      0 1px 2px rgba(0, 0, 0, .4),
-      0 8px 20px -12px rgba(0, 0, 0, .8);
-    --press-hi:
-      inset 0 1px 0 var(--emboss),
-      0 1px 2px rgba(0, 0, 0, .5),
-      0 12px 26px -14px rgba(0, 0, 0, .9);
-
-    --v-sigmod: #7cc6d7;
-    --v-vldb:   #a2aeee;
-    --v-vldbj:  #caa4df;
-    --v-tkde:   #f095b1;
-    --v-eaai:   #8fcb9e;
-    --v-pricai: #e3ac78;
-    --v-adc:    #b3aca2;
-    --v-award:  #dcb974;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-  }
-}
-
-/* ==========================================================================
-   Ground
-   ========================================================================== */
-html[data-style="archival-warm"] body {
-  background-color: var(--paper);
-  background-image: var(--laid);
-  color: var(--ink);
-  font-family: var(--sans);
-}
-
-html[data-style="archival-warm"] a { color: var(--accent); }
-
-/* Restated rather than inherited: the base's focus ring resolves --accent from
-   :root, and this layer's --accent lives on a more specific selector. Restating
-   it keeps the ring oxblood even if the base's ring rule ever changes. */
-html[data-style="archival-warm"] :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-html[data-style="archival-warm"] .skip {
-  background: var(--panel);
-  border: 1px solid var(--accent);
-  border-radius: 2px;
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: .85rem;
-  box-shadow: var(--press);
-}
-
-/* ==========================================================================
-   Hero — the title page
-   ========================================================================== */
-html[data-style="archival-warm"] .hero {
-  background-color: var(--paper-deep);
-  background-image: var(--laid);
-  /* The thick half of a title-page double rule; the thin half is ::after. */
-  border-bottom: 2px solid var(--accent);
-}
-html[data-style="archival-warm"] .hero::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 4px;
-  height: 1px;
-  background: var(--rule);
-  pointer-events: none;
-}
-
-html[data-style="archival-warm"] .hero-glow {
-  top: auto; right: auto;
-  inset: -40% -10% auto -10%;
-  width: auto; height: 130%;
-  background: radial-gradient(58% 68% at 24% 32%, var(--wash), transparent 70%);
-}
-
-/* Portrait as a mounted plate: square corners, a paper mat, a hairline.
-   No sepia — toning a photograph to match the furniture is the exact move
-   that made the first draft read as fancy dress. */
-html[data-style="archival-warm"] .hero-portrait {
-  border-radius: 2px;
-  padding: 5px;
-  background: var(--panel);
-  border: 1px solid var(--rule);
-  box-shadow: var(--press);
-}
-html[data-style="archival-warm"] .hero-portrait img {
-  border-radius: 1px;
-  box-shadow: inset 0 0 0 1px rgba(34, 28, 23, .16);
-}
-/* Fallback when no photo is set. */
-html[data-style="archival-warm"] .hero-portrait .mono {
-  border-radius: 1px;
-  background: var(--tint);
-  border: 1px solid var(--rule-soft);
-  color: var(--accent);
-  font-family: var(--serif);
-  font-size: 2.5rem;
-  letter-spacing: .04em;
-}
-
-html[data-style="archival-warm"] .hero-name {
-  /* margin 0 like the other style: an h1 carries .67em of UA margin, which at
-     this size is ~32px — left in place it pushed the name (and, through the
-     grid's centring, the portrait) that far below where the glass hero
-     starts. The base's hero padding is the whole of the top space. */
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2.05rem, 1.4rem + 2.3vw, 2.95rem);
-  line-height: 1.08;
-  letter-spacing: -.012em;
-  color: var(--ink);
-}
-
-/* Brackets around supplied information — a cataloguing convention that happens
-   to be the quietest way to set a gloss apart from the name it follows. */
-html[data-style="archival-warm"] .hero-pronouns {
-  padding: 0;
-  border-radius: 0;
-  background: none;
-  vertical-align: .3em;
-  margin-left: .55em;
-  font-family: var(--sans);
-  font-size: .62rem;
-  font-weight: 500;
-  letter-spacing: .08em;
-  color: var(--muted);
-}
-html[data-style="archival-warm"] .hero-pronouns::before { content: "["; opacity: .55; margin-right: .15em; }
-html[data-style="archival-warm"] .hero-pronouns::after  { content: "]"; opacity: .55; margin-left: .12em; }
-
-/* The single most scannable fact on the page, so it gets the book face at
-   full ink rather than a coloured subtitle. */
-html[data-style="archival-warm"] .hero-role {
-  margin: .65rem 0 0;
-  font-family: var(--serif);
-  font-size: 1.08rem;
-  font-weight: 400;
-  color: var(--ink);
-}
-html[data-style="archival-warm"] .hero-affil {
-  margin: .2rem 0 0;
-  font-family: var(--sans);
-  font-size: .875rem;
-  color: var(--muted);
-}
-html[data-style="archival-warm"] .hero-loc { color: var(--faint); }
-html[data-style="archival-warm"] .hero-loc::before {
-  content: "";
-  display: inline-block;
-  width: 1.3em; height: 1px;
-  vertical-align: .3em;
-  margin: 0 .5em;
-  background: var(--rule);
-}
-
-html[data-style="archival-warm"] .hero-tagline {
-  margin: 1.05rem 0 0;
-  padding-top: .8rem;
-  border-top: 1px solid var(--rule);
-  font-family: var(--sans);
-  font-size: .82rem;
-  font-weight: 500;
-  letter-spacing: .02em;
-  color: var(--accent-ink);
-}
-
-/* Index tabs. Square corners and a hairline; the pill shape belongs to the
-   other style. .hero-links spans both grid columns in the base — untouched. */
-html[data-style="archival-warm"] .hero-links {
-  margin-top: .4rem;
-  gap: .45rem;
-}
-html[data-style="archival-warm"] .hero-links a {
-  padding: .42rem .7rem;
-  border-radius: 2px;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: .88rem;
-  line-height: 1.2;
-  letter-spacing: .01em;
-  box-shadow: inset 0 1px 0 var(--emboss), 0 1px 1px rgba(60, 40, 20, .05);
-  transition: color .15s, border-color .15s, background .15s;
-}
-html[data-style="archival-warm"] .hero-links a:hover,
-html[data-style="archival-warm"] .hero-links a:focus-visible {
-  transform: none;              /* the base lifts these; this layer does not */
-  border-color: var(--accent);
-  background: var(--tint);
-  color: var(--accent-ink);
-  box-shadow: inset 0 1px 0 var(--emboss), 0 1px 1px rgba(60, 40, 20, .05);
-  text-decoration: none;
-}
-/* No CV link in the markup today, but the base styles .is-cv, so this layer
-   owns it too rather than letting a filled teal pill appear if one is added. */
-html[data-style="archival-warm"] .hero-links .is-cv,
-html[data-style="archival-warm"] .hero-links .is-cv:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--panel);          /* 9.4:1 light, 8.2:1 dark */
-  font-weight: 500;
-  opacity: 1;
-}
-
-/* ==========================================================================
-   Nav — a running head, and it is sticky
-   ========================================================================== */
-/* Sticky over a textured ground is the one place this style cannot be coy: the
-   band has to be genuinely opaque or the wire lines of the page below crawl
-   through the labels. So — solid paper-deep, no backdrop blur (the base sets
-   one; killed here), and a rule plus a short shadow underneath so the band
-   reads as sitting on top of the sheet rather than printed into it. */
-html[data-style="archival-warm"] .nav {
-  background: var(--paper-deep);
-  background-image: var(--laid);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-bottom: 1px solid var(--rule);
-  box-shadow:
-    inset 0 1px 0 var(--emboss),
-    0 6px 12px -12px rgba(60, 40, 20, .55);
-}
-
-html[data-style="archival-warm"] .nav-brand {
-  font-family: var(--serif);
-  font-size: 1rem;
-  color: var(--ink);
-  /* Deliberately no opacity here: the base fades this in on scroll with a
-     scroll-driven animation and an opacity:0 start. Setting opacity would
-     either fight it or strand the name invisible. */
-}
-
-html[data-style="archival-warm"] .nav a {
-  font-family: var(--serif);
-  font-size: .95rem;
-  letter-spacing: .01em;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-}
-html[data-style="archival-warm"] .nav a:hover {
-  color: var(--ink);
-  border-bottom-color: var(--rule);
-  text-decoration: none;
-}
-html[data-style="archival-warm"] .nav a.is-active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-  font-weight: 400;             /* the rule marks it; bold as well is shouting */
-}
-
-/* --- style toggle ------------------------------------------------------- */
-/* A small tab in the running head. Square, hairlined, same family as the hero
-   index tabs so it reads as furniture rather than as a widget. */
-html[data-style="archival-warm"] .style-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: .45rem;
-  margin: .35rem 0;
-  padding: .34rem .6rem;
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  background: var(--panel);
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 var(--emboss);
-  transition: color .15s, border-color .15s, background .15s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-html[data-style="archival-warm"] .style-toggle:hover {
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  background: var(--tint);
-}
-html[data-style="archival-warm"] .style-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-html[data-style="archival-warm"] .style-toggle:active {
-  box-shadow: inset 0 1px 2px rgba(60, 40, 20, .18);
-}
-/* A stamped square of ink, not an LED. */
-html[data-style="archival-warm"] .style-toggle-dot {
-  width: 7px; height: 7px;
-  flex: none;
-  border-radius: 1px;
-  background: var(--accent);
-  opacity: .75;
-  transition: opacity .15s;
-}
-html[data-style="archival-warm"] .style-toggle:hover .style-toggle-dot { opacity: 1; }
-html[data-style="archival-warm"] .style-toggle-text { display: inline-block; }
-
-/* ==========================================================================
-   Sections
-   ========================================================================== */
-/* Between sections. Matched to the glass layer's 3.1rem (2.5rem narrow, below)
-   so a reader toggling styles sees the sections hold their place rather than
-   jump: the two layers now share one section rhythm. This was 1.05rem — the
-   escaped-paragraph margin that fell out of About's prose — which set a tighter
-   page than glass and, stacked with archival's taller serif cards, made the
-   toggle shove every heading tens of pixels. It only lands aligned because the
-   card trims below (interest p, interest h3, pub meta, contact) pull the block
-   heights back toward glass's; margin alone could not, and made it worse. */
-html[data-style="archival-warm"] .sec + .sec { margin-top: 3.1rem; }
-
-html[data-style="archival-warm"] .sec-h {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 1rem;
-  gap: .85rem;
-  margin: 0 0 1.35rem;
-}
-/* The margin below a heading is uniform, but the eye measures ink to ink:
-   Research and Contact open with a card whose border sits right at the
-   margin's edge, while About opens with bare prose whose first line spends
-   its own half-leading (1.75 line-height ≈ 6px) plus the face's ascent
-   headroom before any ink shows. Same margin, wider-looking gap — so the
-   heading over prose gives that lead back. .7rem is the owner's calibration:
-   the arithmetic said .85 and his eye said a touch less. Engines without
-   :has() keep the uniform margin, which is merely the old look. */
-html[data-style="archival-warm"] .sec-h:has(+ .prose) { margin-bottom: .7rem; }
-/* The one place small caps are spent. Everything else stays in its own case. */
-html[data-style="archival-warm"] .sec-h > span {
-  font-size: 1.2rem;
-  font-variant-caps: small-caps;
-  letter-spacing: .11em;
-  color: var(--ink);
-}
-/* The base underlines the heading word with a 3px accent bar. This style rules
-   out to the margin instead, so the bar has to go. */
-html[data-style="archival-warm"] .sec-h > span::after { content: none; }
-html[data-style="archival-warm"] .sec-h::after {
-  content: "";
-  flex: 1;
-  height: 3px;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule-soft);
-}
-/* order:3 puts the count after the rule; the rule and the word both sit at
-   order:0 and fall in DOM order. Result: WORD ———— [10]. */
-html[data-style="archival-warm"] .sec-count {
-  order: 3;
-  padding: 0;
-  border-radius: 0;
-  background: none;
-  font-family: var(--serif);
-  font-style: normal;
-  font-weight: 400;
-  font-size: .92rem;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: .04em;
-  color: var(--accent-ink);
-}
-html[data-style="archival-warm"] .sec-count::before { content: "["; opacity: .5; margin-right: .12em; }
-html[data-style="archival-warm"] .sec-count::after  { content: "]"; opacity: .5; margin-left: .12em; }
-
-html[data-style="archival-warm"] .sec-note {
-  font-family: var(--sans);
-  font-size: .82rem;
-  color: var(--faint);
-}
-html[data-style="archival-warm"] .sec-note a {
-  color: var(--accent-ink);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  text-underline-offset: 2px;
-}
-html[data-style="archival-warm"] .sec-note a:hover {
-  text-decoration-color: var(--accent);
-}
-
-/* Running text in the book face. No text-align, no hyphens, no max-width:
-   the base owns the justification and the column, and both are load-bearing. */
-html[data-style="archival-warm"] .prose {
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: var(--ink);
-}
-
-/* ==========================================================================
-   Research — index cards
-   ========================================================================== */
-/* Grid template left alone: the base's 22rem minimum is what keeps four cards
-   in two columns instead of stranding one. */
-html[data-style="archival-warm"] .interest {
-  padding: 1.2rem 1.35rem 1.3rem;   /* the base insets 3.4rem for a left number */
-  border-radius: 2px;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  box-shadow: var(--press);
-  transition: border-color .18s, background .18s, box-shadow .18s;
-}
-/* Counter kept — it is structure, and on an index card the number belongs in
-   the corner, not in the text block's left margin. */
-html[data-style="archival-warm"] .interest::before {
-  counter-increment: interest;
-  content: counter(interest, decimal-leading-zero);
-  left: auto;
-  right: 1.35rem;
-  top: 1.25rem;
-  font-family: var(--sans);
-  font-size: .72rem;
-  font-weight: 600;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: .1em;
-  color: var(--accent-ink);
-  opacity: .8;
-}
-html[data-style="archival-warm"] .interest:hover {
-  transform: none;                  /* the base lifts the card; paper doesn't */
-  border-color: var(--accent);
-  box-shadow: var(--press-hi);
-}
-html[data-style="archival-warm"] .interest h3 {
-  font-family: var(--serif);
-  font-weight: 400;
-  /* 1.05 not 1.1: holds the title to one line, so the card sits at the glass
-     card's height and the grid does not tower over glass's when toggled — the
-     effect multiplies on phones, where the four cards stack instead of pairing. */
-  font-size: 1.05rem;
-  line-height: 1.32;
-  color: var(--ink);
-  padding: 0 2.6rem .4rem 0;         /* clears the corner number */
-  margin: 0 0 .5rem;
-  border-bottom: 1px solid var(--rule-soft);
-}
-html[data-style="archival-warm"] .interest p {
-  /* margin:0 like the glass card. Without it the UA's 1em top and bottom rode
-     on every card — ~29px of height the other style never had, which the toggle
-     read as the cards growing. */
-  margin: 0;
-  font-family: var(--serif);
-  font-size: .92rem;
-  line-height: 1.66;
-  color: var(--muted);
-}
-
-/* ==========================================================================
-   News — an accessions ledger
-   ========================================================================== */
-/* The base draws a timeline: a left rail with a dot per entry. A ledger of
-   ruled rows is the same information with less apparatus, and it suits a page
-   made of rules. Rail and dots off; the base's two-column grid stays. */
-html[data-style="archival-warm"] .news li {
-  padding: .75rem 0;
-  border-left: 0;
-  border-bottom: 1px solid var(--rule-soft);
-  align-items: baseline;
-  font-size: .95rem;
-}
-html[data-style="archival-warm"] .news li::before { content: none; }
-html[data-style="archival-warm"] .news li:first-child { padding-top: 0; }
-html[data-style="archival-warm"] .news li:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-html[data-style="archival-warm"] .news time {
-  padding-top: 0;                   /* base nudges it; baseline alignment now */
-  font-family: var(--sans);
-  font-size: .76rem;
-  font-weight: 700;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: .05em;
-  color: var(--accent-ink);
-}
-html[data-style="archival-warm"] .news li span {
-  font-family: var(--serif);
-  font-size: .95rem;
-  line-height: 1.6;
-  color: var(--ink);
-}
-html[data-style="archival-warm"] .news li span em { font-style: italic; }
-/* The venue is what the eye is hunting for in a news line. Bold ink. */
-html[data-style="archival-warm"] .news li span strong {
-  font-weight: 700;
-  color: var(--ink);
-}
-
-html[data-style="archival-warm"] .more {
-  margin-top: .9rem;
-}
-html[data-style="archival-warm"] .more summary {
-  font-family: var(--sans);
-  font-size: .8rem;
-  color: var(--muted);
-  padding-left: 0;
-}
-html[data-style="archival-warm"] .more summary::before { color: var(--accent); }
-html[data-style="archival-warm"] .more summary:hover { color: var(--accent-ink); }
-
-/* ==========================================================================
-   Publications
-   ========================================================================== */
-html[data-style="archival-warm"] .year {
-  font-family: var(--sans);
-  font-size: .7rem;
-  font-weight: 700;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: .14em;
-  color: var(--faint);
-}
-html[data-style="archival-warm"] .year::after { background: var(--rule-soft); }
-
-html[data-style="archival-warm"] .pub {
-  padding: 1.1rem 1.35rem 1.15rem;
-  border-radius: 2px;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  box-shadow: var(--press);
-  transition: border-color .18s, box-shadow .18s;
-}
-html[data-style="archival-warm"] .pub:hover {
-  transform: none;
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--rule));
-  box-shadow: var(--press-hi);
-}
-
-html[data-style="archival-warm"] .pub-title {
-  font-family: var(--serif);
-  font-size: 1.06rem;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--ink);
-  margin: 0 0 .3rem;
-  text-wrap: pretty;
-}
-
-html[data-style="archival-warm"] .pub-authors {
-  margin: 0 0 .55rem;               /* trimmed with the meta rule, for toggle parity */
-  font-family: var(--serif);
-  font-size: .9rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-/* The owner's name, in an author list, on a page a committee is skimming.
-   It is set BOLD and at full ink — the weight jump against the muted regular
-   around it is the whole job. No small caps (they cost weight, which is the
-   one thing that matters here) and none of the base's highlighter wash. */
-html[data-style="archival-warm"] .pub-authors b {
-  font-weight: 700;
-  font-variant-caps: normal;
-  color: var(--ink);
-  background: none;
-}
-
-html[data-style="archival-warm"] .pub-meta {
-  gap: .5rem;
-  margin: 0;
-  /* .2 not .7: the rule stays but sits close to the tags, near glass's flush
-     meta. Over ten cards the old .7 inset was the single biggest reason the
-     publication list stood taller than glass's and dragged the toggle. */
-  padding-top: .2rem;
-  border-top: 1px solid var(--rule-soft);
-  font-size: .75rem;
-}
-
-/* Venue stamps. One card stock, many inks: the ground is always --tint, so
-   every tag's contrast is a single number this layer can actually guarantee
-   (6.6–9.0:1). Colour still codes the venue; legibility isn't traded for it.
-   Sans, bold, as typed — these get scanned, not read. */
-html[data-style="archival-warm"] .venue {
-  --v: var(--muted);
-  padding: .3em .55em;
-  border-radius: 2px;
-  background: var(--tint);
-  border: 1px solid color-mix(in srgb, var(--v) 35%, transparent);
-  color: var(--v);
-  font-family: var(--sans);
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  line-height: 1.35;
-  box-shadow: inset 0 1px 0 var(--emboss);
-  cursor: help;
-}
-html[data-style="archival-warm"] .venue--sigmod { --v: var(--v-sigmod); }
-html[data-style="archival-warm"] .venue--vldb   { --v: var(--v-vldb); }
-html[data-style="archival-warm"] .venue--vldbj  { --v: var(--v-vldbj); }
-html[data-style="archival-warm"] .venue--tkde   { --v: var(--v-tkde); }
-html[data-style="archival-warm"] .venue--eaai   { --v: var(--v-eaai); }
-html[data-style="archival-warm"] .venue--pricai { --v: var(--v-pricai); }
-html[data-style="archival-warm"] .venue--adc    { --v: var(--v-adc); }
-
-html[data-style="archival-warm"] .award {
-  padding: .3em .55em;
-  border-radius: 2px;
-  background: var(--tint);
-  border: 1px solid color-mix(in srgb, var(--v-award) 40%, transparent);
-  color: var(--v-award);
-  font-family: var(--sans);
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  line-height: 1.35;
-}
-
-/* Kept as a bordered tab rather than a bare underlined link: it preserves a
-   real tap target next to the stamp, and it matches the hero's index tabs. */
-html[data-style="archival-warm"] .pub-link {
-  padding: .3rem .5rem;
-  border-radius: 2px;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: .72rem;
-  line-height: 1.35;
-  transition: color .15s, border-color .15s, background .15s;
-}
-html[data-style="archival-warm"] .pub-link:hover {
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  background: var(--tint);
-  text-decoration: none;
-}
-
-/* ==========================================================================
-   Contact — a bookplate
-   ========================================================================== */
-html[data-style="archival-warm"] .contact {
-  position: relative;
-  border-radius: 2px;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  box-shadow: var(--press);
-}
-/* The inner rule of a bookplate. One ornament, and it is the only one. */
-html[data-style="archival-warm"] .contact::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 1px;
-  pointer-events: none;
-}
-html[data-style="archival-warm"] .contact > p {
-  font-family: var(--serif);
-  font-size: 1.02rem;
-  line-height: 1.7;
-  color: var(--ink);
-}
-html[data-style="archival-warm"] .contact-mail {
-  /* A modest gap above the email line, so it sits close under the invitation
-     rather than drifting toward the middle of the plate. The bookplate's air
-     sits below it, in the ruled address block. */
-  margin: .7rem 0 0;
-  border-bottom: 0;                 /* the base draws one; use a real underline */
-  font-family: var(--serif);
-  font-size: 1.22rem;
-  letter-spacing: .01em;
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
-}
-html[data-style="archival-warm"] .contact-mail:hover {
-  border-bottom: 0;
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-}
-/* Qualified with p.contact-addr on purpose. The address IS a .contact > p, and
-   that rule above is one element more specific than a bare .contact-addr —
-   without the p. here, the intro paragraph's serif ink wins and the address
-   comes out at 16px body copy. The base never tripped on this because it only
-   sets margin on .contact > p. */
-html[data-style="archival-warm"] .contact > p.contact-addr {
-  margin: 1.15rem 0 0;
-  padding-top: .85rem;
-  border-top: 1px solid var(--rule-soft);
-  font-family: var(--sans);
-  font-size: .8rem;
-  line-height: 1.55;
-  color: var(--faint);
-}
-
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-html[data-style="archival-warm"] .foot {
-  background-color: var(--paper-deep);
-  background-image: var(--laid);
-  border-top: 1px solid var(--rule);
-  box-shadow: inset 0 1px 0 var(--emboss);
-}
-html[data-style="archival-warm"] .foot-inner {
-  font-family: var(--sans);
-  font-size: .76rem;
-  color: var(--faint);            /* 5.0:1 light, 6.1:1 dark on paper-deep */
-}
-
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-@media (max-width: 40rem) {
-  /* Glass narrows its section gap to 2.5rem here; match it so the toggle stays
-     put on phones too. */
-  html[data-style="archival-warm"] .sec + .sec { margin-top: 2.5rem; }
-
-  /* The corner number and the heading share a line at this width and the
-     heading has nowhere to go, so pull the number's reserved space in. */
-  html[data-style="archival-warm"] .interest { padding: 1.1rem 1.15rem 1.2rem; }
-  html[data-style="archival-warm"] .interest::before { right: 1.15rem; top: 1.15rem; }
-  html[data-style="archival-warm"] .interest h3 { padding-right: 2.4rem; }
-
-  html[data-style="archival-warm"] .hero-portrait { border-radius: 2px; }
-  html[data-style="archival-warm"] .contact::before { inset: 4px; }
-}
-
-/* Touch. The nav links already clear 44px from the base's padding; the tabs
-   and the toggle do not, and they are the two things a thumb goes for. */
-@media (pointer: coarse) {
-  html[data-style="archival-warm"] .style-toggle {
-    min-height: 44px;
-    padding-inline: .75rem;
-  }
-  html[data-style="archival-warm"] .hero-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-  html[data-style="archival-warm"] .pub-link,
-  html[data-style="archival-warm"] .venue {
-    display: inline-flex;
-    align-items: center;
-    min-height: 36px;
-  }
-  html[data-style="archival-warm"] .more summary {
-    padding-block: .6rem;
-  }
-}
-
-/* ==========================================================================
-   Preferences
-   ========================================================================== */
-@media (prefers-reduced-motion: reduce) {
-  html[data-style="archival-warm"] *,
-  html[data-style="archival-warm"] *::before,
-  html[data-style="archival-warm"] *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/* This layer is opaque by design — the sticky band is solid paper-deep, not a
-   blur — so there is little to undo. What remains is the hero's colour wash
-   and the base's backdrop-filter, both of which are stated away here so the
-   preference is honoured explicitly rather than by luck. */
-@media (prefers-reduced-transparency: reduce) {
-  html[data-style="archival-warm"] .hero-glow { display: none; }
-  html[data-style="archival-warm"] .nav {
-    background-color: var(--paper-deep);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-
-@media (prefers-contrast: more) {
-  html[data-style="archival-warm"] {
-    --muted: var(--ink);
-    --faint: #4a3f38;
-    --rule: #9d8f78;
-    --rule-soft: #b9ac95;
-  }
-  @media (prefers-color-scheme: dark) {
-    html[data-style="archival-warm"] {
-      --faint: #cfc3b4;
-      --rule: #6d5e50;
-      --rule-soft: #52463b;
-    }
-  }
-  html[data-style="archival-warm"] .venue,
-  html[data-style="archival-warm"] .award {
-    border-color: currentColor;
-  }
-}
-
-/* ==========================================================================
-   Print
-   ========================================================================== */
-/* The base's print block strips the cards and the hero background, but it does
-   it with single-class selectors — every rule in this layer outranks them, so
-   without this block the laid texture, the panels and the oxblood rules would
-   all go to the printer. Restated at this layer's specificity. */
-@media print {
-  html[data-style="archival-warm"] body {
-    background: #fff;
-    color: #000;
-  }
-  html[data-style="archival-warm"] .hero {
-    background: none;
-    border-bottom: 1px solid #000;
-  }
-  html[data-style="archival-warm"] .hero::after,
-  html[data-style="archival-warm"] .contact::before { content: none; }
-  html[data-style="archival-warm"] .hero-portrait {
-    border: 1px solid #999;
-    box-shadow: none;
-  }
-  html[data-style="archival-warm"] .foot {
-    background: none;
-  }
-  html[data-style="archival-warm"] .pub,
-  html[data-style="archival-warm"] .interest,
-  html[data-style="archival-warm"] .contact {
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-  }
-  html[data-style="archival-warm"] .interest::before {
-    position: static;
-    display: block;
-  }
-  html[data-style="archival-warm"] .venue,
-  html[data-style="archival-warm"] .award,
-  html[data-style="archival-warm"] .pub-link {
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0 .3em 0 0;
-    color: #000;
-    min-height: 0;
-  }
-  html[data-style="archival-warm"] .pub-meta { border-top: none; }
-  html[data-style="archival-warm"] .hero-name,
-  html[data-style="archival-warm"] .hero-role,
-  html[data-style="archival-warm"] .pub-title,
-  html[data-style="archival-warm"] .pub-authors b,
-  html[data-style="archival-warm"] .interest h3 { color: #000; }
-}
-
-
-/* ==========================================================================
-   LAYER 3 — STYLE: liquid-glass
-   html[data-style="liquid-glass"] — translucent chrome over an ambient field.
-   ========================================================================== */
-
-/* ==========================================================================
-   LIQUID GLASS
-   Every selector below is scoped to html[data-style="liquid-glass"]. Two style
-   layers ship in one stylesheet; one bare selector would corrupt the other.
-
-   WHY THE LAST PASS CAME OUT FLAT, AND WHAT CHANGED
-
-   It kept the glass to the chrome and left the reading surfaces at .93 alpha
-   over a smooth pale wash. Both halves of that are why it read as white cards:
-   .93 alpha is a solid surface, and a smooth wash has no edge for a blur to
-   smear — which is why removing the blur cost nothing visually. That was the
-   tell. There was nothing behind the glass worth refracting.
-
-   So the material is rebuilt from the backdrop forwards:
-
-   1. THE FIELD HAS STRUCTURE. Four blobs of real hue at .28-.36 alpha, sized
-      30-34rem and placed ON the column rather than 60rem monsters parked in the
-      corners — a blob that big only ever washes. Each falloff now crosses the
-      reading column, so there is a colour edge to see through a pane. Under it
-      a hairline weave: 1px lines an 18px blur genuinely dissolves, which is what
-      makes the seam at a pane's edge visible.
-   2. THE PANES ARE TRANSPARENT. .64 light / .62 dark, not .93. The headroom was
-      always there — body copy lands at 8.4:1 light and 9.7:1 dark against the
-      worst pixel the field can produce.
-   3. THE BLUR IS REAL. blur(18px) saturate(1.6): the weave dissolves and the
-      blob colour arrives enriched rather than merely dimmed.
-   4. SPECULAR EDGES. A masked gradient ring, bright at the top-left where the
-      light lands, gone at the bottom-right, returning faintly on the far rim.
-   5. DEPTH. Three-stop shadow plus an inner top sheen, so a pane is a slab.
-
-   CONTRAST, AND HOW IT IS GUARANTEED
-   The field is bounded per channel by the LP over every reachable alpha
-   combination (a pixel is w0*base + sum(w_i*blob_i), sum(w)=1, w_i <= peak
-   alpha). The optimum wants blobs in opposite corners to peak on one pixel, so
-   it is deliberately unreachable: the bound survives edits nobody re-checks.
-   blur is a convex combination and cannot leave that box. saturate() is modelled
-   as a matrix on GAMMA-ENCODED sRGB, which is what CSS shorthand filters use.
-   Text painted straight on the field is checked against the RAW box — nothing
-   filters it — while panes composite over the saturate-widened box.
-   Worst pair anywhere, either scheme: 4.59:1 (.hero-affil / .hero-loc /
-   .hero-tagline, dark, on the hero field's simultaneous-peak corner).
-
-   NO INK IS TUNED WITH `opacity`. Last time opacity:.85 on .hero-loc composited
-   its glyphs against the bloom at 4.26:1 and sailed through an 80-pair sweep,
-   because a checker that reads tokens cannot see through an opacity. Ink is
-   tuned by the token or not at all. The only opacity in this file is on the
-   field itself, under prefers-reduced-transparency, and it is argued there.
-   ========================================================================== */
-
-html[data-style="liquid-glass"] {
-  /* ---- ink -------------------------------------------------------------
-     Two of these are field-legal and two are not, and that is the whole rule:
-     --lg-ink and --lg-ink-2 survive the worst field pixel; --lg-muted and
-     --lg-faint are pane-only. --lg-ink-2 is the binding token of the layer — it
-     decides how much colour the field may carry, because it is the lightest ink
-     that ever touches bare field. It has 8:1 of unused headroom on the panes; it
-     is this dark for the field's sake, not theirs. */
-  --lg-ink:      #10161d;
-  --lg-ink-2:    #2b3440;
-  --lg-muted:    #414c59;
-  --lg-faint:    #4d5765;
-
-  /* --lg-accent is the field-legal accent, --lg-accent-2 the richer one for
-     fills and gradients. They swap lightness between schemes: on a light field
-     the legible one is the deep teal, on a dark field the bright cyan. */
-  --lg-accent:   #083846;
-  --lg-accent-2: #17677c;
-  --lg-on-fill:  #ffffff;
-
-  /* ---- the field -------------------------------------------------------
-     Sized and placed to put an edge under the column. The blobs are LIGHT and
-     SATURATED rather than dark and faint: a dark hue at .05 alpha is just grey,
-     which is how the last field ended up a wash. Bounded to L=[0.344, 0.861]. */
-  --lg-base: #e9eef7;
-  --lg-blobs:
-    radial-gradient(34rem 30rem at 16% 4%,  rgba(74, 190, 248, .36), transparent 62%),
-    radial-gradient(30rem 27rem at 84% 1%,  rgba(142, 154, 250, .32), transparent 62%),
-    radial-gradient(32rem 29rem at 90% 64%, rgba(250, 194, 124, .28), transparent 62%),
-    radial-gradient(31rem 28rem at 6%  94%, rgba(82, 212, 194, .28), transparent 62%);
-
-  /* The blur needs an edge or it is a no-op. This is it: a 1px weave at 9/14px
-     pitch, which an 18px blur dissolves completely. Outside a pane it is crisp
-     texture; inside it is flat haze. That difference, at the boundary, is what
-     frosted glass looks like. Static background — costs nothing on scroll.
-     These alphas are not a taste setting. The weave is a dark layer and it eats
-     straight into the field's floor: at .05/.034 it read fine and put dark hero
-     text at 4.39:1. It is bounded with the blobs, not eyeballed beside them. */
-  --lg-weave:
-    repeating-linear-gradient(58deg,  rgba(18, 32, 54, .038) 0 1px, transparent 1px 9px),
-    repeating-linear-gradient(-58deg, rgba(18, 32, 54, .026) 0 1px, transparent 1px 14px);
-
-  /* ---- material --------------------------------------------------------
-     --lg-chip is chrome on the field; --lg-chip-pane is chrome nested on a pane.
-     Two tokens because in dark they must tint in OPPOSITE directions — see the
-     dark block. */
-  --lg-pane:      rgba(255, 255, 255, .64);
-  --lg-pane-hi:   rgba(255, 255, 255, .74);
-  --lg-pane-flat: #f4f7fb;                 /* opaque stand-in: .skip, --surface */
-  --lg-chip:      rgba(255, 255, 255, .5);
-  --lg-chip-hi:   rgba(255, 255, 255, .68);
-  --lg-chip-pane: rgba(255, 255, 255, .55);
-  --lg-nav:       rgba(255, 255, 255, .78);
-  --lg-foot:      rgba(255, 255, 255, .62);
-  --lg-hair:      rgba(16, 24, 32, .12);
-  --lg-hair-soft: rgba(16, 24, 32, .07);
-  --lg-blur:      blur(18px) saturate(1.6);
-  --lg-sheen:     linear-gradient(177deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 46%);
-
-  /* The single strongest glass cue and the cheapest: bright where the light
-     catches the bevel, gone where it does not, returning faintly on the far rim
-     where the slab bounces it back. */
-  --lg-edge: linear-gradient(146deg,
-               rgba(255, 255, 255, 1)   0%,
-               rgba(255, 255, 255, .35) 26%,
-               rgba(255, 255, 255, 0)   50%,
-               rgba(255, 255, 255, .16) 72%,
-               rgba(255, 255, 255, .7)  100%);
-  --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .75);
-  --lg-inset-lo: inset 0 -1px 0 rgba(16, 24, 32, .05);
-  --lg-shadow:
-       0 1px 2px rgba(16, 24, 32, .05),
-       0 6px 14px -8px rgba(16, 24, 32, .16),
-       0 22px 44px -22px rgba(16, 24, 32, .26);
-  --lg-shadow-lift:
-       0 2px 4px rgba(16, 24, 32, .06),
-       0 10px 22px -8px rgba(16, 24, 32, .2),
-       0 34px 60px -26px rgba(16, 24, 32, .34);
-
-  --lg-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-  --lg-sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-              "PingFang SC", "Microsoft YaHei", sans-serif;
-  --lg-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-
-  /* ---- safety net ------------------------------------------------------
-     The base's own token names, re-pointed. Anything in the base this layer has
-     not overridden still resolves into this palette rather than leaking the
-     other style's colours. --wrap and --pad are absent on purpose: the base owns
-     the column, and every block on the page is aligned to it. */
-  --bg: var(--lg-base);
-  --surface: var(--lg-pane-flat);
-  --surface-2: var(--lg-base);
-  --text: var(--lg-ink);
-  --muted: var(--lg-muted);
-  --faint: var(--lg-faint);
-  --rule: var(--lg-hair);
-  --rule-soft: var(--lg-hair-soft);
-  --accent: var(--lg-accent);
-  --accent-tint: rgba(8, 56, 70, .1);
-  --accent-ink: var(--lg-accent);
-  --hero-from: transparent;
-  --hero-to: transparent;
-  --glow: transparent;
-  --serif: var(--lg-serif);
-  --sans: var(--lg-sans);
-  --shadow-sm: 0 1px 2px rgba(16, 24, 32, .05);
-  --shadow-md: var(--lg-shadow);
-  --shadow-lg: var(--lg-shadow-lift);
-
-  background-color: var(--lg-base);
-  color-scheme: light dark;
-}
-
-/* Fixed, so the field never scrolls: the blobs stay lit where they are and the
-   panes travel across them, which is the plainest possible proof that the panes
-   are transparent — the colour inside a card changes as it passes a blob.
-   z-index:-1 puts it behind the content but above the canvas, which only works
-   while body itself stays transparent. Hence the rule above it. */
-html[data-style="liquid-glass"] body {
-  background: transparent;
-  color: var(--lg-ink);
-  font-family: var(--lg-sans);
-  -webkit-font-smoothing: antialiased;
-}
-html[data-style="liquid-glass"] body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-color: var(--lg-base);
-  background-image: var(--lg-weave), var(--lg-blobs);
-  background-repeat: repeat, no-repeat;
-}
-
-html[data-style="liquid-glass"] a { color: var(--lg-accent); text-decoration: none; }
-html[data-style="liquid-glass"] a:hover { text-decoration: underline; text-underline-offset: 2px; }
-html[data-style="liquid-glass"] :focus-visible {
-  outline: 2px solid var(--lg-accent-2);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-html[data-style="liquid-glass"] .skip {
-  background: var(--lg-pane-flat);
-  color: var(--lg-ink);
-  border-radius: 10px;
-  box-shadow: var(--lg-shadow);
-}
-
-/* ==========================================================================
-   The specular hairline — one ring, five surfaces
-   A 1px gradient border: fill the box, then mask out all but the padding ring.
-   .interest is absent on purpose — its ::before is the counter the base
-   increments, so its ring lives on ::after.
-   ========================================================================== */
-html[data-style="liquid-glass"] .prose::before,
-html[data-style="liquid-glass"] .news::before,
-html[data-style="liquid-glass"] .pub::before,
-html[data-style="liquid-glass"] .contact::before,
-html[data-style="liquid-glass"] .interest::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: var(--lg-edge);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ==========================================================================
-   Hero
-   No pane: the base gives .hero-inner the column geometry, so a background on it
-   would draw a box whose edges sit var(--pad) outside every other block on the
-   page. The hero IS the field — which is why its secondary text is ink-2, the
-   lightest ink that survives bare field, and never --lg-muted.
-   ========================================================================== */
-html[data-style="liquid-glass"] .hero {
-  background: none;
-  border-bottom: 1px solid var(--lg-hair-soft);
-}
-
-/* Glare, not colour. The sky and indigo blobs already sit over the hero; what
-   the hero needs from its own layer is the bright spot where the light enters,
-   so every stop here is near-white. That is also why it is free: a blob whose
-   channels all exceed the base cannot lower the field's per-channel floor, so
-   the hero's bound stays the field's bound and its text keeps its ratios. */
-html[data-style="liquid-glass"] .hero-glow {
-  top: -14rem;
-  right: auto;
-  left: 50%;
-  width: 76rem;
-  height: 44rem;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(26rem 17rem at 34% 54%, rgba(255, 255, 255, .55), transparent 66%),
-    radial-gradient(22rem 15rem at 62% 40%, rgba(238, 250, 255, .34), transparent 66%),
-    radial-gradient(17rem 12rem at 46% 74%, rgba(255, 246, 236, .22), transparent 66%);
-}
-
-/* A thick frosted ring. The base's 5px padding is the ring; the img fills the
-   content box — which is exactly why this one does NOT get a backdrop-filter.
-   The filter would apply to the whole 136px box while the photo covers all but
-   a 5px band of it, so ~96% of the work would be rasterised and then painted
-   over. The ring reads frosted from the chip fill and the inset highlight. */
-html[data-style="liquid-glass"] .hero-portrait {
-  border-radius: 26px;
-  background: var(--lg-chip-hi);
-  box-shadow:
-    0 10px 26px -12px rgba(16, 24, 32, .45),
-    0 0 0 1px rgba(255, 255, 255, .5),
-    inset 0 2px 3px rgba(255, 255, 255, .85);
-}
-html[data-style="liquid-glass"] .hero-portrait img {
-  border-radius: 21px;
-  box-shadow: 0 0 0 1px rgba(16, 24, 32, .1);
-}
-html[data-style="liquid-glass"] .hero-portrait .mono {
-  border-radius: 21px;
-  color: var(--lg-accent);
-  font-family: var(--lg-serif);
-  font-size: 2.4rem;
-  letter-spacing: .04em;
-}
-
-html[data-style="liquid-glass"] .hero-name {
-  margin: 0;
-  font-family: var(--lg-serif);
-  font-size: clamp(2rem, 1.35rem + 2.4vw, 2.9rem);
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -.015em;
-  color: var(--lg-ink);
-}
-html[data-style="liquid-glass"] .hero-pronouns {
-  margin-left: .5em;
-  padding: .18em .55em;
-  border: 1px solid var(--lg-hair);
-  border-radius: 999px;
-  background: var(--lg-chip);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
-  color: var(--lg-ink-2);
-  font-family: var(--lg-sans);
-  font-size: .68rem;
-  font-weight: 500;
-  letter-spacing: .02em;
-  vertical-align: .35em;
-}
-/* The most scannable fact on the page, so it takes full ink and weight rather
-   than a colour. It also has to: on a field this saturated the accent is only
-   field-legal in light, and a role that changes hue between schemes purely to
-   stay legible is one token doing two jobs badly. */
-html[data-style="liquid-glass"] .hero-role {
-  margin: .65rem 0 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--lg-ink);
-}
-html[data-style="liquid-glass"] .hero-affil {
-  margin: .25rem 0 0;
-  font-size: .875rem;
-  color: var(--lg-ink-2);
-}
-/* No opacity here. It looked like a harmless half-tone, but opacity composites
-   the glyph against the bloom: ink-2 at .85 measured 4.26:1 and passed a
-   token-level sweep, which cannot see an opacity at all. */
-html[data-style="liquid-glass"] .hero-loc { color: var(--lg-ink-2); }
-html[data-style="liquid-glass"] .hero-loc::before {
-  content: "";
-  display: inline-block;
-  width: 1.2em;
-  height: 1px;
-  margin: 0 .5em;
-  vertical-align: .3em;
-  background: var(--lg-hair);
-}
-html[data-style="liquid-glass"] .hero-tagline {
-  margin: .95rem 0 0;
-  padding-top: .85rem;
-  border-top: 1px solid var(--lg-hair);
-  font-family: var(--lg-serif);
-  font-style: italic;
-  font-size: .98rem;
-  color: var(--lg-ink-2);
-}
-
-/* Six drops of the material, sitting straight on the glare. They blur: small,
-   numerous, and exactly where the eye checks whether the glass is real. */
-html[data-style="liquid-glass"] .hero-links {
-  margin-top: .2rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--lg-hair);
-  gap: .5rem;
-}
-html[data-style="liquid-glass"] .hero-links a {
-  padding: .46rem .95rem;
-  border: 1px solid rgba(255, 255, 255, .6);
-  border-radius: 999px;
-  background: var(--lg-chip);
-  -webkit-backdrop-filter: var(--lg-blur);
-          backdrop-filter: var(--lg-blur);
-  color: var(--lg-ink);
-  font-size: .8rem;
-  font-weight: 500;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 32, .06),
-    0 4px 10px -6px rgba(16, 24, 32, .24),
-    inset 0 1px 0 rgba(255, 255, 255, .85);
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-}
-html[data-style="liquid-glass"] .hero-links a:hover {
-  transform: translateY(-1px);
-  background: var(--lg-chip-hi);
-  color: var(--lg-ink);
-  text-decoration: none;
-  box-shadow:
-    0 2px 4px rgba(16, 24, 32, .08),
-    0 10px 20px -8px rgba(16, 24, 32, .32),
-    inset 0 1px 0 rgba(255, 255, 255, .95);
-}
-/* No CV link in the markup today; it would be the only filled thing in the row,
-   which is the point of it. */
-html[data-style="liquid-glass"] .hero-links .is-cv,
-html[data-style="liquid-glass"] .hero-links .is-cv:hover {
-  background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
-  border-color: rgba(255, 255, 255, .35);
-  color: var(--lg-on-fill);
-  box-shadow: 0 4px 12px -4px rgba(8, 56, 70, .6), inset 0 1px 0 rgba(255, 255, 255, .4);
-}
-
-/* ==========================================================================
-   Sticky nav
-   The one element whose backdrop cannot be bounded — arbitrary content scrolls
-   under it. So it is bounded the only honest way: the fill is opaque enough that
-   PURE BLACK passing beneath still leaves the links at 5.16:1 (4.87:1 for pure
-   white in dark). No assumption
-   about what is below it is required, now or ever.
-   ========================================================================== */
-html[data-style="liquid-glass"] .nav {
-  background: var(--lg-nav);
-  -webkit-backdrop-filter: var(--lg-blur);
-          backdrop-filter: var(--lg-blur);
-  border-bottom: 1px solid var(--lg-hair);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .55),
-    0 8px 24px -18px rgba(16, 24, 32, .5);
-}
-/* Vertical only — longhands, because the base's horizontal padding is the
-   column and every block on the page is aligned to it. */
-html[data-style="liquid-glass"] .nav-inner { padding-top: .45rem; padding-bottom: .45rem; }
-html[data-style="liquid-glass"] .nav-brand {
-  font-family: var(--lg-serif);
-  font-weight: 600;
-  letter-spacing: -.01em;
-  color: var(--lg-ink);
-  /* Deliberately no opacity: the base fades this in on scroll from opacity:0. */
-}
-html[data-style="liquid-glass"] .nav ul { gap: .15rem; }
-html[data-style="liquid-glass"] .nav a {
-  padding: .42rem .8rem;
-  border-radius: 999px;
-  font-size: .84rem;
-  font-weight: 500;
-  line-height: 1.35;
-  color: var(--lg-muted);
-  transition: color .16s ease, background .16s ease;
-}
-html[data-style="liquid-glass"] .nav a:hover {
-  background: var(--lg-chip);
-  color: var(--lg-ink);
-  text-decoration: none;
-}
-/* No drop shadow on the active pill: .nav ul is a scroll container on narrow
-   screens, so overflow-y computes to auto and would clip one. Inset only. */
-html[data-style="liquid-glass"] .nav a.is-active {
-  background: rgba(255, 255, 255, .85);
-  color: var(--lg-accent);
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(16, 24, 32, .1), inset 0 1px 0 rgba(255, 255, 255, .9);
-}
-
-/* --- style toggle --------------------------------------------------------
-   Nested inside .nav, which is already a backdrop root — a backdrop-filter here
-   would blur the nav's own output rather than the page. So it is a plain chip,
-   and it costs nothing. */
-html[data-style="liquid-glass"] .style-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  flex: none;
-  padding: .34rem .7rem .34rem .52rem;
-  border: 1px solid var(--lg-hair);
-  border-radius: 999px;
-  background: var(--lg-chip);
-  color: var(--lg-muted);
-  font-family: var(--lg-sans);
-  font-size: .74rem;
-  font-weight: 500;
-  line-height: 1.35;
-  white-space: nowrap;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
-  transition: background .16s ease, color .16s ease;
-  -webkit-appearance: none;
-          appearance: none;
-}
-html[data-style="liquid-glass"] .style-toggle:hover {
-  background: var(--lg-chip-hi);
-  color: var(--lg-ink);
-}
-/* The bead: a lit sphere, the material in miniature. */
-html[data-style="liquid-glass"] .style-toggle-dot {
-  width: .62rem;
-  height: .62rem;
-  flex: none;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%,
-    rgba(255, 255, 255, .95) 0%, rgba(255, 255, 255, .45) 24%,
-    var(--lg-accent-2) 62%, var(--lg-accent) 100%);
-  box-shadow: 0 1px 2px rgba(16, 24, 32, .35), inset 0 0 0 1px rgba(255, 255, 255, .35);
-}
-html[data-style="liquid-glass"] .style-toggle-text { display: inline-block; }
-/* A 30px pill is a fine mouse target and a poor thumb target. Grow the hit area
-   with a pseudo rather than the box, so the nav's height never moves. */
-@media (pointer: coarse) {
-  html[data-style="liquid-glass"] .style-toggle::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: max(44px, 100%);
-    min-width: 44px;
-  }
-  /* Glass keeps its chrome compact for a mouse, but a finger needs ~44px. The
-     archival layer gets there from the base's nav padding plus its own coarse
-     block; this layer overrode the nav padding down to .42rem and never wrote a
-     coarse block beyond the toggle, so on a phone the nav links (32px), index
-     tabs (34px) and stamps (25px) were all under the touch floor. Match the
-     archival layer's targets — the nav grows on touch only, never for a mouse. */
-  html[data-style="liquid-glass"] .nav a {
-    padding-top: .78rem;
-    padding-bottom: .78rem;
-  }
-  html[data-style="liquid-glass"] .hero-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-  html[data-style="liquid-glass"] .pub-link,
-  html[data-style="liquid-glass"] .venue {
-    display: inline-flex;
-    align-items: center;
-    min-height: 36px;
-  }
-  html[data-style="liquid-glass"] .more summary { padding-block: .6rem; }
-}
-
-/* ==========================================================================
-   Sections
-   The base sets no margin on any heading or paragraph — it owns the column, the
-   justification and the component padding, and nothing else — so the vertical
-   rhythm is this layer's, and every margin below is load-bearing rather than
-   decorative. The previous pass left them out and got UA defaults: 1em above and
-   below every .pub-title, which is most of why the cards read as loose slabs.
-   ========================================================================== */
-html[data-style="liquid-glass"] .sec { scroll-margin-top: 5rem; }
-html[data-style="liquid-glass"] .sec + .sec { margin-top: 3.1rem; }
-
-html[data-style="liquid-glass"] .sec-h {
-  margin: 0 0 1.15rem;
-  font-family: var(--lg-serif);
-  font-size: 1.3rem;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  color: var(--lg-ink);
-}
-/* The base builds no ::after here — .sec-h is a flex row and nothing more — so
-   the rule out to the column edge is drawn from scratch. */
-html[data-style="liquid-glass"] .sec-h::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--lg-hair), transparent);
-}
-/* order:3 sends the count past the rule, out to the right edge. */
-html[data-style="liquid-glass"] .sec-count {
-  order: 3;
-  padding: .16em .5em;
-  border: 1px solid var(--lg-hair);
-  border-radius: 999px;
-  background: var(--lg-chip);
-  color: var(--lg-ink-2);
-  font-family: var(--lg-mono);
-  font-size: .7rem;
-  font-style: normal;
-  font-weight: 500;
-}
-html[data-style="liquid-glass"] .sec-note {
-  margin: 0 0 1.4rem;
-  color: var(--lg-ink-2);
-  font-size: .85rem;
-}
-html[data-style="liquid-glass"] .sec-note a {
-  color: var(--lg-accent);
-  text-decoration: underline;
-  text-decoration-color: rgba(8, 56, 70, .35);
-  text-underline-offset: 2px;
-}
-
-/* ==========================================================================
-   The panes
-   .64 alpha over a blurred, saturated field. No text-align and no hyphens
-   anywhere below: the base owns the justification and the owner has asked for it
-   repeatedly.
-   ========================================================================== */
-html[data-style="liquid-glass"] .prose,
-html[data-style="liquid-glass"] .news,
-html[data-style="liquid-glass"] .interest,
-html[data-style="liquid-glass"] .pub,
-html[data-style="liquid-glass"] .contact {
-  position: relative;
-  border: 0;
-  background-color: var(--lg-pane);
-  background-image: var(--lg-sheen);
-  -webkit-backdrop-filter: var(--lg-blur);
-          backdrop-filter: var(--lg-blur);
-  box-shadow: var(--lg-shadow), var(--lg-inset-hi), var(--lg-inset-lo);
-}
-
-html[data-style="liquid-glass"] .prose {
-  padding: 1.6rem 1.75rem;
-  border-radius: 20px;
-  font-size: .97rem;
-  line-height: 1.74;
-}
-html[data-style="liquid-glass"] .prose p { margin: 0 0 .95rem; color: var(--lg-ink-2); }
-html[data-style="liquid-glass"] .prose p:last-child { margin-bottom: 0; }
-
-/* ==========================================================================
-   Research
-   The base reserves a 3.4rem left gutter on .interest and increments the counter
-   — but it sets no `content` and no `position`. The previous layer set `top` on
-   a static box, so the numeral rendered inline above each heading and the gutter
-   sat empty. It is an index you can read, so it goes in the gutter cut for it.
-   ========================================================================== */
-html[data-style="liquid-glass"] .interest {
-  border-radius: 20px;
-  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
-}
-html[data-style="liquid-glass"] .interest::before {
-  content: counter(interest, decimal-leading-zero);
-  position: absolute;
-  left: 1.45rem;
-  top: 1.5rem;
-  font-family: var(--lg-mono);
-  font-size: .8rem;
-  font-weight: 600;
-  letter-spacing: .04em;
-  color: var(--lg-accent);
-}
-html[data-style="liquid-glass"] .interest:hover {
-  transform: translateY(-2px);
-  background-color: var(--lg-pane-hi);
-  box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
-}
-html[data-style="liquid-glass"] .interest h3 {
-  margin: 0 0 .55rem;
-  font-family: var(--lg-serif);
-  font-size: 1.06rem;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -.005em;
-  color: var(--lg-ink);
-}
-html[data-style="liquid-glass"] .interest p {
-  margin: 0;
-  color: var(--lg-muted);
-  font-size: .875rem;
-  line-height: 1.62;
-}
-
-/* ==========================================================================
-   News
-   One calm pane with the timeline inside it — four panes for four one-line
-   entries would be noise. The base draws neither rail nor dot: its .news
-   li::before has no content, so both are built here.
-   ========================================================================== */
-html[data-style="liquid-glass"] .news {
-  padding: 1.3rem 1.6rem;
-  border-radius: 20px;
-}
-html[data-style="liquid-glass"] .news li {
-  border-left: 2px solid var(--lg-hair);
-  color: var(--lg-ink-2);
-}
-/* The rail must stop at the last dot rather than run on to the pane's edge —
-   but a transparent border alone cut the last entry off the timeline
-   altogether: it dangled below the item above with a dot and no line. Keep
-   the transparent border for its 2px of geometry, and draw the last stub of
-   rail on the ::after (the dot owns ::before), from the top of the entry down
-   to its dot's centre and no further. */
-html[data-style="liquid-glass"] .news li:last-child { border-left-color: transparent; }
-html[data-style="liquid-glass"] .news li:last-child::after {
-  content: "";
-  position: absolute;
-  left: -2px;                   /* the strip the others' border paints */
-  top: 0;
-  width: 2px;
-  height: calc(.85rem + 4px);   /* the dot's top offset plus its radius */
-  background: var(--lg-hair);
-}
-/* Centred on the 2px rail: `left` resolves against the li's padding box, whose
-   left edge is the inner edge of that border. */
-html[data-style="liquid-glass"] .news li::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: .85rem;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--lg-accent);
-}
-html[data-style="liquid-glass"] .news time {
-  color: var(--lg-accent);
-  font-family: var(--lg-mono);
-  font-size: .76rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-/* .9rem, not the inherited 1rem: unset, the news line was the largest body text
-   in this layer — bigger than the prose it sits near — which read as out of
-   scale, most of all on a phone. */
-html[data-style="liquid-glass"] .news li span { font-size: .9rem; color: var(--lg-ink-2); }
-html[data-style="liquid-glass"] .news li em { font-style: italic; color: var(--lg-ink); }
-html[data-style="liquid-glass"] .news li strong { font-weight: 600; color: var(--lg-ink); }
-
-/* Sits outside the pane, on bare field, so it takes a field-legal ink. */
-html[data-style="liquid-glass"] .more { margin-top: .9rem; }
-html[data-style="liquid-glass"] .more summary {
-  list-style: none;
-  color: var(--lg-ink-2);
-  font-size: .82rem;
-  cursor: pointer;
-}
-html[data-style="liquid-glass"] .more summary:hover { color: var(--lg-accent); }
-
-/* ==========================================================================
-   Publications
-   ========================================================================== */
-html[data-style="liquid-glass"] .year-group + .year-group { margin-top: 1.5rem; }
-html[data-style="liquid-glass"] .year {
-  margin: 0 0 .6rem;
-  font-family: var(--lg-mono);
-  font-size: .76rem;
-  font-weight: 600;
-  letter-spacing: .1em;
-  color: var(--lg-ink-2);
-}
-/* As with .sec-h::after: the base builds no pseudo here either. */
-html[data-style="liquid-glass"] .year::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--lg-hair), transparent);
-}
-
-html[data-style="liquid-glass"] .pub {
-  border-radius: 18px;
-  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
-}
-html[data-style="liquid-glass"] .pub:hover {
-  transform: translateY(-2px);
-  background-color: var(--lg-pane-hi);
-  box-shadow: var(--lg-shadow-lift), var(--lg-inset-hi), var(--lg-inset-lo);
-}
-html[data-style="liquid-glass"] .pub-title {
-  margin: 0 0 .3rem;
-  font-family: var(--lg-serif);
-  font-size: 1.04rem;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -.005em;
-  color: var(--lg-ink);
-  text-wrap: pretty;
-}
-html[data-style="liquid-glass"] .pub-authors {
-  margin: 0 0 .7rem;
-  color: var(--lg-muted);
-  font-size: .85rem;
-  line-height: 1.5;
-}
-/* The owner's name in an author list a committee is skimming: a weight change
-   and an ink change. The base's highlighter wash would read as a smudge here. */
-html[data-style="liquid-glass"] .pub-authors b {
-  background: none;
-  color: var(--lg-ink);
-  font-weight: 600;
-}
-html[data-style="liquid-glass"] .pub-meta { margin: 0; }
-
-/* Venue tags. Nested on the pub pane, which is already a backdrop root — their
-   backdrop is the pane, not the field, so their contrast is a number this layer
-   can guarantee (5.0:1 and up) rather than hope for. Bare .venue is the fallback
-   for any venue added later without a rule, and it is checked too (7.3:1). */
-html[data-style="liquid-glass"] .venue {
-  border: 1px solid var(--lg-hair);
-  border-radius: 7px;
-  background: var(--lg-chip-pane);
-  color: var(--lg-muted);
-  font-family: var(--lg-mono);
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .06em;
-  line-height: 1.35;
-  text-transform: uppercase;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
-  cursor: help;
-}
-html[data-style="liquid-glass"] .venue--sigmod { color: #093a47; background: rgba(15, 76, 92, .16);   border-color: rgba(15, 76, 92, .24); }
-html[data-style="liquid-glass"] .venue--vldb   { color: #2b3583; background: rgba(59, 72, 175, .14);  border-color: rgba(59, 72, 175, .24); }
-html[data-style="liquid-glass"] .venue--vldbj  { color: #4c2b83; background: rgba(105, 60, 175, .14); border-color: rgba(105, 60, 175, .24); }
-html[data-style="liquid-glass"] .venue--tkde   { color: #7c1f56; background: rgba(170, 40, 110, .13); border-color: rgba(170, 40, 110, .24); }
-html[data-style="liquid-glass"] .venue--eaai   { color: #1c5434; background: rgba(30, 110, 70, .14);  border-color: rgba(30, 110, 70, .24); }
-html[data-style="liquid-glass"] .venue--pricai { color: #6f3f12; background: rgba(180, 110, 40, .16); border-color: rgba(180, 110, 40, .26); }
-html[data-style="liquid-glass"] .venue--adc    { color: #35404e; background: rgba(60, 75, 95, .14);   border-color: rgba(60, 75, 95, .24); }
-
-html[data-style="liquid-glass"] .award {
-  border: 1px solid rgba(214, 158, 46, .35);
-  border-radius: 7px;
-  background: rgba(214, 158, 46, .18);
-  color: #6f4304;
-  font-size: .7rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
-html[data-style="liquid-glass"] .pub-link {
-  border: 1px solid var(--lg-hair);
-  border-radius: 7px;
-  background: var(--lg-chip-pane);
-  color: var(--lg-ink-2);
-  font-size: .74rem;
-  font-weight: 500;
-  line-height: 1.35;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
-  transition: background .16s ease, color .16s ease;
-}
-html[data-style="liquid-glass"] .pub-link:hover {
-  background: var(--lg-chip-hi);
-  color: var(--lg-accent);
-  text-decoration: none;
-}
-
-/* ==========================================================================
-   Contact
-   ========================================================================== */
-html[data-style="liquid-glass"] .contact { border-radius: 22px; }
-html[data-style="liquid-glass"] .contact > p {
-  margin: 0;
-  color: var(--lg-ink-2);
-  font-size: .95rem;
-  line-height: 1.66;
-}
-html[data-style="liquid-glass"] .contact-mail {
-  margin: 1.1rem 0 0;
-  padding: .55rem 1.2rem;
-  border: 1px solid rgba(255, 255, 255, .28);
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--lg-accent-2), var(--lg-accent));
-  color: var(--lg-on-fill);
-  font-family: var(--lg-mono);
-  font-size: .87rem;
-  font-weight: 500;
-  box-shadow: 0 6px 16px -6px rgba(8, 56, 70, .55), inset 0 1px 0 rgba(255, 255, 255, .4);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-html[data-style="liquid-glass"] .contact-mail:hover {
-  transform: translateY(-1px);
-  text-decoration: none;
-  box-shadow: 0 10px 24px -6px rgba(8, 56, 70, .65), inset 0 1px 0 rgba(255, 255, 255, .5);
-}
-/* Qualified with p. on purpose: the address IS a .contact > p, and that rule is
-   one element more specific than a bare .contact-addr — without the p. here the
-   intro paragraph's ink wins and the address comes out at body size. */
-html[data-style="liquid-glass"] .contact > p.contact-addr {
-  margin: 1.1rem 0 0;
-  padding-top: 1rem;
-  border-top: 1px solid var(--lg-hair);
-  color: var(--lg-faint);
-  /* .8rem to match the archival address, and not .82 as it was: on a phone
-     the two styles resolve to the same system font, and at .82 the first
-     syllable of "Auckland" no longer fit the justified first line — its width
-     went into the word gaps instead. This pane is 2px wider inside than the
-     archival one (no real border), so whatever line the archival address can
-     compose, this one can compose at least as tightly. */
-  font-size: .8rem;
-}
-
-/* ==========================================================================
-   Footer — a band, not bare field
-   ========================================================================== */
-html[data-style="liquid-glass"] .foot {
-  background: var(--lg-foot);
-  -webkit-backdrop-filter: var(--lg-blur);
-          backdrop-filter: var(--lg-blur);
-  border-top: 1px solid var(--lg-hair);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
-}
-html[data-style="liquid-glass"] .foot-inner { color: var(--lg-muted); font-size: .76rem; }
-html[data-style="liquid-glass"] .foot-inner p { margin: 0; }
-
-/* ==========================================================================
-   DARK
-   The one real lesson of this material: dark glass must DARKEN. Tinting the pane
-   white — the obvious mirror of light mode — lets a blob push it to L=0.23 and
-   drops muted text to 1.7:1.
-   The transparent panes add a second edge to that lesson. The link pills sit on
-   the raw glare, so --lg-chip has to smoke; only chips already nested on a dark
-   pane (--lg-chip-pane: venue tags, DOI links) may tint upward, because the pane
-   beneath them has done the darkening. That is why those are two tokens.
-   The field is dimmer here than in light for a reason that is not taste: the
-   bright cyan accent and ink-2 are the inks that touch bare field, and both need
-   a dark backdrop. Bounded to L_max = 0.091 body, 0.117 hero.
-   ========================================================================== */
-@media (prefers-color-scheme: dark) {
-  html[data-style="liquid-glass"] {
-    --lg-ink:      #eef2f6;
-    --lg-ink-2:    #d5dde5;
-    --lg-muted:    #b3bfcb;
-    --lg-faint:    #a3b1bf;
-    --lg-accent:   #a5e6f7;
-    --lg-accent-2: #4fb8d4;
-    --lg-on-fill:  #04161c;
-
-    --lg-base: #060910;
-    --lg-blobs:
-      radial-gradient(34rem 30rem at 16% 4%,  rgba(10, 96, 122, .32), transparent 62%),
-      radial-gradient(30rem 27rem at 84% 1%,  rgba(56, 60, 150, .28), transparent 62%),
-      radial-gradient(32rem 29rem at 90% 64%, rgba(122, 68, 30, .19), transparent 62%),
-      radial-gradient(31rem 28rem at 6%  94%, rgba(10, 108, 94, .19), transparent 62%);
-    --lg-weave:
-      repeating-linear-gradient(58deg,  rgba(170, 205, 255, .028) 0 1px, transparent 1px 9px),
-      repeating-linear-gradient(-58deg, rgba(170, 205, 255, .019) 0 1px, transparent 1px 14px);
-
-    --lg-pane:      rgba(8, 12, 19, .62);
-    --lg-pane-hi:   rgba(22, 31, 44, .72);
-    --lg-pane-flat: #0b1118;
-    --lg-chip:      rgba(6, 10, 16, .46);
-    --lg-chip-hi:   rgba(6, 10, 16, .64);
-    --lg-chip-pane: rgba(255, 255, 255, .1);
-    /* .82 not .76: an independent audit put the dark inactive nav link at
-       4.87:1 — a pass, but the thinnest margin on the page. A touch more
-       opacity here settles it against pale content scrolling under the bar. */
-    --lg-nav:       rgba(10, 15, 22, .82);
-    --lg-foot:      rgba(6, 10, 16, .6);
-    --lg-hair:      rgba(255, 255, 255, .13);
-    --lg-hair-soft: rgba(255, 255, 255, .07);
-    --lg-sheen:     linear-gradient(177deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 46%);
-
-    --lg-edge: linear-gradient(146deg,
-                 rgba(255, 255, 255, .6)  0%,
-                 rgba(255, 255, 255, .16) 28%,
-                 rgba(255, 255, 255, 0)   52%,
-                 rgba(255, 255, 255, .07) 74%,
-                 rgba(255, 255, 255, .3)  100%);
-    --lg-inset-hi: inset 0 1px 0 rgba(255, 255, 255, .16);
-    --lg-inset-lo: inset 0 -1px 0 rgba(0, 0, 0, .22);
-    --lg-shadow:
-         0 1px 2px rgba(0, 0, 0, .4),
-         0 8px 18px -8px rgba(0, 0, 0, .6),
-         0 26px 50px -24px rgba(0, 0, 0, .7);
-    --lg-shadow-lift:
-         0 2px 4px rgba(0, 0, 0, .45),
-         0 12px 26px -8px rgba(0, 0, 0, .66),
-         0 38px 66px -26px rgba(0, 0, 0, .8);
-
-    --accent-tint: rgba(165, 230, 247, .12);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-  }
-
-  /* The hero glare inverts. On a dark field a white bloom would be a headlight,
-     and it would raise the very bound the bare hero text is measured against. */
-  html[data-style="liquid-glass"] .hero-glow {
-    background:
-      radial-gradient(26rem 17rem at 34% 54%, rgba(10, 90, 116, .2), transparent 66%),
-      radial-gradient(22rem 15rem at 62% 40%, rgba(62, 68, 156, .17), transparent 66%),
-      radial-gradient(17rem 12rem at 46% 74%, rgba(124, 74, 36, .1), transparent 66%);
-  }
-
-  /* Every white-tinted highlight in the light layer has to be re-cut, or the
-     chrome glows like strip lighting against a dark field. */
-  html[data-style="liquid-glass"] .hero-portrait {
-    box-shadow:
-      0 12px 30px -12px rgba(0, 0, 0, .8),
-      0 0 0 1px rgba(255, 255, 255, .12),
-      inset 0 2px 3px rgba(255, 255, 255, .22);
-  }
-  html[data-style="liquid-glass"] .hero-portrait img { box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
-  html[data-style="liquid-glass"] .hero-pronouns,
-  html[data-style="liquid-glass"] .sec-count,
-  html[data-style="liquid-glass"] .style-toggle {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
-  }
-  html[data-style="liquid-glass"] .hero-links a {
-    border-color: rgba(255, 255, 255, .14);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, .4),
-      0 4px 10px -6px rgba(0, 0, 0, .6),
-      inset 0 1px 0 rgba(255, 255, 255, .18);
-  }
-  html[data-style="liquid-glass"] .hero-links a:hover {
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, .45),
-      0 10px 20px -8px rgba(0, 0, 0, .7),
-      inset 0 1px 0 rgba(255, 255, 255, .26);
-  }
-  html[data-style="liquid-glass"] .hero-links .is-cv,
-  html[data-style="liquid-glass"] .hero-links .is-cv:hover,
-  html[data-style="liquid-glass"] .contact-mail,
-  html[data-style="liquid-glass"] .contact-mail:hover {
-    background: linear-gradient(180deg, var(--lg-accent), var(--lg-accent-2));
-    border-color: rgba(255, 255, 255, .3);
-    color: var(--lg-on-fill);
-    box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .5);
-  }
-  html[data-style="liquid-glass"] .nav {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 8px 24px -18px rgba(0, 0, 0, .8);
-  }
-  html[data-style="liquid-glass"] .nav a:hover { background: rgba(255, 255, 255, .1); }
-  html[data-style="liquid-glass"] .nav a.is-active {
-    background: var(--lg-accent);
-    color: var(--lg-on-fill);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
-  }
-  html[data-style="liquid-glass"] .style-toggle-dot {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 255, 255, .25);
-  }
-  html[data-style="liquid-glass"] .sec-note a { text-decoration-color: rgba(165, 230, 247, .4); }
-  html[data-style="liquid-glass"] .venue { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
-  html[data-style="liquid-glass"] .venue--sigmod { color: #7fd8ee; background: rgba(56, 189, 248, .15);  border-color: rgba(125, 211, 240, .3); }
-  html[data-style="liquid-glass"] .venue--vldb   { color: #a9b4ff; background: rgba(129, 140, 248, .15); border-color: rgba(160, 170, 250, .3); }
-  html[data-style="liquid-glass"] .venue--vldbj  { color: #cbb0ff; background: rgba(167, 139, 250, .15); border-color: rgba(190, 165, 255, .3); }
-  html[data-style="liquid-glass"] .venue--tkde   { color: #ff9ecb; background: rgba(244, 114, 182, .15); border-color: rgba(248, 150, 200, .3); }
-  html[data-style="liquid-glass"] .venue--eaai   { color: #7fdcaa; background: rgba(52, 211, 153, .15);  border-color: rgba(110, 225, 180, .3); }
-  html[data-style="liquid-glass"] .venue--pricai { color: #f0b98a; background: rgba(230, 150, 90, .15);  border-color: rgba(235, 175, 130, .3); }
-  html[data-style="liquid-glass"] .venue--adc    { color: #adbccd; background: rgba(150, 175, 200, .15); border-color: rgba(175, 195, 215, .3); }
-  html[data-style="liquid-glass"] .award {
-    color: #f3ce7a;
-    background: rgba(214, 158, 46, .18);
-    border-color: rgba(214, 158, 46, .4);
-  }
-  html[data-style="liquid-glass"] .pub-link { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
-  html[data-style="liquid-glass"] .pub-link:hover { background: rgba(255, 255, 255, .16); color: var(--lg-accent); }
-  /* Footer only. Grouping the active nav pill in here once cost it the .5
-     highlight set above — same specificity, later in the source. */
-  html[data-style="liquid-glass"] .foot { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
-}
-
-/* ==========================================================================
-   Narrow — the base's 40rem breakpoint, not the mockup's 46rem
-   A media query adds no specificity, so a base rule inside its own narrow block
-   still loses to any scoped rule above at every width. Anything this layer
-   restyles that the base also adjusts down here has to be re-adjusted, or it
-   silently regresses on phones.
-   ========================================================================== */
-@media (max-width: 40rem) {
-  /* The base trims this panel for a real reason: its padding made the justified
-     text the narrowest column on the page and opened rivers. The pane rule above
-     would have quietly undone that. */
-  html[data-style="liquid-glass"] .contact { padding: 1.15rem; }
-  /* 1.02rem — the archival bookplate's size — and not the pane's usual .95:
-     measured across phone fonts and widths, .95 put this panel's justified
-     lines in a narrow band of measure-per-em where the last short word of a
-     line just misses the fit and its width spreads into the word gaps (the
-     owner's phone sat exactly there). A 1rem-and-wider-inset variant chasing
-     character-parity with the archival panel was tried next and rolled back:
-     the owner preferred this one. The address keeps its own smaller rule
-     below. */
-  html[data-style="liquid-glass"] .contact > p { font-size: 1.02rem; }
-  html[data-style="liquid-glass"] .prose { padding: 1.15rem; font-size: .95rem; }
-  html[data-style="liquid-glass"] .news { padding: 1.1rem 1.15rem; }
-  /* The base hides .nav-brand here and packs the row left, which would leave the
-     toggle floating beside the links instead of on the column edge. */
-  html[data-style="liquid-glass"] .style-toggle { margin-left: auto; }
-  html[data-style="liquid-glass"] .hero-links { padding-top: 1rem; }
-  html[data-style="liquid-glass"] .hero-portrait { border-radius: 20px; }
-  html[data-style="liquid-glass"] .hero-portrait img { border-radius: 15px; }
-  html[data-style="liquid-glass"] .sec + .sec { margin-top: 2.5rem; }
-}
-
-/* ==========================================================================
-   Degradation
-   ========================================================================== */
-
-/* Without backdrop-filter the panes still composite over the field, which is
-   exactly the path every ratio in this file was computed against — so nothing
-   becomes illegible. What breaks is the LOOK: the weave and anything under the
-   nav come through sharp instead of dissolved. So the fills go up. Every ratio
-   only improves, because a higher alpha moves each surface toward white (light)
-   or toward black (dark), away from its ink. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  html[data-style="liquid-glass"] {
-    --lg-pane:    rgba(255, 255, 255, .88);
-    --lg-pane-hi: rgba(255, 255, 255, .94);
-    --lg-chip:    rgba(255, 255, 255, .86);
-    --lg-chip-hi: rgba(255, 255, 255, .94);
-    --lg-nav:     rgba(255, 255, 255, .96);
-    --lg-foot:    rgba(255, 255, 255, .9);
-  }
-  @media (prefers-color-scheme: dark) {
-    html[data-style="liquid-glass"] {
-      --lg-pane:    rgba(8, 12, 19, .88);
-      --lg-pane-hi: rgba(22, 31, 44, .94);
-      --lg-chip:    rgba(6, 10, 16, .86);
-      --lg-chip-hi: rgba(6, 10, 16, .94);
-      --lg-nav:     rgba(10, 15, 22, .96);
-      --lg-foot:    rgba(6, 10, 16, .9);
-    }
-  }
-}
-
-/* Asked for less transparency: the effect is precisely what they opted out of,
-   so it goes — panes opaque, blur off, glare off, field damped toward its base.
-   Damping the field is monotone safe: it moves every pixel toward --lg-base,
-   which is the lightest colour in the light field and the darkest in the dark
-   one, so L_min rises in light and L_max falls in dark. Both help.
-   That opacity is on the FIELD. It is never on ink — see the header. */
-@media (prefers-reduced-transparency: reduce) {
-  html[data-style="liquid-glass"] {
-    --lg-pane:      var(--lg-pane-flat);
-    --lg-pane-hi:   #ffffff;
-    --lg-chip:      rgba(255, 255, 255, .95);
-    --lg-chip-hi:   #ffffff;
-    --lg-chip-pane: rgba(255, 255, 255, .95);
-    --lg-nav:       #ffffff;
-    --lg-foot:      var(--lg-pane-flat);
-    --lg-blur:      none;
-    --lg-sheen:     none;
-  }
-  html[data-style="liquid-glass"] body::before { opacity: .4; }
-  html[data-style="liquid-glass"] .hero-glow { display: none; }
-  @media (prefers-color-scheme: dark) {
-    html[data-style="liquid-glass"] {
-      --lg-pane-hi:   #18222f;
-      --lg-chip:      rgba(11, 16, 23, .95);
-      --lg-chip-hi:   #18222f;
-      --lg-chip-pane: rgba(255, 255, 255, .14);
-      --lg-nav:       #0b1017;
-    }
-  }
-}
-
-/* The base kills transitions globally under reduced-motion, but it does it with
-   `*`, which this layer's scoped hover transforms out-specify. Restated. */
-@media (prefers-reduced-motion: reduce) {
-  html[data-style="liquid-glass"] *,
-  html[data-style="liquid-glass"] *::before,
-  html[data-style="liquid-glass"] *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-  html[data-style="liquid-glass"] .interest:hover,
-  html[data-style="liquid-glass"] .pub:hover,
-  html[data-style="liquid-glass"] .hero-links a:hover,
-  html[data-style="liquid-glass"] .contact-mail:hover { transform: none; }
-}
-
-@media (prefers-contrast: more) {
-  html[data-style="liquid-glass"] {
-    --lg-muted: var(--lg-ink-2);
-    --lg-faint: var(--lg-ink-2);
-    --lg-hair: rgba(16, 24, 32, .3);
-  }
-  @media (prefers-color-scheme: dark) {
-    html[data-style="liquid-glass"] { --lg-hair: rgba(255, 255, 255, .32); }
-  }
-  html[data-style="liquid-glass"] .venue,
-  html[data-style="liquid-glass"] .award { border-color: currentColor; }
-}
-
-/* ==========================================================================
-   Print
-   The base's print block strips the cards and the field, but with single-class
-   selectors — every rule in this layer out-specifies them, so without this the
-   panes, the blobs and the weave would all go to the printer.
-   ========================================================================== */
-@media print {
-  html[data-style="liquid-glass"] { background: #fff; }
-  html[data-style="liquid-glass"] body::before { display: none; }
-  html[data-style="liquid-glass"] .hero { border-bottom: 0; }
-  html[data-style="liquid-glass"] .prose,
-  html[data-style="liquid-glass"] .news,
-  html[data-style="liquid-glass"] .interest,
-  html[data-style="liquid-glass"] .pub,
-  html[data-style="liquid-glass"] .contact {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: none;
-    -webkit-backdrop-filter: none;
-            backdrop-filter: none;
-    box-shadow: none;
-  }
-  html[data-style="liquid-glass"] .prose::before,
-  html[data-style="liquid-glass"] .news::before,
-  html[data-style="liquid-glass"] .pub::before,
-  html[data-style="liquid-glass"] .contact::before,
-  html[data-style="liquid-glass"] .interest::after,
-  html[data-style="liquid-glass"] .news li::before,
-  html[data-style="liquid-glass"] .news li::after { display: none; }
-  html[data-style="liquid-glass"] .interest::before { position: static; }
-  html[data-style="liquid-glass"] .news li { border-left: 0; }
-  html[data-style="liquid-glass"] .hero-portrait { box-shadow: none; }
-  html[data-style="liquid-glass"] .hero-links a {
-    -webkit-backdrop-filter: none;
-            backdrop-filter: none;
-  }
-  html[data-style="liquid-glass"] .contact-mail {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: #000;
-    box-shadow: none;
-  }
-  html[data-style="liquid-glass"] .venue,
-  html[data-style="liquid-glass"] .pub-link,
-  html[data-style="liquid-glass"] .award {
-    background: none;
-    box-shadow: none;
-  }
 }

@@ -1,0 +1,29 @@
+{%- comment -%}
+  Hand-drawn doodles, inline so site.css can colour them.
+
+  Strokes are currentColor. `.i-a` is the body of the drawing and `.i-b` its
+  accent; site.css fills both (cream body, a deeper shade of the card's colour
+  for the accent), so one drawing works on every card and in dark mode.
+
+  Usage:  {% include icon.html name="key" %}   or   name=some.variable
+  Names:  database | key | search | log | mail | pin | sparkle | moon
+  (the moon paints itself with its own moon-* classes)
+{%- endcomment -%}
+{%- case include.name -%}
+{%- when "moon" -%}
+<svg class="doodle moon-art" viewBox="0 0 80 80" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle class="moon-face" cx="40" cy="40" r="31"/><circle class="moon-crater" cx="57" cy="24" r="5" stroke-width="2.4"/><circle class="moon-crater" cx="21" cy="55" r="3.4" stroke-width="2.2"/><ellipse class="moon-blush" cx="25" cy="47" rx="4.4" ry="2.6" stroke="none"/><ellipse class="moon-blush" cx="55" cy="47" rx="4.4" ry="2.6" stroke="none"/><path d="M26 39.5q4 4.4 8 0M46 39.5q4 4.4 8 0M36.5 48.5q3.5 3 7 0" stroke-width="2.6"/></svg>
+{%- when "database" -%}
+<svg class="doodle" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-a" d="M9 12v24c0 3.6 6.7 6.5 15 6.5s15-2.9 15-6.5V12"/><ellipse class="i-b" cx="24" cy="12" rx="15" ry="6.5"/><path d="M9 20.5c0 3.6 6.7 6.5 15 6.5s15-2.9 15-6.5M9 28.5c0 3.6 6.7 6.5 15 6.5s15-2.9 15-6.5"/><path d="M13.5 33.5v2.5" stroke-width="2.2"/></svg>
+{%- when "key" -%}
+<svg class="doodle" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-a" d="M22 20.6h20v6.8h-3.6v5.4h-5.6v-5.4H22"/><circle class="i-a" cx="15" cy="24" r="9.5"/><circle class="i-b" cx="15" cy="24" r="3.6"/></svg>
+{%- when "search" -%}
+<svg class="doodle" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect class="i-a" x="31" y="27" width="7" height="17" rx="3.5" transform="rotate(-45 34.5 35.5)"/><circle class="i-b" cx="20" cy="20" r="12"/><path d="M13.5 17.5a7 7 0 0 1 5-5"/></svg>
+{%- when "log" -%}
+<svg class="doodle" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="i-a" d="M10 5.5h19l9 9v28H10z"/><path d="M29 5.5v9h9M15.5 20h15M15.5 26h15M15.5 32h7"/><circle class="i-b" cx="35.5" cy="36" r="8.5"/><path d="M35.5 31.6v4.8M35.5 40.2v.3" stroke-width="3"/></svg>
+{%- when "mail" -%}
+<svg class="doodle" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect class="i-a" x="6" y="12" width="36" height="25" rx="4"/><path d="M7.5 14.5 24 27l16.5-12.5"/><path class="i-b" d="M24 33c-3-2-5-3.8-5-5.9 0-1.4 1.1-2.4 2.4-2.4 1.1 0 2 .6 2.6 1.6.6-1 1.5-1.6 2.6-1.6 1.3 0 2.4 1 2.4 2.4 0 2.1-2 3.9-5 5.9z" stroke-width="2.2"/></svg>
+{%- when "pin" -%}
+<svg class="doodle" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="i-b" d="M12 22s7-6.4 7-12a7 7 0 0 0-14 0c0 5.6 7 12 7 12z"/><circle class="i-a" cx="12" cy="10" r="2.6"/></svg>
+{%- when "sparkle" -%}
+<svg class="doodle" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path class="i-b" d="M12 1.8c.9 5.6 3.1 7.9 9.2 9.2-6.1 1.3-8.3 3.6-9.2 9.2-.9-5.6-3.1-7.9-9.2-9.2 6.1-1.3 8.3-3.6 9.2-9.2z"/></svg>
+{%- endcase -%}

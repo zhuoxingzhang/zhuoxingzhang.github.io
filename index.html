@@ -2,21 +2,30 @@
 layout: default
 ---
 {%- assign p = site.data.profile -%}
+{%- assign first_name = p.name | split: " " | first -%}
 
-<section id="about" class="sec">
-  <h2 class="sec-h"><span>About</span></h2>
+<section id="about" class="sec sec--about">
+  <div class="sec-head">
+    <h2 class="sec-tag">About</h2>
+    <p class="sec-sub">nice to meet you</p>
+  </div>
   <div class="prose">
     {% for para in p.about %}<p>{{ para }}</p>{% endfor %}
   </div>
 </section>
 
 {% if p.interests and p.interests.size > 0 %}
-<section id="research" class="sec">
-  <h2 class="sec-h"><span>Research</span></h2>
+<section id="research" class="sec sec--research">
+  <div class="sec-head">
+    <h2 class="sec-tag">Research</h2>
+    <p class="sec-sub">what keeps me busy</p>
+  </div>
   <ul class="interests">
     {% for i in p.interests %}
       <li class="interest">
         {% if i.name %}
+          {%- assign ic = i.icon | default: "sparkle" -%}
+          <span class="interest-icon">{% include icon.html name=ic %}</span>
           <h3>{{ i.name }}</h3>
           <p>{{ i.detail }}</p>
         {% else %}
@@ -29,37 +38,42 @@ layout: default
 {% endif %}
 
 {% if site.data.news and site.data.news.size > 0 %}
-<section id="news" class="sec">
-  <h2 class="sec-h"><span>News</span></h2>
-  <ol class="news">
-    {% for n in site.data.news limit: 5 %}
-      <li>
-        <time>{{ n.date }}</time>
-        <span>{{ n.text }}</span>
-      </li>
-    {% endfor %}
-  </ol>
-  {% if site.data.news.size > 5 %}
-  <details class="more">
-    <summary>Earlier news</summary>
+<section id="news" class="sec sec--news">
+  <div class="sec-head">
+    <h2 class="sec-tag">News</h2>
+    <p class="sec-sub">fresh off the press</p>
+  </div>
+  <div class="news-card">
     <ol class="news">
-      {% for n in site.data.news offset: 5 %}
+      {% for n in site.data.news limit: 5 %}
         <li>
           <time>{{ n.date }}</time>
           <span>{{ n.text }}</span>
         </li>
       {% endfor %}
     </ol>
-  </details>
-  {% endif %}
+    {% if site.data.news.size > 5 %}
+    <details class="more">
+      <summary>Earlier news</summary>
+      <ol class="news">
+        {% for n in site.data.news offset: 5 %}
+          <li>
+            <time>{{ n.date }}</time>
+            <span>{{ n.text }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </details>
+    {% endif %}
+  </div>
 </section>
 {% endif %}
 
-<section id="publications" class="sec">
-  <h2 class="sec-h">
-    <span>Publications</span>
-    <em class="sec-count">{{ site.data.publications.size }}</em>
-  </h2>
+<section id="publications" class="sec sec--papers">
+  <div class="sec-head">
+    <h2 class="sec-tag">Publications</h2>
+    <p class="sec-sub"><b class="sec-count">{{ site.data.publications.size }}</b> papers so far</p>
+  </div>
   <p class="sec-note">
     Authors in publication order. Also on
     <a href="{{ p.links | where: 'name', 'DBLP' | map: 'url' | first }}">DBLP</a> and
@@ -91,24 +105,45 @@ layout: default
   {% endfor %}
 </section>
 
-<section id="contact" class="sec">
-  <h2 class="sec-h"><span>Contact</span></h2>
-  <div class="contact">
-    {%- comment -%}
-      The &shy;s mark the syllable breaks a hyphenation dictionary would
-      supply (in·ter·est·ed, ex·plor·ing, pos·si·ble, col·lab·o·ra·tions,
-      hes·i·tate). This panel is the narrowest justified column on the page,
-      and hyphens: auto only works where the engine ships an English
-      dictionary — several phone browsers ship none, which left these lines
-      gappy. A soft hyphen is honoured by every engine and invisible on any
-      line that does not break at it.
-    {%- endcomment -%}
-    <p>
-      If you are in&shy;ter&shy;est&shy;ed in ex&shy;plor&shy;ing
-      pos&shy;si&shy;ble col&shy;lab&shy;o&shy;ra&shy;tions, please don't
-      hes&shy;i&shy;tate to get in touch.
-    </p>
-    {% include email.html class="contact-mail" %}
-    <p class="contact-addr">{{ p.department }}, {{ p.affiliation }} &middot; {{ p.location }}</p>
+<section id="contact" class="sec sec--contact">
+  <div class="sec-head">
+    <h2 class="sec-tag">Contact</h2>
+    <p class="sec-sub">say hello</p>
+  </div>
+  <div class="postcard">
+    <div class="contact">
+      <span class="stamp" aria-hidden="true"><span class="stamp-art">{% include icon.html name="moon" %}<span class="stamp-mark">NZ</span></span></span>
+
+      <div class="postcard-msg">
+        <div class="postcard-head">
+          <p class="postcard-label" aria-hidden="true">Post card</p>
+          <p class="postcard-hello">Hello there!</p>
+        </div>
+        {%- comment -%}
+          The &shy;s mark the syllable breaks a hyphenation dictionary would
+          supply. This is the narrowest justified column on the page, and
+          hyphens: auto only works where the engine ships an English
+          dictionary — several phone browsers ship none, which left lines like
+          these gappy. A soft hyphen is honoured by every engine and invisible
+          on any line that does not break at it.
+        {%- endcomment -%}
+        <p class="postcard-body">
+          Want to talk da&shy;ta&shy;bas&shy;es, logs, or a
+          pos&shy;si&shy;ble col&shy;lab&shy;o&shy;ra&shy;tion? My inbox is
+          always open, and I'm hap&shy;py to hear from stu&shy;dents and
+          re&shy;search&shy;ers alike.
+        </p>
+        <p class="postcard-sign">&mdash; {{ first_name }}</p>
+      </div>
+
+      <div class="postcard-addr">
+        {% include email.html class="contact-mail" icon="yes" %}
+        <p class="contact-addr">
+          {% if p.department %}<span>{{ p.department }}</span>{% endif %}
+          <span>{{ p.affiliation }}</span>
+          {% if p.location %}<span>{{ p.location }}</span>{% endif %}
+        </p>
+      </div>
+    </div>
   </div>
 </section>
