@@ -240,10 +240,14 @@ interests:
 
 ### 4.2 字体
 
-标题用 **Fredoka**（圆润的那个），正文用 **Nunito**，都从 jsDelivr 加载。
+标题、按钮、标签用 **Fredoka**（圆润的那个），正文用 **Mali**（手写感的卡通字体），都从 jsDelivr 加载。
 这里特意没用 Google Fonts，因为国内访问不了。
-加载字体的两行在 `_layouts/default.html`，字体名在 `site.css` 的 `--font-display` / `--font-body`。
+加载字体的几行在 `_layouts/default.html`，字体名在 `site.css` 的 `--font-display` / `--font-body`。
 如果 CDN 偶尔访问不到，页面会自动退回系统字体，不影响阅读。
+
+Mali 的字母比一般字体宽，同样字号下每行放的词更少，所以正文字号特意调小了一档
+（电脑 16px、手机 15px）。换别的正文字体时，记得把 `site.css` 里 `body` 的 `font-size` 一起调回来，
+再用手机看看两端对齐有没有出现大空隙。
 
 ### 4.3 板块旁边的小字、导航栏文字
 
@@ -397,5 +401,5 @@ Gemfile                 只给本地预览用，GitHub 不看它
 ---
 
 用到的开源资源：字体 [Fredoka](https://fonts.google.com/specimen/Fredoka) 和
-[Nunito](https://fonts.google.com/specimen/Nunito)（SIL Open Font License），
+[Mali](https://fonts.google.com/specimen/Mali)（SIL Open Font License），
 通过 [jsDelivr](https://www.jsdelivr.com) 上的 [Fontsource](https://fontsource.org) 加载。

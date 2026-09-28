@@ -12,8 +12,8 @@
 
    THE LOOK: cream paper with a halftone dot, ink outlines, hard offset
    shadows and pastel stickers; a night-sky banner in the navy of the portrait
-   behind it. Fredoka for anything that is a label or a heading, Nunito for
-   reading.
+   behind it. Fredoka for anything that is a label or a heading, Mali (a
+   hand-lettered face) for reading.
 
    TO EDIT COLOUR OR TYPE: change the tokens in :root below (and their dark
    twins right after). Every rule reads from them.
@@ -66,8 +66,8 @@
   --air-blue: #4f8ff7;
 
   --font-display: "Fredoka Variable", "Fredoka", ui-rounded, "Arial Rounded MT Bold",
-                  "Nunito Variable", system-ui, sans-serif;
-  --font-body:    "Nunito Variable", "Nunito", ui-rounded, system-ui, -apple-system,
+                  system-ui, sans-serif;
+  --font-body:    "Mali", "Comic Neue", ui-rounded, system-ui, -apple-system,
                   "Segoe UI", Roboto, sans-serif;
 
   --radius: 20px;
@@ -118,8 +118,11 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.7;
+  /* Mali runs wide and large for its size: 16px of it sets about like 17px of
+     an ordinary sans, and a line holds fewer words, so the sizes here and
+     below sit a step under the usual. */
+  font-size: 1rem;
+  line-height: 1.75;
   color: var(--text);
   background-color: var(--paper);
   background-image: radial-gradient(var(--dot) 1.2px, transparent 1.8px);
@@ -151,7 +154,7 @@ a {
   top: 1rem;
   z-index: 20;
   padding: .6rem 1rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--on-color);
   background: var(--yellow);
   border: 3px solid var(--line);
@@ -436,7 +439,7 @@ a {
   position: relative;
   top: -.2em;
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 700;
   font-size: .8rem;
   line-height: 1;
   letter-spacing: .02em;
@@ -451,7 +454,7 @@ a {
 
 .hero-role {
   margin-top: .8rem;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 1.15rem;
   line-height: 1.4;
   color: var(--on-night);
@@ -727,7 +730,7 @@ a {
 /* The phrase to catch, run over with a marker in the bullet's colour. Left
    plain where color-mix() is unsupported. */
 .interest strong {
-  font-weight: 800;
+  font-weight: 700;
   background: linear-gradient(transparent 60%,
     color-mix(in srgb, var(--c) var(--marker), transparent) 60%);
 }
@@ -766,7 +769,7 @@ a {
   transform: rotate(-3deg);
 }
 .news li:nth-child(even) time { transform: rotate(2deg); }
-.news strong { font-weight: 800; }
+.news strong { font-weight: 700; }
 
 .more { border-top: 2.5px dashed var(--rule); padding: .8rem 0; }
 .more summary {
@@ -792,7 +795,7 @@ a {
    ========================================================================== */
 .sec-note {
   margin: -.35rem 0 1.9rem;
-  font-size: .98rem;
+  font-size: .94rem;
   color: var(--text-soft);
 }
 
@@ -838,13 +841,13 @@ a {
 }
 .pub-authors {
   margin-top: .35rem;
-  font-size: .98rem;
+  font-size: .94rem;
   line-height: 1.6;
   color: var(--text-soft);
 }
 /* Your own name, run over with a highlighter. */
 .pub-authors b {
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text);
   background: linear-gradient(transparent 60%, var(--highlight) 60%);
 }
@@ -1106,7 +1109,7 @@ a {
   gap: .3rem 1rem;
   padding-top: 1.5rem;
   padding-bottom: 1.75rem;
-  font-size: .92rem;
+  font-size: .88rem;
   font-weight: 600;
 }
 
@@ -1116,7 +1119,7 @@ a {
    ========================================================================== */
 @media (max-width: 40rem) {
   :root { --pad: 1rem; }
-  body { font-size: 1rem; }
+  body { font-size: .9375rem; }
 
   .hero-inner {
     grid-template-areas:
@@ -1198,6 +1201,14 @@ a {
   .contact-mail .doodle { width: 1.55rem; height: 1.55rem; }
 
   .foot { margin-top: 4rem; }
+}
+
+/* The smallest phones (320px): every pixel of card padding is a pixel the
+   justified text cannot use, and at this width it needs all it can get. */
+@media (max-width: 22.5rem) {
+  .prose,
+  .interests-card,
+  .news-card { padding-left: .9rem; padding-right: .9rem; }
 }
 
 
